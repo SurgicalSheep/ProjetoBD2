@@ -1,0 +1,35 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color: rgb(248, 236, 245);">
+    <div style="text-align: center;">
+        <img src={{products.imagem}} style="width: 20em;height: 15em;" alt={{products.descricao}}>
+    </div>
+    <div>
+        <div style="text-align: center;">
+            <b>{{products.nome}}</b>
+        </div>
+        <br>
+        <b>ID do produto:</b> {{products.id}}
+        <br>
+        <b>Categoria:</b> {{products.categoria}}
+        <br>
+        <b>Descrição:</b> {{products.descricao}}
+        <br>
+        <b>Cor:</b> {{products.cor}}
+        <br>
+        <b>Marca:</b> {{products.marca}}
+        <br>
+        <b>Preco:</b> {{products.preco}}
+        <br>
+        <b>Desconto:</b> {{products.desconto}} %
+        <br>
+        <b>Stock:</b> {{products.stock}}
+        <br>
+        <a href="#" class="btn btn-success">Comprar</a>
+        <a href="#" class="btn btn-danger">Apagar</a> #apenas disponivel com cargo especifico
+    </div>
+
+</div>
+
+{% endblock %}

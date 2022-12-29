@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+{% block content %}
+<h2 style="margin-left: 1.5%;">Listagem de todos os users </h2>
+
+<div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
+    {% for users in users %}
+    <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+        <div class="card-body">
+            <span class="badge bg-dark">{{users.tipouser}}</span>
+            <h6 class="card-title">Nome: {{users.nome}}</h6>
+            <h6 class="card-title">Username: {{users.username}}</h6>
+            <h6 class="card-text">Password:******** </h6>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
