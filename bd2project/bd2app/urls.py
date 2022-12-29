@@ -1,11 +1,7 @@
 from django.urls import path
 from . import views
 from . import other
-<<<<<<< HEAD
-#teste 2
-=======
-#teste 1
->>>>>>> feature/test1
+
 urlpatterns = [
     path('',views.index, name='index'),
     path('login', views.login, name='login'),
