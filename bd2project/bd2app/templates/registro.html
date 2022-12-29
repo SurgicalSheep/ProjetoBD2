@@ -1,0 +1,35 @@
+{% extends "index.html" %}
+{% block content %}
+<div style="margin: auto;width: 50%;text-align: center;">
+    <h2>Registo de um novo utilizador</h2>
+</div>
+
+
+<form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
+    {% csrf_token %}
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="nome" placeholder="Nome">
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="username" placeholder="Username">
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="password" class="form-control" name="password" placeholder="Password">
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <label for="FormTipoUser" class="form-label">Tipo de utilizador:</label>
+        <select class="form-select" name="tipouser" aria-label="FormTipoUser">
+            <option value="Cliente" selected>Cliente</option>
+            <option value="Comercial Tipo 1">Comercial Tipo 1</option>
+            <option value="Comercial Tipo 2">Comercial Tipo 2</option>
+            <option value="Fornecedor">Fornecedor</option>
+            <option value="Administrador">Administrador</option>
+        </select>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="submit" class="btn btn-primary" name="inserir" value="Inserir">
+    </div>
+
+</form>
+
+{% endblock %}

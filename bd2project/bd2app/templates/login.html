@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<h2>Login de utilizador</h2>
+<nav class="navbar navbar-expand-sm bg-light">
+    <!-- Links -->
+    <ul class="navbar-nav">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_table }}
+            <input type="submit" name="entrar" value="Entrar">
+        </form>
+    </ul>
+{% endblock %}
