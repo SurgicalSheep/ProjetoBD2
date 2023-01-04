@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bd2app',
-    'html_sanitizer'
+    'bd2app'
 ]
 
 MIDDLEWARE = [
@@ -77,8 +76,12 @@ WSGI_APPLICATION = 'bd2project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bd2',
+        'USER': 'pv20234',
+        'PASSWORD':'pv20234',
+        'HOST':'localhost',
+        'PORT':'5432',
     }
 }
 

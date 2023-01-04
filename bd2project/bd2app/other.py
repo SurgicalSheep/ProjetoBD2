@@ -2,11 +2,10 @@ import pymongo
 from django.db import connections
 conexaomongo = pymongo.MongoClient("mongodb+srv://eletropoggers_admin:faroladlucas@projetobd2-onlinedb.833ybao.mongodb.net/test")["bd2_mongo"]
 
-
-def insere_ut(nome,username,password,tipouser):
+def insere_ut(nome,username,password,tipouser,morada):
     bd = conexaomongo
     col = bd["utilizadores"]
-    doc = {"id": user_max_id(),"nome":nome,"username":username,"password":password,"tipouser":tipouser}
+    doc = {"id": user_max_id(),"nome":nome,"username":username,"password":password,"tipouser":tipouser,"morada":morada}
     x = col.insert_one(doc)
     return x
 

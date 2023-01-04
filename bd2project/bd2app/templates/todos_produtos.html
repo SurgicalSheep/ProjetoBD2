@@ -11,7 +11,7 @@
             <p class="card-text">Descrição: {products.descricao} </p>
             <p class="card-text">Cor: {{products.cor}} || Marca: {{products.marca}}</p>
             <p class="card-text">Preco: {{products.preco}}€ || Desconto: {{products.desconto}}% || Stock: {{products.stock}}   </p>
-            <a href="#" class="btn btn-success">Comprar</a>
+            <a href="/produto/adicionar_carrinho/{{products.id}}/{{products.desconto}}/{{products.nome}}/{{products.preco}}/{{products.imagem}}" class="btn btn-success">Comprar</a>
             <a href="/produto/{{products.id}}/" class="btn btn-primary">Visualizar</a>
             <a href="/produto/apagar_produto/{{products.id}}" class="btn btn-danger" >Apagar</a>
         </div>
