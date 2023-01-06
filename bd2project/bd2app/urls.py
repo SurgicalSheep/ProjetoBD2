@@ -4,7 +4,8 @@ from . import other
 
 urlpatterns = [
     path('',views.index, name='index'),
-    path('login', views.login, name='login'),
+    path('login', views.loginUser, name='loginUser'),
+    path('logout', views.logoutUser, name='logoutUser'),
     path('registro',views.registro, name='registro'),
     path('novo_produto',views.novo_produto, name='novo_produto'),
     path('todos_produtos',views.todos_produtos, name='todos_produtos'),

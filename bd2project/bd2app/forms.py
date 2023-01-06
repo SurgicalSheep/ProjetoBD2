@@ -5,4 +5,8 @@ class registo_util(forms.Form):
     passut = forms.CharField(widget=forms.PasswordInput,label='Password', 
 max_length=30,required=True)
     typeut = forms.CharField(label='Tipo de Utilizador', max_length=30,required=True)
+
+class loginUserForm(forms.Form):
+    username = forms.CharField(label='Username', max_length=100,required=True)
+    password = forms.CharField(widget=forms.PasswordInput,label='Password')
     

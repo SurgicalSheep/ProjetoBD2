@@ -70,19 +70,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bd2project.wsgi.application'
 
-
+import djongo
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bd2',
-        'USER': 'pv20234',
-        'PASSWORD':'pv20234',
-        'HOST':'localhost',
+        'NAME': 'yocswmsk',
+        'USER': 'yocswmsk',
+        'PASSWORD':'tbWWd6Ro1PN2mhkvns7e24b2JpSXjE9u',
+        'HOST':'mel.db.elephantsql.com',
         'PORT':'5432',
-    }
+    },
+    #'default': {
+        #'ENGINE': 'django.db.backends.postgresql',
+        #'NAME': 'bd2',
+        #'USER': 'pv20234',
+        #'PASSWORD':'pv20234',
+        #'HOST':'localhost',
+        #'PORT':'5432',
+    #},
+    'mongo': {
+        'ENGINE': 'djongo',
+        'NAME': 'bd2_mongo',
+        'HOST': 'mongodb+srv://eletropoggers_admin:faroladlucas@projetobd2-onlinedb.833ybao.mongodb.net/test',
+    },
 }
 
 
@@ -126,5 +139,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
- 
- 
+
+LOGIN_URL='/login'
+LOGIN_REDIRECT_URL = '/todos_produtos'

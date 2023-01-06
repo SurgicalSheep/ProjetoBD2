@@ -1,18 +1,15 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from bd2app.forms import registo_util
+from bd2app.forms import registo_util,loginUserForm
 from bd2app.models import *
 from bd2app.other import *
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
 def index(request):
     context = {}
     return render(request, 'index.html', context=context)
-
-
-def login(request):
-    return render(request, 'login.html', {})
-
 
 def registro(request):
     context = {}
@@ -32,34 +29,31 @@ def registro(request):
         return render(request, 'registro.html', context)
 
 
-def login(request):
+def loginUser(request):
     if request.method == 'POST':
-        form = registo_util(request.POST)
+        form = loginUserForm(request.POST)
         if 'entrar' in request.POST:
             if form.is_valid():
-                inomev = form.cleaned_data["logut"]
-                ipa = form.cleaned_data["passut"]
-                va = login_ut(inomev, ipa)
-                if va > 0:
+                username = form.cleaned_data["username"]
+                password = form.cleaned_data["password"]
+                user = authenticate(request,username = username,password = password)
+                if user is not None:
+                    login(request,user)
                     pag = 'index.html'
                     context = {}
+                    print(user.id)
                 else:
-                    context = {'form': form, }
+                    context = {'form': form}
                     pag = 'login.html'
     else:
-        form = registo_util(request.POST)
+        form = loginUserForm(request.POST)
         pag = 'login.html'
-        context = {'form': form,
-                   }
+        context = {'form': form}
     return render(request, pag, context)
 
-
-def login_ut(username, password):
-    bd = conexaomongo
-    col = bd["utilizadores"]
-    x = col.count_documents({"username": username, "password": password})
-    return x
-
+def logoutUser(request):
+    logout(request)
+    return redirect('/')
 
 def novo_produto(request):
     context = {}
@@ -82,9 +76,10 @@ def novo_produto(request):
         context = {'form': form}
         return render(request, 'novo_produto.html', context)
 
-
 def todos_produtos(request):
     context = {}
+    user = request.user
+    print (user.id)
     if request.method == 'GET':
         pag = 'todos_produtos.html'
         products = todos_produtos_other()
