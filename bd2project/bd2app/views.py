@@ -150,3 +150,13 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
         form = request.POST
         context = {'form': form}
         return render(request, 'adicionar_carrinho.html', context)
+
+def remover_produto_carrinho(request, produto_id):
+    context = {}
+    if request.method == 'POST':
+        remover_produto_carrinho_other(produto_id)
+        return redirect('carrinho')
+    else:
+        form = request.POST
+        context = {'form': form}
+        return render(request, 'carrinho.html', context)

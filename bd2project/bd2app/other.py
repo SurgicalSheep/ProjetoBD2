@@ -1,5 +1,7 @@
 import pymongo
 from django.db import connections
+from django.shortcuts import get_object_or_404, redirect
+from bd2app.models import *
 conexaomongo = pymongo.MongoClient("mongodb+srv://eletropoggers_admin:faroladlucas@projetobd2-onlinedb.833ybao.mongodb.net/test")["bd2_mongo"]
 
 def insere_ut(nome,username,password,tipouser,morada):
@@ -51,3 +53,8 @@ def apagar_produto_other(id):
     col = bd["produtos"]
     x = col.delete_one({"id": id})
     return x
+
+def remover_produto_carrinho_other(produto_id):
+    item = get_object_or_404(itens_carrinho_model, id_produto=produto_id)
+    item.delete()
+    return redirect('carrinho')

@@ -13,6 +13,10 @@
             <h6 class="card-title">Preço: {{itens.preco_produto}} €</h6>
             <h6 class="card-title">Desconto: {{itens.desconto_produto}} %</h6>
             <h6 class="card-title">Quantidade: {{itens.quantidade}}</h6>
+            <form action="{% url 'remover_produto_carrinho' produto_id=itens.id_produto %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Delete">
+            </form>
         </div>
     </div>
     {% endfor %}
