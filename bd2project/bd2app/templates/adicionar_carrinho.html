@@ -8,6 +8,7 @@
     <h2>Confirme que pretende adicionar o item ao carrinho!</h2>
     <h4>E indique a quantidade pretendida!</h4>
     <form action="" method="POST">
+        {% csrf_token %}
         <input type="number" name=quantidade min="1" value="quantidade"></input>
         <input type="hidden" name=id value="{{products.id}}"></input>
         <input type="hidden" name=desconto value="{{products.desconto}}"></input>
