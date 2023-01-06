@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
+#faro
 from bd2app.forms import registo_util,loginUserForm
 from bd2app.models import *
 from bd2app.other import *
