@@ -4,6 +4,8 @@ from bd2app.models import *
 from bd2app.other import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import HttpResponse
 # Create your views here.
 
 
@@ -20,8 +22,17 @@ def registro(request):
         password = data.get("password")
         tipouser = data.get("tipouser")
         morada = data.get("morada")
-        insere_ut(nome, username, password, tipouser, morada)
-        # esta linha vai ser apagada. só agora para testes mesmo
+
+        try:
+            u = User.objects.get(username=username)
+            return HttpResponse("Username exists")#meter isto bonito
+        except User.DoesNotExist:
+            u = User.objects.create_user(username=username,password=password)
+            u.save()
+            login(request,u)
+            insere_ut(request.user.id,nome, tipouser, morada)
+            print(request.user.id)
+
         return redirect('todos_users')
     else:
         form = request.POST
