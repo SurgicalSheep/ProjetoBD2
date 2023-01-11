@@ -135,10 +135,11 @@ def novo_pedido(request):
         id_pedido=1, id_utilizador=1, preco=50, data='2020-12-12', estado='pendente')
     utilizador.save()
 
-
+#@login_required
 def carrinho(request):
     itens = itens_carrinho_model.objects.all()
-    return render(request, 'carrinho.html', {'itens': itens})
+    carrinho = carrinho_compras.objects.get(id_cliente=1) #aqui vai o id do cliente request.user.id
+    return render(request, 'carrinho.html', {'itens': itens, 'carrinho': carrinho})
 
 
 def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produto_preco,produto_imagem):

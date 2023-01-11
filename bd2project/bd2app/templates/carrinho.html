@@ -1,11 +1,13 @@
 {% extends "index.html" %}
 {% block content %}
 <div style="margin: auto;width: 50%;text-align: center;"><h2 style="margin-left: 1.5%;">Aqui tem o seu carrinho </h2></div>
-
+Preco do carrinho: {{carrinho.preco_total}} €
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
     {% for itens in itens %}
+
     <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
         <div class="card-body" style="text-align: center;">
+            
             <img src="{{itens.imagem_produto}}" class="card-img-top" alt="...">
             <h6 class="card-title">Id do carrinho: {{itens.id_carrinho}}</span>
             <h6 class="card-title">Id do produto: {{itens.id_produto}}</h6>
@@ -15,10 +17,11 @@
             <h6 class="card-title">Quantidade: {{itens.quantidade}}</h6>
             <form action="{% url 'remover_produto_carrinho' produto_id=itens.id_produto %}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Delete">
+                <input type="submit" value="Remover">
             </form>
         </div>
     </div>
+
     {% endfor %}
 </div>
 {% endblock %}
