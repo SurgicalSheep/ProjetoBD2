@@ -138,7 +138,7 @@ def novo_pedido(request):
 #@login_required
 def carrinho(request):
     itens = itens_carrinho_model.objects.all()
-    carrinho = carrinho_compras.objects.get(id_cliente=1) #aqui vai o id do cliente request.user.id
+    carrinho = carrinho_compras.objects.get(id_cliente=1) #aqui vai o id do cliente ~~ request.user.id
     return render(request, 'carrinho.html', {'itens': itens, 'carrinho': carrinho})
 
 
