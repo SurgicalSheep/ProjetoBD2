@@ -8,6 +8,7 @@
     <h2>Confirme que pretende de facto eliminar o item!</h2>
     <button style="width:20%;margin: auto;" type="button" class="btn btn-primary" onclick="window.location.href='/todos_produtos'">Voltar</button>
     <form action="" method="POST">
+        {% csrf_token %}
         <input type="hidden" name=id value="{{products.id}}"></input>
         <button style="width:20%;margin-top: 1%;margin-bottom: 1%;" class="btn btn-danger" type="submit">Apagar</button>
     </form>

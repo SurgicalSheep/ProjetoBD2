@@ -1,24 +1,28 @@
 {% extends "index.html" %}
+
 {% block content %}
-<h2 style="margin-left: 1.5%;">Listagem de todos os produtos </h2>
+<div style="margin: auto;width: 50%;text-align: center;">
+    <h2 style="margin-left: 1.5%;">Todos os produtos</h2>
+</div>
 
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
     {% for products in products %}
+
     <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
-        <img src={{products.imagem}}  style="height: 18em;  " class="card-img-top" alt={{products.descricao}}>
         <div class="card-body">
-            <h5 class="card-title">{{products.id}}-{{products.nome}} || {{products.categoria}}</h5>
-            <p class="card-text">Descrição: {products.descricao} </p>
-            <p class="card-text">Cor: {{products.cor}} || Marca: {{products.marca}}</p>
-            <p class="card-text">Preco: {{products.preco}}€ || Desconto: {{products.desconto}}% || Stock: {{products.stock}}   </p>
-            <a href="/produto/adicionar_carrinho/{{products.id}}/{{products.desconto}}/{{products.nome}}/{{products.preco}}/{{products.imagem}}" class="btn btn-success">Comprar</a>
+
+            <img src="{{products.imagem}}" class="card-img-top" alt="...">
+                <h6 class="card-title">{{products.nome}}</h6>
+                <h6 class="card-title">Preço unitário: {{products.preco}} €, Desconto: {{products.desconto}} %</h6>
+                <h6 class="card-title">Marca: {{products.marca}}</h6>
+                <h6 class="card-title">Stock: {{products.stock}}</h6>
+                <a href="/produto/adicionar_carrinho/{{products.id}}/{{products.desconto}}/{{products.nome}}/{{products.preco}}/{{products.imagem}}"
+                class="btn btn-success">Comprar</a>
             <a href="/produto/{{products.id}}/" class="btn btn-primary">Visualizar</a>
-            <a href="/produto/apagar_produto/{{products.id}}" class="btn btn-danger" >Apagar</a>
+            <a href="/produto/apagar_produto/{{products.id}}" style="margin-top: 1.7%;" class="btn btn-danger">Apagar</a>
         </div>
     </div>
+
     {% endfor %}
 </div>
-
 {% endblock %}
-
-
