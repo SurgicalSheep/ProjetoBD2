@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 class todos_pedidos_model(models.Model):
     id_pedido = models.AutoField(primary_key=True)
+    id_cliente = models.IntegerField()
     preco_total = models.DecimalField(max_digits=10, decimal_places=2)
     estado = models.CharField(max_length=255)
     data = models.DateField()
@@ -18,6 +19,10 @@ class Itens_Pedido(models.Model):
     id_pedido = models.IntegerField()
     id_produto = models.IntegerField()
     quantidade = models.IntegerField()
+    nome_produto = models.CharField(max_length=255, blank=False, null=False)
+    preco_produto = models.DecimalField(max_digits=10, decimal_places=2)
+    imagem_produto = models.CharField(max_length=255, blank=True, null=True)
+    desconto_produto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     class Meta:
         managed = False
         db_table = 'itens_pedido'

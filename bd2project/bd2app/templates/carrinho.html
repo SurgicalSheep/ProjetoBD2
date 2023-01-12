@@ -5,6 +5,8 @@
 <div style="margin: auto;width: 50%;text-align: center;">
     <h2 style="margin-left: 1.5%;">Aqui tem o seu carrinho </h2>
     <h6 style="margin-left: 1.5%;"><u>Preço do carrinho:</u> <b>{{carrinho.preco_total}} €</b></h6>
+    <a type="button" class="btn btn-primary" href="{% url 'todos_produtos' %}">Voltar atrás</a>
+    <a type="button" class="btn btn-success" href="{% url 'pagamento' id_carrinho=carrinho.id_carrinho%}"> Pagamento</a>
 </div>
 
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">

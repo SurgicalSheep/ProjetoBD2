@@ -17,5 +17,6 @@ urlpatterns = [
     path('produto/adicionar_carrinho/<int:produto_id>/<int:produto_desconto>/<str:produto_nome>/<str:produto_preco>/<path:produto_imagem>', views.adicionar_carrinho, name='adicionar_carrinho'),
     #path('itens_carrinho', views.itens_carrinho, name='itens_carrinho'),#teste
     path('carrinho', views.carrinho, name='carrinho'),
+    path('pagamento/<int:id_carrinho>', views.pagamento, name='pagamento'),
     #path('produto/adicionar_carrinho/<int:produto_id>', views.adicionar_carrinho, name='adicionar_carrinho'),
 ]

@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import redirect, render, get_object_or_404
 from bd2app.forms import registo_util,loginUserForm
 from bd2app.models import *
@@ -164,7 +165,7 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
         return render(request, 'adicionar_carrinho.html', context)
 
 def remover_produto_carrinho(request, produto_id):
-    context = {}
+    
     if request.method == 'POST':
         remover_produto_carrinho_other(produto_id)
         return redirect('carrinho')
@@ -172,3 +173,48 @@ def remover_produto_carrinho(request, produto_id):
         form = request.POST
         context = {'form': form}
         return render(request, 'carrinho.html', context)
+
+def pagamento(request,id_carrinho):
+    context = {}
+    if request.method == 'POST':
+        inserir_pedido(id_carrinho)
+        return redirect('todos_pedidos')
+    else:
+        form = request.POST
+        context = {'form': form}
+    return render(request, 'pagamento.html', context=context)
+
+def inserir_pedido(id_carrinho):
+    itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
+    carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
+    pedido = todos_pedidos_model.objects.create(**{
+        'id_cliente': 1, #aqui vai o id do cliente ~~ request.user.id
+        'preco_total': carrinho.preco_total,
+        'data': datetime.datetime.now(),
+        'estado': 'em processamento'
+    })
+    pedido.save()
+    latest_pedido = todos_pedidos_model.objects.filter(id_cliente=1).latest('id_pedido')
+    id_pedido_x = latest_pedido.id_pedido #mudar id cliente . aqui vai o id do cliente ~~ request.user.id
+    for item_carrinho in itens_carrinho:
+        itens_pedido = Itens_Pedido.objects.create(
+            id_pedido=id_pedido_x,
+            id_produto=item_carrinho.id_produto,
+            quantidade=item_carrinho.quantidade,
+            nome_produto=item_carrinho.nome_produto,
+            preco_produto=item_carrinho.preco_produto,
+            imagem_produto=item_carrinho.imagem_produto,
+            desconto_produto=item_carrinho.desconto_produto
+    )
+    itens_pedido.save()
+    delete_carrinho(id_carrinho)
+    return 1
+
+def delete_carrinho(id_carrinho):
+    itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
+    for item_carrinho in itens_carrinho:
+        item_carrinho.delete()
+    carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
+    carrinho.preco_total = 0
+    carrinho.save()
+    return 1
