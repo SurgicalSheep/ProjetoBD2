@@ -13,9 +13,7 @@
 
             <img src="{{products.imagem}}" class="card-img-top" alt="...">
                 <h6 class="card-title">{{products.nome}}</h6>
-                <h6 class="card-title">Preço unitário: {{products.preco}} €, Desconto: {{products.desconto}} %</h6>
-                <h6 class="card-title">Marca: {{products.marca}}</h6>
-                <h6 class="card-title">Stock: {{products.stock}}</h6>
+                <h6 class="card-title">Preço unitário: {{products.preco}} €, Desconto: {{products.desconto}} %, Stock: {{products.stock}}</h6>
                 <a href="/produto/adicionar_carrinho/{{products.id}}/{{products.desconto}}/{{products.nome}}/{{products.preco}}/{{products.imagem}}"
                 class="btn btn-success">Comprar</a>
             <a href="/produto/{{products.id}}/" class="btn btn-primary">Visualizar</a>

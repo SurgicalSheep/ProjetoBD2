@@ -1,4 +1,5 @@
 import datetime
+from bson import Decimal128
 from django.shortcuts import redirect, render, get_object_or_404
 from bd2app.forms import registo_util,loginUserForm
 from bd2app.models import *
@@ -74,7 +75,7 @@ def novo_produto(request):
         nome = data.get("nome")
         descricao = data.get("descricao")
         imagem = data.get("imagem")
-        preco = data.get("preco")
+        preco = Decimal128(data.get("preco"))
         desconto = data.get("desconto")
         marca = data.get("marca")
         cor = data.get("cor")
