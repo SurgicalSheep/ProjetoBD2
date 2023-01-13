@@ -43,10 +43,20 @@
     <div class="container-fluid" style="padding: 0;">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if not user.is_authenticated %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
               href="{% url 'registro' %}">Registro Utilizador</a>
           </li>
+          {% endif %}
+          {% if tipouser %}
+          {% if tipouser == 'Administrador' %}
+          <li class="nav-item">
+            <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
+              href="{% url 'todos_users' %}">Utilizadores por confirmar</a>
+          </li>
+          {% endif %}
+          {% endif %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
               href="{% url 'todos_users' %}">Apresentar todos os utilizadores</a>
@@ -72,14 +82,17 @@
               href="{% url 'carrinho' %}"><img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt=""
                 width="24" height="24" class="d-inline-block align-text-top"></a>
           </li>
-          <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
-              href="{% url 'loginUser' %}">Login</a>
-          </li>
+          {% if user.is_authenticated %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
               href="{% url 'logoutUser' %}">Logout</a>
           </li>
+          {% else %}
+          <li class="nav-item">
+            <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
+              href="{% url 'loginUser' %}">Login</a>
+          </li>
+          {% endif %}
         </ul>
       </div>
     </div>

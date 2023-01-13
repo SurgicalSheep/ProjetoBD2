@@ -12,8 +12,11 @@ from django.http import HttpResponse
 
 
 def index(request):
-    context = {}
-    return render(request, 'index.html', context=context)
+    if request.user.is_authenticated:
+        user = bd["utilizadores"].find_one({"id":request.user.id})
+        tipoUser = user["tipouser"]
+        return render(request, 'index.html', {"tipouser":tipoUser})
+    return render(request, 'index.html', {"tipouser":"none"})
 
 def registro(request):
     context = {}
