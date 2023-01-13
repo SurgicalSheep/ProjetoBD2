@@ -219,3 +219,10 @@ def delete_carrinho(id_carrinho):
     carrinho.preco_total = 0
     carrinho.save()
     return 1
+
+#def edit_product(request, produto_id,carrinho_id):
+#    if request.method == 'POST':
+#        itens_carrinho = itens_carrinho_model.objects.get(id_produto=produto_id,id_carrinho=carrinho_id)
+#        itens_carrinho.quantidade = request.POST.get("quantidade")
+#        itens_carrinho.save()
+
