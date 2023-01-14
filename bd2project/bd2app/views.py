@@ -114,7 +114,6 @@ def todos_users(request):
 
 
 def detalhes_produto(request, produto_id):
-    bd = conexaomongo
     col = bd["produtos"]
     products = col.find_one({"id": produto_id})
     return render(request, 'detalhes_produto.html', {'products': products})
