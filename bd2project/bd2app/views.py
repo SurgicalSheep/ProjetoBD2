@@ -12,11 +12,7 @@ from django.http import HttpResponse
 
 
 def index(request):
-    if request.user.is_authenticated:
-        user = bd["utilizadores"].find_one({"id":request.user.id})
-        tipoUser = user["tipouser"]
-        return render(request, 'index.html', {"tipouser":tipoUser})
-    return render(request, 'index.html', {"tipouser":"none"})
+    return render(request, 'index.html')
 
 def registro(request):
     context = {}
@@ -54,10 +50,12 @@ def loginUser(request):
                 password = form.cleaned_data["password"]
                 user = authenticate(request,username = username,password = password)
                 if user is not None:
+                    userMongo = bd["utilizadores"].find_one({"id":user.id})
+                    tipoUser = userMongo["tipouser"]
+                    request.session['tipouser'] = tipoUser
                     login(request,user)
                     pag = 'index.html'
                     context = {}
-                    print(user.id)
                 else:
                     context = {'form': form}
                     pag = 'login.html'
@@ -68,7 +66,12 @@ def loginUser(request):
     return render(request, pag, context)
 
 def logoutUser(request):
-    logout(request)
+    try:
+        if 'tipouser' in request.session:
+            del request.session['tipouser']
+        logout(request)
+    except KeyError:
+        pass
     return redirect('/')
 
 def novo_produto(request):

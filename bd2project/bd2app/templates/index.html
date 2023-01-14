@@ -49,13 +49,13 @@
               href="{% url 'registro' %}">Registro Utilizador</a>
           </li>
           {% endif %}
-          {% if tipouser %}
-          {% if tipouser == 'Administrador' %}
+          {% if request.session %}
+            {% if request.session.tipouser == "Administrador" %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
               href="{% url 'todos_users' %}">Utilizadores por confirmar</a>
           </li>
-          {% endif %}
+            {% endif %}
           {% endif %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
