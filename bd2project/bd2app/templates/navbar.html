@@ -51,10 +51,10 @@
           {% endif %}
           {% if request.session %}
             {% if request.session.tipouser == "Administrador" %}
-          <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
-              href="{% url 'todos_users' %}">Utilizadores por confirmar</a>
-          </li>
+            <li class="nav-item">
+              <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
+                href="{% url 'utilizador_por_confirmar' %}">Utilizadores por confirmar</a>
+            </li>
             {% endif %}
           {% endif %}
           <li class="nav-item">

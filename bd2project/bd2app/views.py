@@ -241,3 +241,23 @@ def delete_carrinho(id_carrinho):
 #        itens_carrinho.quantidade = request.POST.get("quantidade")
 #        itens_carrinho.save()
 
+def acaoutilizador(request, id_user, acao, nome):
+    return render(request, 'acao_utilizador.html', {'id_user': id_user, 'acao': acao, 'nome': nome})
+    
+def utilizador_por_confirmar(request):
+    collection = bd['utilizadores']
+    users = collection.find({"approved": False})
+    return render(request, 'utilizador_por_confirmar.html', {'users': users})
+
+def aceitar_utilizador(request, id_user):
+    collection = bd['utilizadores']
+    collection.update_one({"id": id_user}, {"$set": {"approved": True}})
+    return redirect('utilizador_por_confirmar')
+
+def rejeitar_utilizador(request, id_user):
+    from django.contrib.auth.models import User
+    user = User.objects.filter(id=id_user)
+    user.delete()
+    collection = bd['utilizadores']
+    collection.delete_one({"id": id_user})
+    return redirect('utilizador_por_confirmar')
