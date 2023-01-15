@@ -12,7 +12,9 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return render(request, 'index.html')
+    col = bd["produtos"]
+    produtos_promocao = col.find().sort("desconto",-1).limit(6)
+    return render(request, 'index.html', {'produtos_promocao':produtos_promocao})
 
 def registro(request):
     context = {}
@@ -82,10 +84,10 @@ def novo_produto(request):
         descricao = data.get("descricao")
         imagem = data.get("imagem")
         preco = Decimal128(data.get("preco"))
-        desconto = data.get("desconto")
+        desconto = int(data.get("desconto"))
         marca = data.get("marca")
         cor = data.get("cor")
-        stock = data.get("stock")
+        stock = int(data.get("stock"))
         categoria = data.get("categoria")
         novo_produto_insert(nome, preco, marca, cor, imagem,
                             descricao, stock, desconto, categoria)
