@@ -19,7 +19,7 @@
 
             <img src="{{itens.imagem_produto}}" class="card-img-top" alt="...">
             <h6 class="card-title">Id do carrinho: {{itens.id_carrinho}}</span> <!-- para remover -->
-                <h6 class="card-title">Id do produto: {{itens.id_produto}}</h6><!-- para remover -->
+                <h6 class="card-title">Id do produto: {{itens.id_produto}}</h6> <!-- para remover -->
                 <h6 class="card-title">Nome do produto: {{itens.nome_produto}}</h6>
                 <h6 class="card-title">Preço unitário: {{itens.preco_produto}} € {% if itens.quantidade > 1 %} ({{itens.preco_produto|multiply:itens.quantidade}}€) {% endif %}</h6>
                 <h6 class="card-title">Desconto: {{itens.desconto_produto}} %</h6>

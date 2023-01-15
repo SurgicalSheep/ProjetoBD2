@@ -33,6 +33,7 @@ def registro(request):
         password = data.get("password")
         tipouser = data.get("tipouser")
         morada = data.get("morada")
+        email = data.get("email")
 
         try:
             u = User.objects.get(username=username)
@@ -41,7 +42,7 @@ def registro(request):
             u = User.objects.create_user(username=username,password=password)
             u.save()
             login(request,u)
-            insere_ut(request.user.id,nome, tipouser, morada)
+            insere_ut(request.user.id,nome, tipouser, morada, username, email)
             print(request.user.id)
 
         return redirect('todos_users')

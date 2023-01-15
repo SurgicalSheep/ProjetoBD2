@@ -3,9 +3,9 @@ from django.shortcuts import get_object_or_404, redirect
 from bd2app.models import *
 bd = pymongo.MongoClient("mongodb+srv://eletropoggers_admin:faroladlucas@projetobd2-onlinedb.833ybao.mongodb.net/test")["bd2_mongo"]
 
-def insere_ut(id,nome,tipouser,morada):
+def insere_ut(id,nome,tipouser,morada,username,email):
     col = bd["utilizadores"]
-    doc = {"id": id,"nome":nome,"tipouser":tipouser,"morada":morada}
+    doc = {"id": id,"nome":nome,"tipouser":tipouser,"morada":morada, "username":username, "email":email}
     x = col.insert_one(doc)
     return x
 

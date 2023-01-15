@@ -1,0 +1,27 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+
+{% for itens in itens %}
+
+<div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+    <div class="card-body" style="text-align: center;">
+
+        <img src="{{itens.imagem_produto}}" class="card-img-top" alt="...">
+        <h6 class="card-title">Id do carrinho: {{itens.id_carrinho}}</span> <!-- para remover -->
+            <h6 class="card-title">Id do produto: {{itens.id_produto}}</h6> <!-- para remover -->
+            <h6 class="card-title">Nome do produto: {{itens.nome_produto}}</h6>
+            <h6 class="card-title">Preço unitário: {{itens.preco_produto}} € {% if itens.quantidade > 1 %} ({{itens.preco_produto|multiply:itens.quantidade}}€) {% endif %} </h6>
+            <h6 class="card-title">Desconto: {{itens.desconto_produto}} %</h6>
+            <h6 class="card-title">Quantidade: {{itens.quantidade}}</h6>
+            <form action="{% url 'remover_produto_carrinho' produto_id=itens.id_produto %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Remover">
+            </form>
+     
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock %}

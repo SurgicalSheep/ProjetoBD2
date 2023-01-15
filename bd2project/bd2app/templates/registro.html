@@ -8,16 +8,19 @@
 <form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
     {% csrf_token %}
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
-        <input type="text" class="form-control" name="nome" placeholder="Nome">
+        <input type="text" class="form-control" name="nome" placeholder="Nome" required>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
-        <input type="text" class="form-control" name="username" placeholder="Username">
+        <input type="text" class="form-control" name="username" placeholder="Username" required>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
-        <input type="password" class="form-control" name="password" placeholder="Password">
+        <input type="email" class="form-control" name="email" placeholder="Email" required>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
-        <input type="address" class="form-control" name="morada" placeholder="Morada">
+        <input type="password" class="form-control" name="password" placeholder="Password" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="address" class="form-control" name="morada" placeholder="Morada" required>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
         <label for="FormTipoUser" class="form-label">Tipo de utilizador:</label>
