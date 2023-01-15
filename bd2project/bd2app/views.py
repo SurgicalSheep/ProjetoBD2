@@ -8,13 +8,21 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.db import connection
+from bson.objectid import ObjectId
 # Create your views here.
 
 
 def index(request):
     col = bd["produtos"]
     produtos_promocao = col.find().sort("desconto",-1).limit(6)
-    return render(request, 'index.html', {'produtos_promocao':produtos_promocao})
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM top6_itens_mais_vendidos()")
+    top6 = cursor.fetchall()
+    product_ids = [item[0] for item in top6]
+    print(product_ids)
+    produtos_mais_vendidos = col.find({'id': {'$in': product_ids}})
+    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos})
 
 def registro(request):
     context = {}
