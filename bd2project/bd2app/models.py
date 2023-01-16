@@ -47,3 +47,15 @@ class itens_carrinho_model(models.Model):
     class Meta:
         managed = False
         db_table = 'itens_carrinho'
+
+class PedidoFornecedor(models.Model):
+    id_pedidofornecedor = models.IntegerField(primary_key=True)
+    id_fornecedor = models.IntegerField()
+    id_produto = models.IntegerField()
+    quantidade = models.IntegerField()
+    datapedido = models.DateField()
+    dataentrega = models.DateField()
+    estado = models.CharField(max_length=255)
+    class Meta:
+        managed = False
+        db_table = 'pedidos_fornecedor'

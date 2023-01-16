@@ -2,26 +2,27 @@
 
 {% block content %}
 
-{% for itens in itens %}
+<h2 style="margin-left: 2%; margin-top: 2%;"> Os Produtos que forneces</h2>
+<div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
 
-<div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
-    <div class="card-body" style="text-align: center;">
+    {% for x in produtos %}
 
-        <img src="{{itens.imagem_produto}}" class="card-img-top" alt="...">
-        <h6 class="card-title">Id do carrinho: {{itens.id_carrinho}}</span> <!-- para remover -->
-            <h6 class="card-title">Id do produto: {{itens.id_produto}}</h6> <!-- para remover -->
-            <h6 class="card-title">Nome do produto: {{itens.nome_produto}}</h6>
-            <h6 class="card-title">Preço unitário: {{itens.preco_produto}} € {% if itens.quantidade > 1 %} ({{itens.preco_produto|multiply:itens.quantidade}}€) {% endif %} </h6>
-            <h6 class="card-title">Desconto: {{itens.desconto_produto}} %</h6>
-            <h6 class="card-title">Quantidade: {{itens.quantidade}}</h6>
-            <form action="{% url 'remover_produto_carrinho' produto_id=itens.id_produto %}" method="post">
-                {% csrf_token %}
-                <input type="submit" value="Remover">
-            </form>
-     
+    <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+        <div class="card-body" style="text-align: center;">
+            <img src="{{x.imagem}}" class="card-img-top" alt="...">
+            <h6 class="card-title">Nome do produto: {{x.nome}}</h6>
+            <h6 class="card-title">Preço do produto: {{x.preco}} €</h6>
+            <h6 class="card-title">id: {{x.id}}</h6>
+            {% if x.disponivel %}
+                <button style="margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/desativar_produto/{{x.id}}'">Desativar</button>
+            {% else %}
+                <button style="margin: auto;" type="button" class="btn btn-success" onclick="window.location.href='/ativar_produto/{{x.id}}'">Ativar</button>
+            {% endif%}
+        </div>
     </div>
-</div>
 
-{% endfor %}
+    {% endfor %}
+
+</div>
 
 {% endblock %}

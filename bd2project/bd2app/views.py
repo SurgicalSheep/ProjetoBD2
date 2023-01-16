@@ -14,6 +14,10 @@ from bson.objectid import ObjectId
 
 
 def index(request):
+    if request.user.is_authenticated:
+        if request.session:
+            if request.session['tipouser'] == "Fornecedor":
+                return redirect('homepage_fornecedores')           
     col = bd["produtos"]
     produtos_promocao = col.find().sort("desconto",-1).limit(6)
     cursor = connection.cursor()
@@ -65,8 +69,7 @@ def loginUser(request):
                     tipoUser = userMongo["tipouser"]
                     request.session['tipouser'] = tipoUser
                     login(request,user)
-                    pag = 'index.html'
-                    context = {}
+                    return redirect("/")
                 else:
                     context = {'form': form}
                     pag = 'login.html'
@@ -256,9 +259,44 @@ def aceitar_utilizador(request, id_user):
     return redirect('utilizador_por_confirmar')
 
 def rejeitar_utilizador(request, id_user):
-    from django.contrib.auth.models import User
     user = User.objects.filter(id=id_user)
     user.delete()
     collection = bd['utilizadores']
     collection.delete_one({"id": id_user})
     return redirect('utilizador_por_confirmar')
+
+def homepage_fornecedores(request):
+    if(request.user.is_authenticated):
+        class produto:
+            def __init__(self, id, nome, preco, imagem, desconto, disponivel):
+                self.id = id
+                self.nome = nome
+                self.preco = preco
+                self.imagem = imagem
+                self.desconto = desconto
+                self.disponivel = disponivel
+        collection = bd['produtos_fornecedores']
+        collection2 = bd['produtos']
+        produtos=[]
+        produtos_fornecedor = collection.find({"id_fornecedor": request.user.id})
+        for x in produtos_fornecedor:
+            varproduto = collection2.find_one({"id": x["id_produto"]})
+            varid = varproduto["id"]
+            varpreco = x["preco_unitario"]
+            vardisponivel = x["disponivel"]
+            varimagem = varproduto["imagem"]
+            vardesconto = varproduto["desconto"]
+            varnome = varproduto["nome"]
+            p = produto(varid, varnome, varpreco, varimagem, vardesconto, vardisponivel)
+            produtos.append(p)
+    return render(request, 'homepage_fornecedores.html', {'produtos': produtos})
+
+def desativar_produto(request, id_produto):
+    collection = bd['produtos_fornecedores']
+    collection.update_one({"id_produto": id_produto, "id_fornecedor": request.user.id}, {"$set": {"disponivel": False}})
+    return redirect('homepage_fornecedores')
+
+def ativar_produto(request, id_produto):
+    collection = bd['produtos_fornecedores']
+    collection.update_one({"id_produto": id_produto, "id_fornecedor": request.user.id}, {"$set": {"disponivel": True}})
+    return redirect('homepage_fornecedores')
