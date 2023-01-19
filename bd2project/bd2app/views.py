@@ -146,7 +146,6 @@ def apagar_produto(request, produto_id):
 def todos_pedidos(request):
     todos = todos_pedidos_model.objects.all()
     return render(request, 'todos_pedidos.html', {'todos': todos})
-
 # ainda por acabar e meio que um teste
 
 
@@ -323,3 +322,7 @@ def editarUser(request, id_user):
     collection = bd['utilizadores']
     user = collection.find_one({"id": id_user})
     return render(request, 'editUser.html', {'user': user})
+    
+def pedidos_cliente(request):
+    todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id)
+    return render(request, 'pedidos_cliente.html', {'todos': todos})
