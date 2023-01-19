@@ -271,7 +271,7 @@ def categoria(request, categoria):
     col = bd["produtos"]
     products = col.find({"categoria": categoria})
     print(products)
-    render(request, 'categoria.html', {'products': products, 'categoria': categoria})
+    return render(request, 'categoria.html', {'products': products, 'categoria': categoria})
 
 def homepage_fornecedores(request):
     if(request.user.is_authenticated):
