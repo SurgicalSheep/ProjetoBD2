@@ -66,6 +66,8 @@ def loginUser(request):
                 user = authenticate(request,username = username,password = password)
                 if user is not None:
                     userMongo = bd["utilizadores"].find_one({"id":user.id})
+                    if not userMongo["active"]:
+                        return HttpResponse("User not active")#meter isto bonito
                     tipoUser = userMongo["tipouser"]
                     request.session['tipouser'] = tipoUser
                     login(request,user)
