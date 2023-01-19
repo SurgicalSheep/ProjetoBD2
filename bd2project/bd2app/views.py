@@ -20,9 +20,9 @@ def index(request):
     cursor.execute("SELECT * FROM top6_itens_mais_vendidos()")
     top6 = cursor.fetchall()
     product_ids = [item[0] for item in top6]
-    print(product_ids)
     produtos_mais_vendidos = col.find({'id': {'$in': product_ids}})
-    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos})
+    categorias = col.distinct("categoria")
+    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias})
 
 def registro(request):
     context = {}
@@ -262,3 +262,9 @@ def rejeitar_utilizador(request, id_user):
     collection = bd['utilizadores']
     collection.delete_one({"id": id_user})
     return redirect('utilizador_por_confirmar')
+
+def categoria(request, categoria):
+    col = bd["produtos"]
+    products = col.find({"categoria": categoria})
+    print(products)
+    render(request, 'categoria.html', {'products': products, 'categoria': categoria})
