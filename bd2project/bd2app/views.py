@@ -163,10 +163,12 @@ def carrinho(request):
 
 
 def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produto_preco,produto_imagem):
-    context = {}
-    print(produto_id, produto_desconto)
     quantity = request.POST.get('quantidade')
     if request.method == 'POST':
+        #if request.user.is_authenticated:
+        ##fazer cena normal
+        #else:
+        ##fazer carrinho anonimo
         item = itens_carrinho_model.objects.create(**{
             'id_carrinho': 1,
             'id_produto': produto_id,
@@ -180,8 +182,7 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
         return redirect('todos_produtos')
     else:
         form = request.POST
-        context = {'form': form}
-        return render(request, 'adicionar_carrinho.html', context)
+        return render(request, 'adicionar_carrinho.html', {'form': form})
 
 def remover_produto_carrinho(request, produto_id):
     

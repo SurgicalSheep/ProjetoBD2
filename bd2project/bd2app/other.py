@@ -60,3 +60,11 @@ def getTipoUserMongo(id):
     collection = bd['utilizadores']
     user = collection.find_one({"id": id})
     return user["tipouser"]
+
+def adicionarProdutoCarrinhoAnonimo(id):
+    #request.session['carrinho'].append(id)
+    return 1
+
+def converterCarrinhoAnonimoParaLogado(id):
+    #carrinhoAnonimo = request.session['carrinho']
+    return 1
