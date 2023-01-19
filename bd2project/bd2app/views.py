@@ -306,3 +306,20 @@ def ativar_produto_fornecedor(request, id_produto):
     collection = bd['produtos_fornecedores']
     collection.update_one({"id_produto": id_produto, "id_fornecedor": request.user.id}, {"$set": {"disponivel": True}})
     return redirect('homepage_fornecedores')
+
+@login_required
+def editarUsers(request):
+    if not getTipoUserMongo(request.user.id) == "Administrador":
+        return redirect('')
+    collection = bd['utilizadores']
+    users = collection.find({"approved": True})
+    return render(request, 'editUsers.html', {'users': users})
+
+#por fazer
+@login_required
+def editarUser(request, id_user):
+    if not getTipoUserMongo(request.user.id) == "Administrador":
+        return redirect('')
+    collection = bd['utilizadores']
+    user = collection.find_one({"id": id_user})
+    return render(request, 'editUser.html', {'user': user})

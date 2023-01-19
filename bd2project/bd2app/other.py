@@ -61,6 +61,10 @@ def getTipoUserMongo(id):
     user = collection.find_one({"id": id})
     return user["tipouser"]
 
+def desativarUserMongo(id):
+    collection = bd['utilizadores']
+    collection.update_one({"id": id}, {"$set": {"active": False}})
+
 def adicionarProdutoCarrinhoAnonimo(id):
     #request.session['carrinho'].append(id)
     return 1
