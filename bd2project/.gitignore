@@ -3,10 +3,10 @@
 *.pot
 *.pyc
 __pycache__
-/bd2app/__pycache__/*
+/bd2app/__pycache__
 /bd2app/*.pyc
 /bd2project/*.pyc
-/bd2project/__pycache__/*
+/bd2project/__pycache__
 db.sqlite3
 media
 
