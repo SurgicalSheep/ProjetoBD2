@@ -24,8 +24,8 @@ urlpatterns = [
     path('aceitar_utilizador/<int:id_user>', views.aceitar_utilizador, name='aceitar_utilizador'),
     path('rejeitar_utilizador/<int:id_user>', views.rejeitar_utilizador, name='rejeitar_utilizador'),
     path('homepage_fornecedores', views.homepage_fornecedores, name='homepage_fornecedores'),
-    path('desativar_produto/<int:id_produto>', views.desativar_produto, name='desativar_produto'),
-    path('ativar_produto/<int:id_produto>', views.ativar_produto, name='ativar_produto'),
+    path('desativar_produto_fornecedor/<int:id_produto>', views.desativar_produto_fornecedor, name='desativar_produto_fornecedor'),
+    path('ativar_produto_fornecedor/<int:id_produto>', views.ativar_produto_fornecedor, name='ativar_produto_fornecedor'),
     #path('edit_product/<int:produto_id>/<int:carrinho_id>', views.edit_product, name='edit_product'),   pus de lado por enquanto pq estava a dar um erro da treta
     #path('produto/adicionar_carrinho/<int:produto_id>', views.adicionar_carrinho, name='adicionar_carrinho'),
 ]

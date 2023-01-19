@@ -112,13 +112,9 @@ def novo_produto(request):
         return render(request, 'novo_produto.html', context)
 
 def todos_produtos(request):
-    context = {}
-    user = request.user
-    print (user.id)
     if request.method == 'GET':
-        pag = 'todos_produtos.html'
         products = todos_produtos_other()
-        return render(request, pag, {'products': products})
+        return render(request, "todos_produtos.html", {'products': products})
 
 
 def todos_users(request):
@@ -134,11 +130,12 @@ def detalhes_produto(request, produto_id):
     products = col.find_one({"id": produto_id})
     return render(request, 'detalhes_produto.html', {'products': products})
 
-
+@login_required
 def apagar_produto(request, produto_id):
     context = {}
     if request.method == 'POST':
-        apagar_produto_other(produto_id)
+        if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+            apagar_produto_other(produto_id)
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -299,12 +296,12 @@ def homepage_fornecedores(request):
             produtos.append(p)
     return render(request, 'homepage_fornecedores.html', {'produtos': produtos})
 
-def desativar_produto(request, id_produto):
+def desativar_produto_fornecedor(request, id_produto):
     collection = bd['produtos_fornecedores']
     collection.update_one({"id_produto": id_produto, "id_fornecedor": request.user.id}, {"$set": {"disponivel": False}})
     return redirect('homepage_fornecedores')
 
-def ativar_produto(request, id_produto):
+def ativar_produto_fornecedor(request, id_produto):
     collection = bd['produtos_fornecedores']
     collection.update_one({"id_produto": id_produto, "id_fornecedor": request.user.id}, {"$set": {"disponivel": True}})
     return redirect('homepage_fornecedores')
