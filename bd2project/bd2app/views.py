@@ -326,3 +326,26 @@ def editarUser(request, id_user):
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id)
     return render(request, 'pedidos_cliente.html', {'todos': todos})
+
+@login_required #para alem destes login required tbm é preciso que haja um if para verificar se o user é admin ou comercial tipo 1
+def editar_produto(request, produto_id):
+    if request.method == 'POST':
+        data = request.POST
+        nome = data.get("nome")
+        descricao = data.get("descricao")
+        imagem = data.get("imagem")
+        preco = Decimal128(data.get("preco"))
+        desconto = int(data.get("desconto"))
+        marca = data.get("marca")
+        cor = data.get("cor")
+        stock = int(data.get("stock"))
+        categoria = data.get("categoria")
+        # update the document in the mongodb collection
+        collection = bd['produtos']
+        collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria}})
+        return redirect('todos_produtos')
+    else:
+        collection = bd['produtos']
+        produto = collection.find_one({"id": produto_id})
+        return render(request, 'editar_produto.html', {'produto': produto})
+

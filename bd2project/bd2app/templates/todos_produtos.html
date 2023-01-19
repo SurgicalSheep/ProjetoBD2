@@ -11,17 +11,31 @@
     <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
         <div class="card-body">
 
-            <img src="{{products.imagem}}" class="card-img-top" alt="...">
-                <h6 class="card-title">{{products.nome}}</h6>
-                <h6 class="card-title">Preço unitário: {{products.preco}} €, Desconto: {{products.desconto}} %, Stock: {{products.stock}}</h6>
-                <a href="/produto/adicionar_carrinho/{{products.id}}/{{products.desconto}}/{{products.nome}}/{{products.preco}}/{{products.imagem}}"
+            <img src="{{products.imagem}}" style="height: 50%;" class="card-img-top" alt="imagem não disponível" onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+            <h6 class="card-title">{{products.nome}}</h6>
+            <h6 class="card-title">Preço unitário: {{products.preco}} €, Desconto: {{products.desconto}} %, Stock:
+                {{products.stock}}</h6>
+
+            <a href="/produto/adicionar_carrinho/{{products.id}}/{{products.desconto}}/{{products.nome}}/{{products.preco}}/{{products.imagem}}"
                 class="btn btn-success">Comprar</a>
+
             <a href="/produto/{{products.id}}/" class="btn btn-primary">Visualizar</a>
+
+            
             {% if request.session %}
-                {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
-                    <a href="/produto/apagar_produto/{{products.id}}" style="margin-top: 1.7%;" class="btn btn-danger">Desativar produto</a>
-                {% endif %}
+            {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+            <a href="/produto/editar_produto/{{products.id}}" style="margin-top: 1.7%;"
+                class="btn btn-warning">Editar</a>
             {% endif %}
+            {% endif %}
+            
+            {% if request.session %}
+            {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+            <a href="/produto/apagar_produto/{{products.id}}" style="margin-top: 1.7%;"
+                class="btn btn-danger">Desativar</a>
+            {% endif %}
+            {% endif %}
+
         </div>
     </div>
 

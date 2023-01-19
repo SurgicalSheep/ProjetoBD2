@@ -17,7 +17,7 @@
     <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
         <div class="card-body" style="text-align: center;">
 
-            <img src="{{itens.imagem_produto}}" class="card-img-top" alt="...">
+            <img src="{{itens.imagem_produto}}" style="height: 45%;" class="card-img-top" alt="...">
             <h6 class="card-title">Id do carrinho: {{itens.id_carrinho}}</span> <!-- para remover -->
                 <h6 class="card-title">Id do produto: {{itens.id_produto}}</h6> <!-- para remover -->
                 <h6 class="card-title">Nome do produto: {{itens.nome_produto}}</h6>
@@ -28,7 +28,6 @@
                     {% csrf_token %}
                     <input type="submit" value="Remover">
                 </form>
-         
         </div>
     </div>
 

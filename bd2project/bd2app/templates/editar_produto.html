@@ -1,0 +1,52 @@
+{% extends "navbar.html" %}
+{% block content %}
+<div style="margin: auto;width: 50%;text-align: center;">
+    <h2>Editar Produto</h2>
+</div>
+
+
+<form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
+    {% csrf_token %}
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Nome:
+        <input type="text" class="form-control" name="nome" value="{{produto.nome}}" placeholder="Nome" required />
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Preço:
+        <input type="number" step="any" class="form-control" value="{{produto.preco}}" min=0 name="preco" placeholder="Preço" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Marca:
+        <input type="text" class="form-control" name="marca" value="{{produto.marca}}" placeholder="Marca" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Cor:
+        <input type="text" class="form-control" name="cor" placeholder="Cor" value="{{produto.cor}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Imagem:
+        <input type="text" class="form-control" name="imagem" placeholder="Link Imagem" value="{{produto.imagem}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Descrição:
+        <input type="text" class="form-control" name="descricao" placeholder="Descrição" value="{{produto.descricao}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Stock:
+        <input type="text" class="form-control" name="stock" placeholder="Stock" value="{{produto.stock}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Desconto:
+        <input type="number" class="form-control" max=100 min=0 name="desconto" placeholder="Desconto" value="{{produto.desconto}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        Categoria:
+        <input type="text" class="form-control" name="categoria" placeholder="Categoria" value="{{produto.categoria}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="submit" class="btn btn-primary" name="atualizar" value="Atualizar">
+    </div>  
+    
+</form>
+
+{% endblock %}
