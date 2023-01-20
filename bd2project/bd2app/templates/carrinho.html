@@ -1,6 +1,7 @@
 {% extends "navbar.html" %}
 {% load math_extras %}
 
+
 {% block content %}
 <div style="margin: auto;width: 50%;text-align: center;">
     <h2 style="margin-left: 1.5%;">Aqui tem o seu carrinho </h2>
@@ -23,7 +24,11 @@
                 <h6 class="card-title">Nome do produto: {{itens.nome_produto}}</h6>
                 <h6 class="card-title">Preço unitário: {{itens.preco_produto}} € {% if itens.quantidade > 1 %} ({{itens.preco_produto|multiply:itens.quantidade}}€) {% endif %}</h6>
                 <h6 class="card-title">Desconto: {{itens.desconto_produto}} %</h6>
-                <h6 class="card-title">Quantidade: {{itens.quantidade}}</h6>
+                <h6 class="card-title" data-item-id="{{itens.id_produto}}">
+                    <label id="quantidade">Quantidade: {{itens.quantidade}}</label>
+                    <button class="increment" data-carrinho-id="{{itens.id_carrinho}}" data-item-id="{{itens.id_produto}}">+</button>
+                    <button class="decrement" data-carrinho-id="{{itens.id_carrinho}}" data-item-id="{{itens.id_produto}}">-</button>
+                </h6>
                 <form action="{% url 'remover_produto_carrinho' produto_id=itens.id_produto %}" method="post">
                     {% csrf_token %}
                     <input type="submit" value="Remover">
@@ -33,4 +38,32 @@
 
     {% endfor %}
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="application/javascript" async>
+    $(document).ready(function () {
+      $('.increment').click(function () {
+        var itemId = $(this).data('item-id');
+        var carrinhoId = $(this).data('carrinho-id');
+        $.ajax({
+          url: '/increment_quantity/' + carrinhoId + '/' + itemId + '/',
+          success: function (data) {
+            document.getElementById("quantidade").innerHTML = "Quantidade: " + data.quantity;
+          }
+        });
+      });
+      $('.decrement').click(function () {
+        var itemId = $(this).data('item-id');
+        var carrinhoId = $(this).data('carrinho-id');
+        $.ajax({
+          url: '/decrement_quantity/' + carrinhoId + '/' + itemId + '/',
+          success: function (data) {
+            document.getElementById("quantidade").innerHTML = "Quantidade: " + data.quantity;
+          }
+        });
+      });
+    });
+  </script>
+
+
 {% endblock %}
