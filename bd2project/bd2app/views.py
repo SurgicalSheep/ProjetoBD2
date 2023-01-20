@@ -1,4 +1,5 @@
 import datetime
+import json
 from bson import Decimal128
 from django.shortcuts import redirect, render, get_object_or_404
 from bd2app.forms import registo_util,loginUserForm
@@ -7,7 +8,7 @@ from bd2app.other import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db import connection
 from bson.objectid import ObjectId
 # Create your views here.
@@ -238,7 +239,7 @@ def delete_carrinho(id_carrinho):
     carrinho.save()
     return 1
 
-#def edit_product(request, produto_id,carrinho_id):
+#def edit_quantity_cart(request, produto_id,carrinho_id):
 #    if request.method == 'POST':
 #        itens_carrinho = itens_carrinho_model.objects.get(id_produto=produto_id,id_carrinho=carrinho_id)
 #        itens_carrinho.quantidade = request.POST.get("quantidade")
@@ -379,3 +380,17 @@ def editar_produto(request, produto_id):
         produto = collection.find_one({"id": produto_id})
         return render(request, 'editar_produto.html', {'produto': produto})
 
+def increment_quantity(request, id_carrinho, id_produto):
+    item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
+    item.quantidade += 1
+    item.save()
+    data = {'quantity': item.quantidade}
+    return HttpResponse(json.dumps(data), content_type='application/json')
+
+def decrement_quantity(request, id_carrinho, id_produto):
+    item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
+    if item.quantidade > 1:
+        item.quantidade -= 1
+        item.save()
+    data = {'quantity': item.quantidade}
+    return HttpResponse(json.dumps(data), content_type='application/json')
