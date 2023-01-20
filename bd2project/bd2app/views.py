@@ -1,5 +1,6 @@
 import datetime
 import json
+from pprint import pprint
 from bson import Decimal128
 from django.shortcuts import redirect, render, get_object_or_404
 from bd2app.forms import registo_util,loginUserForm
@@ -10,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.db import connection
+from django.http import JsonResponse
 from bson.objectid import ObjectId
 # Create your views here.
 
@@ -157,8 +159,8 @@ def novo_pedido(request):
 
 #@login_required
 def carrinho(request):
-    itens = itens_carrinho_model.objects.all()
-    carrinho = carrinho_compras.objects.get(id_cliente=1) #aqui vai o id do cliente ~~ request.user.id
+    carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
+    itens = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto') #nao esquecer que o id do carrinho vai ter que ser sempre igual ao do cliente
     return render(request, 'carrinho.html', {'itens': itens, 'carrinho': carrinho})
 
 
@@ -384,13 +386,14 @@ def increment_quantity(request, id_carrinho, id_produto):
     item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
     item.quantidade += 1
     item.save()
-    data = {'quantity': item.quantidade}
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
 
 def decrement_quantity(request, id_carrinho, id_produto):
     item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
     if item.quantidade > 1:
         item.quantidade -= 1
         item.save()
-    data = {'quantity': item.quantidade}
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
+
