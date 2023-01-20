@@ -6,7 +6,7 @@
     <table>
         <tr>
           <th>Nome</th>
-          <th>Username</th>
+          <th>Tipo</th>
           <th>Email</th>
           <th>Morada</th>
           <th>Ativo</th>
@@ -15,7 +15,7 @@
         {% for users in users %}
             <tr>
                 <td>{{users.nome}}</td>
-                <td>{{users.username}}</td>
+                <td>{{users.tipouser}}</td>
                 <td>{{users.email}}</td>
                 <td>{{users.morada}}</td>
                 {% if users.active %}
@@ -25,7 +25,11 @@
                 {% endif %}
                 <td>
                     <a type="button" class="btn btn-success" href="{% url 'editarUser' id_user=users.id%}">Editar</a>
-                    <a type="button" class="btn btn-danger" href="{% url 'acao_utilizador' id_user=users.id acao='rejeitar' nome=users.nome %}">Desativar</a>
+                    {% if users.active %}
+                    <a type="button" class="btn btn-danger" href="{% url 'desativarUser' id_user=users.id %}">Desativar</a>
+                    {% else %}
+                    <a type="button" class="btn btn-primary" href="{% url 'ativarUser' id_user=users.id %}">Ativar</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

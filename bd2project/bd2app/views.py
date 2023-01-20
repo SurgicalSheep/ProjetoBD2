@@ -314,14 +314,44 @@ def editarUsers(request):
     users = collection.find({"approved": True})
     return render(request, 'editUsers.html', {'users': users})
 
-#por fazer
 @login_required
 def editarUser(request, id_user):
     if not getTipoUserMongo(request.user.id) == "Administrador":
         return redirect('')
-    collection = bd['utilizadores']
-    user = collection.find_one({"id": id_user})
-    return render(request, 'editUser.html', {'user': user})
+    userMongo = bd["utilizadores"].find_one({"id":id_user})
+    if request.method == 'POST':
+        nome = request.POST["nome"]
+        email = request.POST["email"]
+        morada = request.POST["morada"]
+        tipouser = request.POST["tipouser"]
+        active = request.POST["active"]
+        user = User.objects.get(id=id_user)
+        if user is not None:
+            if active == "False":
+                active = ""
+            updateUserMongo(id_user, nome, email, morada, tipouser, active)
+            user.email = email
+            user.save()
+            return redirect('editarUsers')
+    return render(request, 'editUser.html', {'user': userMongo})
+
+@login_required
+def desativarUser(request, id_user):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('')
+    if request.method == 'POST':
+        desativarUserMongo(id_user)
+        return redirect('editarUsers')
+    return render(request,'desativarUser.html' ,{'id_user': id_user})
+
+@login_required
+def ativarUser(request, id_user):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('')
+    if request.method == 'POST':
+        ativarUserMongo(id_user)
+        return redirect('editarUsers')
+    return render(request,'ativarUser.html' ,{'id_user': id_user})
     
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id)
