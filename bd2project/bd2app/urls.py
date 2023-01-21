@@ -38,4 +38,5 @@ urlpatterns = [
     #path('produto/adicionar_carrinho/<int:produto_id>', views.adicionar_carrinho, name='adicionar_carrinho'),
     path('increment_quantity/<int:id_carrinho>/<int:id_produto>/', views.increment_quantity, name='increment_quantity'),
     path('decrement_quantity/<int:id_carrinho>/<int:id_produto>/', views.decrement_quantity, name='decrement_quantity'),
+    path('404', views.error404, name='error404'),
 ]

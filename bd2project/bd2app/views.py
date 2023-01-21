@@ -414,3 +414,5 @@ def decrement_quantity(request, id_carrinho, id_produto):
 #         item.save()
 #         return 1
 
+def error404(request):
+    return render(request, '404.html')
