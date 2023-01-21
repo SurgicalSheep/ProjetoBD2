@@ -20,7 +20,7 @@ from bson.objectid import ObjectId
 def index(request):
     if request.user.is_authenticated:
         if request.session:
-            if request.session['tipouser'] == "Fornecedor":
+            if request.session["tipouser"] == "Fornecedor":
                 return redirect('homepage_fornecedores')           
     col = bd["produtos"]
     produtos_promocao = col.find().sort("desconto",-1).limit(6)
@@ -51,6 +51,7 @@ def registro(request):
             u.save()
             login(request,u)
             insere_ut(request.user.id,nome, tipouser, morada, username, email)
+            request.session['tipouser'] = tipouser
             print(request.user.id)
 
         return redirect('todos_users')
