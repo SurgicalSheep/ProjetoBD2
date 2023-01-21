@@ -41,7 +41,7 @@ class itens_carrinho_model(models.Model):
     id_produto = models.IntegerField()
     quantidade = models.IntegerField()
     nome_produto = models.CharField(max_length=255)
-    preco_produto = models.FloatField()
+    preco_produto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     imagem_produto = models.CharField(max_length=255, blank=True, null=True)
     desconto_produto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     class Meta:
@@ -49,12 +49,12 @@ class itens_carrinho_model(models.Model):
         db_table = 'itens_carrinho'
 
 class PedidoFornecedor(models.Model):
-    id_pedidofornecedor = models.IntegerField(primary_key=True)
+    id_pedidofornecedor = models.AutoField(primary_key=True)
     id_fornecedor = models.IntegerField()
     id_produto = models.IntegerField()
     quantidade = models.IntegerField()
-    datapedido = models.DateField()
-    dataentrega = models.DateField()
+    datapedido = models.DateTimeField()
+    dataentrega = models.DateTimeField()
     estado = models.CharField(max_length=255)
     class Meta:
         managed = False

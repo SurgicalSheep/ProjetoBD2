@@ -7,6 +7,9 @@ def insere_ut(id,nome,tipouser,morada,username,email):
     col = bd["utilizadores"]
     doc = {"id": id,"nome":nome,"tipouser":tipouser,"morada":morada, "username":username, "email":email,"active":True}
     x = col.insert_one(doc)
+    #criar tambem um carrinho de compras para o user
+    carrinho = carrinho_compras(id_carrinho=id,id_cliente=id,preco_total=0)
+    carrinho.save()
     return x
 
 def novo_produto_insert(nome,preco,marca,cor,imagem,descricao,stock,desconto,categoria):
@@ -61,11 +64,19 @@ def getTipoUserMongo(id):
     user = collection.find_one({"id": id})
     return user["tipouser"]
 
+def updateUserMongo(id_user, nome, email, morada, tipouser, active):
+    collection = bd['utilizadores']
+    collection.update_one({"id": id_user}, {"$set": {"nome": nome, "morada": morada, "email": email, "active": bool(active), "tipouser": tipouser}})
+
 def desativarUserMongo(id):
     collection = bd['utilizadores']
     collection.update_one({"id": id}, {"$set": {"active": False}})
 
-def adicionarProdutoCarrinhoAnonimo(id):
+def ativarUserMongo(id):
+    collection = bd['utilizadores']
+    collection.update_one({"id": id}, {"$set": {"active": True}})
+
+def adicionarProdutoCarrinhoAnonimo(id):    
     #request.session['carrinho'].append(id)
     return 1
 

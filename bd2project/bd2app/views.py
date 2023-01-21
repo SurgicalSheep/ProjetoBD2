@@ -1,4 +1,7 @@
 import datetime
+from decimal import Decimal
+import json
+from pprint import pprint
 from bson import Decimal128
 from django.shortcuts import redirect, render, get_object_or_404
 from bd2app.forms import registo_util,loginUserForm
@@ -7,8 +10,9 @@ from bd2app.other import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db import connection
+from django.http import JsonResponse
 from bson.objectid import ObjectId
 # Create your views here.
 
@@ -16,7 +20,7 @@ from bson.objectid import ObjectId
 def index(request):
     if request.user.is_authenticated:
         if request.session:
-            if request.session['tipouser'] == "Fornecedor":
+            if request.session["tipouser"] == "Fornecedor":
                 return redirect('homepage_fornecedores')           
     col = bd["produtos"]
     produtos_promocao = col.find().sort("desconto",-1).limit(6)
@@ -47,6 +51,7 @@ def registro(request):
             u.save()
             login(request,u)
             insere_ut(request.user.id,nome, tipouser, morada, username, email)
+            request.session['tipouser'] = tipouser
             print(request.user.id)
 
         return redirect('todos_users')
@@ -144,10 +149,19 @@ def apagar_produto(request, produto_id):
 
 
 def todos_pedidos(request):
-    todos = todos_pedidos_model.objects.all()
-    return render(request, 'todos_pedidos.html', {'todos': todos})
+    if request.method == 'POST':
+        data = request.POST
+        id_pedido = data.get("id_pedido")
+        pedido_update = todos_pedidos_model.objects.get(id_pedido=id_pedido)
+        pedido_update.estado = "Encomenda Enviada!"
+        pedido_update.save()
+        return redirect('todos_pedidos')
+    else:
+        form = request.POST
+        todos = todos_pedidos_model.objects.all().order_by('estado')
+        return render(request, 'todos_pedidos.html', {'todos': todos, 'form': form})
 # ainda por acabar e meio que um teste
-
+    
 
 def novo_pedido(request):
     utilizador = todos_pedidos_model(
@@ -156,8 +170,8 @@ def novo_pedido(request):
 
 #@login_required
 def carrinho(request):
-    itens = itens_carrinho_model.objects.all()
-    carrinho = carrinho_compras.objects.get(id_cliente=1) #aqui vai o id do cliente ~~ request.user.id
+    carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
+    itens = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto') #nao esquecer que o id do carrinho vai ter que ser sempre igual ao do cliente
     return render(request, 'carrinho.html', {'itens': itens, 'carrinho': carrinho})
 
 
@@ -203,17 +217,17 @@ def pagamento(request,id_carrinho):
         context = {'form': form}
     return render(request, 'pagamento.html', context=context)
 
-def inserir_pedido(id_carrinho):
+def inserir_pedido(request,id_carrinho):
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     pedido = todos_pedidos_model.objects.create(**{
-        'id_cliente': 1, #aqui vai o id do cliente ~~ request.user.id
+        'id_cliente': request.user.id, #aqui vai o id do cliente ~~ request.user.id
         'preco_total': carrinho.preco_total,
         'data': datetime.datetime.now(),
-        'estado': 'em processamento'
+        'estado': 'Em Processamento!'
     })
     pedido.save()
-    latest_pedido = todos_pedidos_model.objects.filter(id_cliente=1).latest('id_pedido')
+    latest_pedido = todos_pedidos_model.objects.filter(id_cliente=request.user.id).latest('id_pedido')
     id_pedido_x = latest_pedido.id_pedido #mudar id cliente . aqui vai o id do cliente ~~ request.user.id
     for item_carrinho in itens_carrinho:
         itens_pedido = Itens_Pedido.objects.create(
@@ -238,7 +252,7 @@ def delete_carrinho(id_carrinho):
     carrinho.save()
     return 1
 
-#def edit_product(request, produto_id,carrinho_id):
+#def edit_quantity_cart(request, produto_id,carrinho_id):
 #    if request.method == 'POST':
 #        itens_carrinho = itens_carrinho_model.objects.get(id_produto=produto_id,id_carrinho=carrinho_id)
 #        itens_carrinho.quantidade = request.POST.get("quantidade")
@@ -314,14 +328,44 @@ def editarUsers(request):
     users = collection.find({"approved": True})
     return render(request, 'editUsers.html', {'users': users})
 
-#por fazer
 @login_required
 def editarUser(request, id_user):
     if not getTipoUserMongo(request.user.id) == "Administrador":
         return redirect('')
-    collection = bd['utilizadores']
-    user = collection.find_one({"id": id_user})
-    return render(request, 'editUser.html', {'user': user})
+    userMongo = bd["utilizadores"].find_one({"id":id_user})
+    if request.method == 'POST':
+        nome = request.POST["nome"]
+        email = request.POST["email"]
+        morada = request.POST["morada"]
+        tipouser = request.POST["tipouser"]
+        active = request.POST["active"]
+        user = User.objects.get(id=id_user)
+        if user is not None:
+            if active == "False":
+                active = ""
+            updateUserMongo(id_user, nome, email, morada, tipouser, active)
+            user.email = email
+            user.save()
+            return redirect('editarUsers')
+    return render(request, 'editUser.html', {'user': userMongo})
+
+@login_required
+def desativarUser(request, id_user):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('')
+    if request.method == 'POST':
+        desativarUserMongo(id_user)
+        return redirect('editarUsers')
+    return render(request,'desativarUser.html' ,{'id_user': id_user})
+
+@login_required
+def ativarUser(request, id_user):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('')
+    if request.method == 'POST':
+        ativarUserMongo(id_user)
+        return redirect('editarUsers')
+    return render(request,'ativarUser.html' ,{'id_user': id_user})
     
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id)
@@ -343,9 +387,41 @@ def editar_produto(request, produto_id):
         # update the document in the mongodb collection
         collection = bd['produtos']
         collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria}})
+        #atualizar o produto nos carrinhos
+        preco_pg = Decimal(data.get("preco"))
+        itens_carrinho = itens_carrinho_model.objects.filter(id_produto=produto_id)
+        for item in itens_carrinho:
+            item.preco_produto = preco_pg
+            item.save()
         return redirect('todos_produtos')
     else:
         collection = bd['produtos']
         produto = collection.find_one({"id": produto_id})
         return render(request, 'editar_produto.html', {'produto': produto})
 
+def increment_quantity(request, id_carrinho, id_produto):
+    item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
+    item.quantidade += 1
+    item.save()
+    carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
+
+def decrement_quantity(request, id_carrinho, id_produto):
+    item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
+    if item.quantidade > 1:
+        item.quantidade -= 1
+        item.save()
+    carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
+
+# def editar_preco_carrinho(request, id_produto):
+#     item = get_object_or_404(itens_carrinho_model, id_produto=id_produto)
+#     if request.method == 'POST':
+#         data = request.POST
+#         preco = Decimal128(data.get("preco"))
+#         item.preco_produto = preco
+#         item.save()
+#         return 1
+
+def error404(request):
+    return render(request, '404.html')

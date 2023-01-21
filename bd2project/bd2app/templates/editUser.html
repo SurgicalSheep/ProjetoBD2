@@ -4,18 +4,15 @@
 <form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
     {% csrf_token %}
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <label for="nome" class="form-label">Nome:</label>
         <input type="text" class="form-control" name="nome" placeholder="Nome" value="{{user.nome}}" required>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
-        <input type="text" class="form-control" name="username" placeholder="Username" value="{{user.username}}" required>
-    </div>
-    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <label for="email" class="form-label">Email:</label>
         <input type="email" class="form-control" name="email" placeholder="Email" value="{{user.email}}" required>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
-        <input type="password" class="form-control" name="password" placeholder="Password" required>
-    </div>
-    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <label for="morada" class="form-label">Morada:</label>
         <input type="address" class="form-control" name="morada" placeholder="Morada" value="{{user.morada}}" required>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
@@ -23,18 +20,38 @@
         <select class="form-select" name="tipouser" aria-label="FormTipoUser">
             {% if user.tipouser == "Cliente" %}
             <option value="Cliente" selected>Cliente</option>
+            <option value="Comercial Tipo 1">Comercial Tipo 1</option>
+            <option value="Comercial Tipo 2">Comercial Tipo 2</option>
+            <option value="Fornecedor">Fornecedor</option>
+            <option value="Administrador">Administrador</option>
             {% endif %}
             {% if user.tipouser == "Comercial Tipo 1" %}
-            <option value="Comercial Tipo 1">Comercial Tipo 1</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Comercial Tipo 1" selected>Comercial Tipo 1</option>
+            <option value="Comercial Tipo 2">Comercial Tipo 2</option>
+            <option value="Fornecedor">Fornecedor</option>
+            <option value="Administrador">Administrador</option>
             {% endif %}
             {% if user.tipouser == "Comercial Tipo 2" %}
-            <option value="Comercial Tipo 2">Comercial Tipo 2</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Comercial Tipo 1">Comercial Tipo 1</option>
+            <option value="Comercial Tipo 2" selected>Comercial Tipo 2</option>
+            <option value="Fornecedor">Fornecedor</option>
+            <option value="Administrador">Administrador</option>
             {% endif %}
             {% if user.tipouser == "Fornecedor" %}
-            <option value="Fornecedor">Fornecedor</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Comercial Tipo 1">Comercial Tipo 1</option>
+            <option value="Comercial Tipo 2">Comercial Tipo 2</option>
+            <option value="Fornecedor" selected>Fornecedor</option>
+            <option value="Administrador">Administrador</option>
             {% endif %}
             {% if user.tipouser == "Administrador" %}
-            <option value="Administrador">Administrador</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Comercial Tipo 1">Comercial Tipo 1</option>
+            <option value="Comercial Tipo 2">Comercial Tipo 2</option>
+            <option value="Fornecedor">Fornecedor</option>
+            <option value="Administrador" selected>Administrador</option>
             {% endif %}
         </select>
     </div>
@@ -43,8 +60,10 @@
         <select value="{{user.active}}" class="form-select" name="active" aria-label="userActive">
             {% if user.active %}
             <option value="True" selected>Sim</option>
-            {% else %}
             <option value="False">Não</option>
+            {% else %}
+            <option value="True">Sim</option>
+            <option value="False" selected>Não</option>
             {% endif %}
         </select>
     </div>

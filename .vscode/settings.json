@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./bd2project/bd2app"
+    ]
+}
