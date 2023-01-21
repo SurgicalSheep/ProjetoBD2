@@ -16,7 +16,6 @@ from django.http import JsonResponse
 from bson.objectid import ObjectId
 # Create your views here.
 
-
 def index(request):
     if request.user.is_authenticated:
         if request.session:
@@ -425,3 +424,27 @@ def decrement_quantity(request, id_carrinho, id_produto):
 
 def error404(request):
     return render(request, '404.html')
+def homepage_comerciantetipo1(request):
+    #if request.method == 'GET':
+        products = todos_produtos_other()
+        return render(request, "homepage_comerciantestipo1.html", {'products': products})
+
+def solicitar_produto(request, id_product):
+    context = {}
+    if request.method == 'POST':
+        data = request.POST
+        quantidade = data.get("quantidade")
+        id_fornecedor =  data.get("id_fornecedor")
+        id_produto = data.get("id_produto")
+        encomenda = PedidoFornecedor.objects.create(**{
+        'id_fornecedor': id_fornecedor,
+        'id_produto': id_produto,
+        'quantidade': quantidade,
+        'datapedido': datetime.datetime.now(),
+        'estado': "Por verificar"
+        })
+        return redirect('homepage_comerciantetipo1')
+    else:
+        form = request.POST
+        fornecedores = todos_fornecedores_produto_other(id_product)
+        return render(request, "lista_fornecedores_produto.html", {'fornecedores': fornecedores,'form': form})
