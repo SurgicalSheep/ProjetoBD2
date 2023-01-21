@@ -11,6 +11,7 @@
         <th>Preço Total:</th>
         <th>Estado:</th>
         <th>Data Pedido:</th>
+        <th>Ações:</th>
     </thead>
     <tbody>
 
@@ -22,6 +23,14 @@
                 <td style="text-align: center;">{{k.preco_total}}</td>
                 <td style="text-align: center;">{{k.estado}}</td>
                 <td style="text-align: center;">{{k.data}}</td>
+                <td style="text-align: center;">
+                    {% if k.estado == "Em Processamento!" %}
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_pedido" value="{{k.id_pedido}}"></input>
+                        <button style="margin-top: 1%;margin-bottom: 1%;" class="btn btn-success" type="submit">Encomenda Enviada!</button>
+                    </form>
+                    {% endif %}
             </tr>
             <tr style="border-bottom: 1px solid #000;"></tr>
         {% endfor %}

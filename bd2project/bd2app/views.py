@@ -149,10 +149,19 @@ def apagar_produto(request, produto_id):
 
 
 def todos_pedidos(request):
-    todos = todos_pedidos_model.objects.all()
-    return render(request, 'todos_pedidos.html', {'todos': todos})
+    if request.method == 'POST':
+        data = request.POST
+        id_pedido = data.get("id_pedido")
+        pedido_update = todos_pedidos_model.objects.get(id_pedido=id_pedido)
+        pedido_update.estado = "Encomenda Enviada!"
+        pedido_update.save()
+        return redirect('todos_pedidos')
+    else:
+        form = request.POST
+        todos = todos_pedidos_model.objects.all().order_by('estado')
+        return render(request, 'todos_pedidos.html', {'todos': todos, 'form': form})
 # ainda por acabar e meio que um teste
-
+    
 
 def novo_pedido(request):
     utilizador = todos_pedidos_model(
@@ -208,17 +217,17 @@ def pagamento(request,id_carrinho):
         context = {'form': form}
     return render(request, 'pagamento.html', context=context)
 
-def inserir_pedido(id_carrinho):
+def inserir_pedido(request,id_carrinho):
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     pedido = todos_pedidos_model.objects.create(**{
-        'id_cliente': 1, #aqui vai o id do cliente ~~ request.user.id
+        'id_cliente': request.user.id, #aqui vai o id do cliente ~~ request.user.id
         'preco_total': carrinho.preco_total,
         'data': datetime.datetime.now(),
-        'estado': 'em processamento'
+        'estado': 'Em Processamento!'
     })
     pedido.save()
-    latest_pedido = todos_pedidos_model.objects.filter(id_cliente=1).latest('id_pedido')
+    latest_pedido = todos_pedidos_model.objects.filter(id_cliente=request.user.id).latest('id_pedido')
     id_pedido_x = latest_pedido.id_pedido #mudar id cliente . aqui vai o id do cliente ~~ request.user.id
     for item_carrinho in itens_carrinho:
         itens_pedido = Itens_Pedido.objects.create(
