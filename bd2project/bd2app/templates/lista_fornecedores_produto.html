@@ -1,0 +1,53 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+<div style="margin: auto;width: 50%;text-align: center;">
+<h2 >Lista de pedidos:</h2>
+
+<table frame=hsides rules=rows style="width: 100%;border: solid 1px black;">
+    <thead style="background-color: white;text-align: center;">
+        <th>id_Fornecedor:</th>
+        <th>Preço Unitario:</th>
+        <th>Disponível:</th>
+        <th>Quantidade:</th>
+        <th></th>
+    </thead>
+    <tbody>
+
+        {% for x in fornecedores %}
+        <tr style="border-bottom: 1px solid #000;"></tr>
+            <tr style="background-color: white;text-align:center;">
+                <td style="text-align: center;">{{x.id_fornecedor}}</td>
+                <td style="text-align: center;">{{x.preco_unitario}}</td>
+                {% if x.disponivel %}
+                <td style="text-align: center;">certo</td>
+                    <form method="POST" enctype="multipart/form-data" style="margin-left: 1%;">
+                    <td>
+                        {% csrf_token %}
+                        <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+                            <input type="number" min="1" class="form-control" name="quantidade" placeholder="Quantidade" required>
+                            <input type="hidden" name="id_fornecedor" value="{{x.id_fornecedor}}" required>
+                            <input type="hidden" name="id_produto" value="{{x.id_produto}}" required>
+                        </div>
+                    </td>
+                        <td style="text-align: center;"><button style="margin: auto;" type="submit" class="btn btn-success">Encomendar</button></td>
+                    </form>
+                {% else %}
+                <td style="text-align: center;">notcerto</td>
+                    <form method="POST" enctype="multipart/form-data" style="margin-left: 1%;">
+                        <td>
+                        <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+                            <input type="number" disabled min="1" class="form-control" name="quantidade" placeholder="Quantidade" required>
+                        </div>
+                        </td>
+                        <td style="text-align: center;"><button style="margin: auto;" type="button" disabled class="btn btn-success">Encomendar</button></td>
+                    </form>
+                {% endif %}            
+            </tr>
+            <tr style="border-bottom: 1px solid #000;"></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% endblock %}
