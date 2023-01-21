@@ -32,6 +32,7 @@ urlpatterns = [
     path('editarUser/<int:id_user>', views.editarUser, name='editarUser'),
     path('desativarUser/<int:id_user>/save', views.desativarUser, name='desativarUser'),
     path('ativarUser/<int:id_user>/save', views.ativarUser, name='ativarUser'),
+    #path('editar_preco_carrinho', views.editar_preco_carrinho, name='editar_preco_carrinho'),
     #path('edit_product/<int:produto_id>/<int:carrinho_id>', views.edit_product, name='edit_product'),   pus de lado por enquanto pq estava a dar um erro da treta
     #path('edit_quantity_cart/<int:produto_id>/<int:carrinho_id>', views.edit_quantity_cart, name='edit_quantity_cart'),   #tinha posto de lado por um erro da treta
     #path('produto/adicionar_carrinho/<int:produto_id>', views.adicionar_carrinho, name='adicionar_carrinho'),

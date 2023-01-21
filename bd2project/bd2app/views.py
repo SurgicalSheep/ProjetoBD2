@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 import json
 from pprint import pprint
 from bson import Decimal128
@@ -376,6 +377,12 @@ def editar_produto(request, produto_id):
         # update the document in the mongodb collection
         collection = bd['produtos']
         collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria}})
+        #atualizar o produto nos carrinhos
+        preco_pg = Decimal(data.get("preco"))
+        itens_carrinho = itens_carrinho_model.objects.filter(id_produto=produto_id)
+        for item in itens_carrinho:
+            item.preco_produto = preco_pg
+            item.save()
         return redirect('todos_produtos')
     else:
         collection = bd['produtos']
@@ -396,4 +403,13 @@ def decrement_quantity(request, id_carrinho, id_produto):
         item.save()
     carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
+
+# def editar_preco_carrinho(request, id_produto):
+#     item = get_object_or_404(itens_carrinho_model, id_produto=id_produto)
+#     if request.method == 'POST':
+#         data = request.POST
+#         preco = Decimal128(data.get("preco"))
+#         item.preco_produto = preco
+#         item.save()
+#         return 1
 
