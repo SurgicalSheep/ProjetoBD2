@@ -426,6 +426,7 @@ def decrement_quantity(request, id_carrinho, id_produto):
 
 def error404(request):
     return render(request, '404.html')
+
 def homepage_comerciantetipo1(request):
     #if request.method == 'GET':
         products = todos_produtos_other()
