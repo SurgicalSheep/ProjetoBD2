@@ -20,7 +20,9 @@ def index(request):
     if request.user.is_authenticated:
         if request.session:
             if request.session["tipouser"] == "Fornecedor":
-                return redirect('homepage_fornecedores')           
+                return redirect('homepage_fornecedores')
+            elif request.session["tipouser"] == "Comercial Tipo 1":
+                return redirect('homepage_comerciantetipo1')           
     col = bd["produtos"]
     produtos_promocao = col.find().sort("desconto",-1).limit(6)
     cursor = connection.cursor()
@@ -160,7 +162,7 @@ def todos_pedidos(request):
         todos = todos_pedidos_model.objects.all().order_by('estado')
         return render(request, 'todos_pedidos.html', {'todos': todos, 'form': form})
 # ainda por acabar e meio que um teste
-    
+
 
 def novo_pedido(request):
     utilizador = todos_pedidos_model(

@@ -41,4 +41,6 @@ urlpatterns = [
     path('increment_quantity/<int:id_carrinho>/<int:id_produto>/', views.increment_quantity, name='increment_quantity'),
     path('decrement_quantity/<int:id_carrinho>/<int:id_produto>/', views.decrement_quantity, name='decrement_quantity'),
     path('404', views.error404, name='error404'),
+    path('homepage_comerciantetipo1', views.homepage_comerciantetipo1, name='homepage_comerciantetipo1'),
+    path('produto/solicitar_produto/<int:id_product>', views.solicitar_produto, name='solicitar_produto'),
 ]

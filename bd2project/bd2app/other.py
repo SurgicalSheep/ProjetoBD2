@@ -83,3 +83,7 @@ def adicionarProdutoCarrinhoAnonimo(id):
 def converterCarrinhoAnonimoParaLogado(id):
     #carrinhoAnonimo = request.session['carrinho']
     return 1
+
+def todos_fornecedores_produto_other(id_produto):
+    collection = bd['produtos_fornecedores']
+    return collection.find({"id_produto": id_produto})
