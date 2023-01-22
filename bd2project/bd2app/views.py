@@ -33,6 +33,10 @@ def index(request):
     categorias = col.distinct("categoria")
     return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias})
 
+def error404(request,exception=None):
+    return render(request, '404.html')
+
+
 def registro(request):
     context = {}
     if request.method == 'POST':
@@ -330,7 +334,7 @@ def ativar_produto_fornecedor(request, id_produto):
 @login_required
 def editarUsers(request):
     if not getTipoUserMongo(request.user.id) == "Administrador":
-        return redirect('')
+        return redirect('mudarEstadoClientes')
     collection = bd['utilizadores']
     users = collection.find({"approved": True})
     return render(request, 'editUsers.html', {'users': users})
@@ -338,7 +342,7 @@ def editarUsers(request):
 @login_required
 def editarUser(request, id_user):
     if not getTipoUserMongo(request.user.id) == "Administrador":
-        return redirect('')
+        return redirect('mudarEstadoClientes')
     userMongo = bd["utilizadores"].find_one({"id":id_user})
     if request.method == 'POST':
         nome = request.POST["nome"]
@@ -357,9 +361,17 @@ def editarUser(request, id_user):
     return render(request, 'editUser.html', {'user': userMongo})
 
 @login_required
+def mudarEstadoClientes(request):
+    if not getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+        return redirect('index')
+    collection = bd['utilizadores']
+    users = collection.find({"approved": True, "tipouser": "Cliente"})
+    return render(request, 'alterarEstadoUser.html', {'users': users})
+
+@login_required
 def desativarUser(request, id_user):
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
-        return redirect('')
+        return redirect('index')
     if request.method == 'POST':
         desativarUserMongo(id_user)
         return redirect('editarUsers')
@@ -368,7 +380,7 @@ def desativarUser(request, id_user):
 @login_required
 def ativarUser(request, id_user):
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
-        return redirect('')
+        return redirect('mudarEstadoClientes')
     if request.method == 'POST':
         ativarUserMongo(id_user)
         return redirect('editarUsers')
@@ -429,9 +441,6 @@ def decrement_quantity(request, id_carrinho, id_produto):
 #         item.preco_produto = preco
 #         item.save()
 #         return 1
-
-def error404(request):
-    return render(request, '404.html')
 
 def homepage_comerciantetipo1(request):
     #if request.method == 'GET':
