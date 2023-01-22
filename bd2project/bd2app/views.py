@@ -233,14 +233,14 @@ def inserir_pedido(id_carrinho):
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     pedido = todos_pedidos_model.objects.create(**{
-        'id_cliente': id_carrinho, #aqui vai o id do cliente ~~ request.user.id
+        'id_cliente': id_carrinho, 
         'preco_total': carrinho.preco_total,
         'data': datetime.datetime.now(),
         'estado': 'Em Processamento!'
     })
     pedido.save()
     latest_pedido = todos_pedidos_model.objects.filter(id_cliente=id_carrinho).latest('id_pedido')
-    id_pedido_x = latest_pedido.id_pedido #mudar id cliente . aqui vai o id do cliente ~~ request.user.id
+    id_pedido_x = latest_pedido.id_pedido 
     for item_carrinho in itens_carrinho:
         itens_pedido = Itens_Pedido.objects.create(
             id_pedido=id_pedido_x,
