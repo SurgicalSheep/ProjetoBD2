@@ -24,8 +24,10 @@
                 <td style="text-align: center;">{{k.preco_total}}</td>
                 {% if k.estado == "Em Processamento!" %}
                 <td style="text-align: center;background-color: rgb(236, 250, 109);">{{k.estado}}</td>
-                {% else %}
+                {% elif k.estado == "Encomenda Enviada!"%}
                 <td style="text-align: center;background-color: rgb(142, 255, 127);">{{k.estado}}</td>
+                {% elif k.estado == "Encomenda Cancelada!"%}
+                <td style="text-align: center;background-color: rgb(255, 127, 127);">{{k.estado}}</td>
                 {% endif %}
                 <td style="text-align: center;">{{k.data}}</td>
                 <td style="text-align: center;">

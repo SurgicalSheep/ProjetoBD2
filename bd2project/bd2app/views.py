@@ -468,7 +468,7 @@ def solicitar_produto(request, id_product):
         return render(request, "lista_fornecedores_produto.html", {'fornecedores': fornecedores,'form': form})
 
 def encomendas_cliente(request):
-    todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado="Encomenda Enviada!").order_by('-data')
+    todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado__in=["Encomenda Enviada!", "Encomenda Cancelada!"]).order_by('-data')
     return render(request, 'encomendas_cliente.html', {'todos': todos})
 
 def encomenda(request,id_encomenda):
@@ -479,3 +479,9 @@ def encomenda(request,id_encomenda):
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado="Em Processamento!").order_by('-data')
     return render(request, 'pedidos_cliente.html', {'todos': todos})
+
+def encomenda_cancelar(request, id_encomenda): #falta atualizar o stock depois de cancelar
+    todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda, estado="Em Processamento!")
+    todos.estado = "Encomenda Cancelada!"
+    todos.save()
+    return redirect('pedidos_cliente')
