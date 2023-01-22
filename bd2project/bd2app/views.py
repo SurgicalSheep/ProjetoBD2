@@ -251,7 +251,10 @@ def inserir_pedido(id_carrinho):
             imagem_produto=item_carrinho.imagem_produto,
             desconto_produto=item_carrinho.desconto_produto
     )
-    itens_pedido.save()
+        # Update stock in MongoDB collection
+        col = bd["produtos"]
+        col.update_one({"id": item_carrinho.id_produto}, {"$inc": {"stock": -item_carrinho.quantidade}})
+    itens_pedido.save()    
     delete_carrinho(id_carrinho)
     return 1
 
@@ -485,6 +488,11 @@ def encomenda_cancelar(request, id_encomenda): #falta atualizar o stock depois d
     todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda, estado="Em Processamento!")
     todos.estado = "Encomenda Cancelada!"
     todos.save()
+    itens_pedido = Itens_Pedido.objects.filter(id_pedido=id_encomenda)
+    for item_pedido in itens_pedido:
+        # Update stock in MongoDB collection
+        collection = bd['produtos']
+        collection.update_one({"id": item_pedido.id_produto}, {"$inc": {"stock": item_pedido.quantidade}})
     return redirect('pedidos_cliente')
 
 @login_required

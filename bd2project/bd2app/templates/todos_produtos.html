@@ -16,11 +16,13 @@
             <h6 class="card-title">Preço unitário: {{product.preco}} €, Desconto: {{product.desconto}} %, Stock:
                 {{product.stock}}</h6>
 
+            {% if product.active %}
             <a href="/produto/adicionar_carrinho/{{product.id}}/{{product.desconto}}/{{product.nome}}/{{product.preco}}/{{product.imagem}}"
                 class="btn btn-success">Comprar</a>
-
+            {% endif %}
+            
             <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
-
+            
             
             {% if request.session %}
             {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
