@@ -28,7 +28,7 @@
             
             {% if request.session %}
             {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
-            <a href="/produto/apagar_produto/{{products.id}}" style="margin-top: 1.7%;"
+            <a href="/produto/desativar_produto/{{products.id}}" style="margin-top: 1.7%;"
                 class="btn btn-danger">Desativar</a>
             {% endif %}
             {% endif %}

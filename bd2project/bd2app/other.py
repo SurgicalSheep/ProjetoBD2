@@ -44,14 +44,14 @@ def user_max_id():
         newid = max_id[0]['id'] + 1
     return newid
 
-def apagar_produto_other(id):
-    col = bd["produtos"]
-    x = col.delete_one({"id": id})
-    return x
-
-def apagar_produto_other(id):
+def desativar_produto_other(id):
     collection = bd['produtos']
     x = collection.update_one({"id": id}, {"$set": {"active": False}})
+    return x
+
+def ativar_produto_other(id):
+    collection = bd['produtos']
+    x = collection.update_one({"id": id}, {"$set": {"active": True}})
     return x
 
 def remover_produto_carrinho_other(produto_id, carrinho_id):

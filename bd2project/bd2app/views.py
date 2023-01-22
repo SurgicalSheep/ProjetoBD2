@@ -142,16 +142,16 @@ def detalhes_produto(request, produto_id):
     return render(request, 'detalhes_produto.html', {'products': products})
 
 @login_required
-def apagar_produto(request, produto_id):
+def desativar_produto(request, produto_id):
     context = {}
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
-            apagar_produto_other(produto_id)
+            desativar_produto_other(produto_id)
         return redirect('todos_produtos')
     else:
         form = request.POST
         context = {'form': form}
-        return render(request, 'apagar_produto.html', context)
+        return render(request, 'desativar_produto.html', context)
 
 
 def todos_pedidos(request):
@@ -486,3 +486,15 @@ def encomenda_cancelar(request, id_encomenda): #falta atualizar o stock depois d
     todos.estado = "Encomenda Cancelada!"
     todos.save()
     return redirect('pedidos_cliente')
+
+@login_required
+def ativar_produto(request, produto_id):
+    context = {}
+    if request.method == 'POST':
+        if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+            ativar_produto_other(produto_id)
+        return redirect('todos_produtos')
+    else:
+        form = request.POST
+        context = {'form': form}
+        return render(request, 'ativar_produto.html', context)
