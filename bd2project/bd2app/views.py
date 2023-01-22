@@ -184,7 +184,7 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
         #else:
         ##fazer carrinho anonimo
         item = itens_carrinho_model.objects.create(**{
-            'id_carrinho': 1,
+            'id_carrinho': request.user.id,
             'id_produto': produto_id,
             'quantidade': quantity,
             'nome_produto': produto_nome,
