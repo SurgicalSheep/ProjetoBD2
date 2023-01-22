@@ -20,7 +20,7 @@ def novo_produto_insert(nome,preco,marca,cor,imagem,descricao,stock,desconto,cat
 
 def todos_produtos_other():
     collection = bd['produtos']
-    return collection.find({"active": True})
+    return collection.find()
 
 def todos_users_other():
     collection = bd['utilizadores']
@@ -54,8 +54,8 @@ def apagar_produto_other(id):
     x = collection.update_one({"id": id}, {"$set": {"active": False}})
     return x
 
-def remover_produto_carrinho_other(produto_id):
-    item = get_object_or_404(itens_carrinho_model, id_produto=produto_id)
+def remover_produto_carrinho_other(produto_id, carrinho_id):
+    item = get_object_or_404(itens_carrinho_model, id_produto=produto_id,id_carrinho=carrinho_id)
     item.delete()
     return redirect('carrinho')
 

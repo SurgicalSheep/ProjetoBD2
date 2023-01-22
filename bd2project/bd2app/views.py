@@ -22,11 +22,13 @@ def index(request):
             if request.session["tipouser"] == "Fornecedor":
                 return redirect('homepage_fornecedores')
             elif request.session["tipouser"] == "Comercial Tipo 1":
-                return redirect('homepage_comerciantetipo1')           
+                return redirect('homepage_comerciantetipo1')
     col = bd["produtos"]
-    produtos_promocao = col.find().sort("desconto",-1).limit(6)
+    produtos_promocao = col.find({'active': True}).sort("desconto", -1).limit(6)
+    produtos_nao_ativos = col.find({'active': False})
+    inactive_product_ids = [int(str(product['id'])) for product in produtos_nao_ativos]
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM top6_itens_mais_vendidos()")
+    cursor.execute("SELECT * FROM top6_itens_mais_vendidos(%s)", (inactive_product_ids,))
     top6 = cursor.fetchall()
     product_ids = [item[0] for item in top6]
     produtos_mais_vendidos = col.find({'id': {'$in': product_ids}})
@@ -35,7 +37,6 @@ def index(request):
 
 def error404(request,exception=None):
     return render(request, '404.html')
-
 
 def registro(request):
     context = {}
@@ -211,7 +212,7 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
 def remover_produto_carrinho(request, produto_id):
     
     if request.method == 'POST':
-        remover_produto_carrinho_other(produto_id)
+        remover_produto_carrinho_other(produto_id,request.user.id)
         return redirect('carrinho')
     else:
         form = request.POST
