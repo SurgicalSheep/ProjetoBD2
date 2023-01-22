@@ -14,7 +14,6 @@ urlpatterns = [
     path('categoria/<str:categoria>/', views.categoria, name='categoria'),
     path('produto/apagar_produto/<int:produto_id>', views.apagar_produto, name='apagar_produto'),
     path('produto/editar_produto/<int:produto_id>', views.editar_produto, name='editar_produto'),
-    path('pedidos_cliente', views.pedidos_cliente, name='pedidos_cliente'),
     path('todos_pedidos', views.todos_pedidos, name='todos_pedidos'),#teste
     path('produto/remover_produto_carrinho/<int:produto_id>', views.remover_produto_carrinho, name='remover_produto_carrinho'),
     path('produto/adicionar_carrinho/<int:produto_id>/<int:produto_desconto>/<str:produto_nome>/<str:produto_preco>/<path:produto_imagem>', views.adicionar_carrinho, name='adicionar_carrinho'),
@@ -43,4 +42,6 @@ urlpatterns = [
     path('404', views.error404, name='error404'),
     path('homepage_comerciantetipo1', views.homepage_comerciantetipo1, name='homepage_comerciantetipo1'),
     path('produto/solicitar_produto/<int:id_product>', views.solicitar_produto, name='solicitar_produto'),
+    path('encomendas_cliente', views.encomendas_cliente, name='encomendas_cliente'),
+    path('encomenda/<int:id_encomenda>', views.encomenda, name='encomenda'),
 ]

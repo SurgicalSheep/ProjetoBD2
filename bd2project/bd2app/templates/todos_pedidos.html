@@ -12,6 +12,7 @@
         <th>Estado:</th>
         <th>Data Pedido:</th>
         <th>Ações:</th>
+        <th>Detalhes:</th>
     </thead>
     <tbody>
 
@@ -21,7 +22,11 @@
                 <td style="text-align: center;">{{k.id_pedido}}</td>
                 <td style="text-align: center;">{{k.id_cliente}}</td>
                 <td style="text-align: center;">{{k.preco_total}}</td>
-                <td style="text-align: center;">{{k.estado}}</td>
+                {% if k.estado == "Em Processamento!" %}
+                <td style="text-align: center;background-color: rgb(236, 250, 109);">{{k.estado}}</td>
+                {% else %}
+                <td style="text-align: center;background-color: rgb(142, 255, 127);">{{k.estado}}</td>
+                {% endif %}
                 <td style="text-align: center;">{{k.data}}</td>
                 <td style="text-align: center;">
                     {% if k.estado == "Em Processamento!" %}
@@ -31,6 +36,7 @@
                         <button style="margin-top: 1%;margin-bottom: 1%;" class="btn btn-success" type="submit">Encomenda Enviada!</button>
                     </form>
                     {% endif %}
+                <td style="text-align: center;"><a href="/encomenda/{{k.id_pedido}}">Ver detalhes</a></td>
             </tr>
             <tr style="border-bottom: 1px solid #000;"></tr>
         {% endfor %}

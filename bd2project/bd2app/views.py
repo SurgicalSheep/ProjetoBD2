@@ -159,7 +159,7 @@ def todos_pedidos(request):
         return redirect('todos_pedidos')
     else:
         form = request.POST
-        todos = todos_pedidos_model.objects.all().order_by('estado')
+        todos = todos_pedidos_model.objects.all().order_by('estado','-id_pedido')
         return render(request, 'todos_pedidos.html', {'todos': todos, 'form': form})
 # ainda por acabar e meio que um teste
 
@@ -218,17 +218,17 @@ def pagamento(request,id_carrinho):
         context = {'form': form}
     return render(request, 'pagamento.html', context=context)
 
-def inserir_pedido(request,id_carrinho):
+def inserir_pedido(id_carrinho):
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     pedido = todos_pedidos_model.objects.create(**{
-        'id_cliente': request.user.id, #aqui vai o id do cliente ~~ request.user.id
+        'id_cliente': id_carrinho, #aqui vai o id do cliente ~~ request.user.id
         'preco_total': carrinho.preco_total,
         'data': datetime.datetime.now(),
         'estado': 'Em Processamento!'
     })
     pedido.save()
-    latest_pedido = todos_pedidos_model.objects.filter(id_cliente=request.user.id).latest('id_pedido')
+    latest_pedido = todos_pedidos_model.objects.filter(id_cliente=id_carrinho).latest('id_pedido')
     id_pedido_x = latest_pedido.id_pedido #mudar id cliente . aqui vai o id do cliente ~~ request.user.id
     for item_carrinho in itens_carrinho:
         itens_pedido = Itens_Pedido.objects.create(
@@ -451,3 +451,12 @@ def solicitar_produto(request, id_product):
         form = request.POST
         fornecedores = todos_fornecedores_produto_other(id_product)
         return render(request, "lista_fornecedores_produto.html", {'fornecedores': fornecedores,'form': form})
+
+def encomendas_cliente(request):
+    todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado="Encomenda Enviada!").order_by('-data')
+    return render(request, 'encomendas_cliente.html', {'todos': todos})
+
+def encomenda(request,id_encomenda):
+    todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda, estado="Encomenda Enviada!")
+    encomenda = Itens_Pedido.objects.filter(id_pedido=id_encomenda)
+    return render(request, 'encomenda.html', {'encomenda': encomenda,'todos': todos})
