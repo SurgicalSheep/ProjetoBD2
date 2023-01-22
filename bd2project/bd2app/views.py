@@ -475,3 +475,7 @@ def encomenda(request,id_encomenda):
     todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda, estado="Encomenda Enviada!")
     encomenda = Itens_Pedido.objects.filter(id_pedido=id_encomenda)
     return render(request, 'encomenda.html', {'encomenda': encomenda,'todos': todos})
+
+def pedidos_cliente(request):
+    todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado="Em Processamento!").order_by('-data')
+    return render(request, 'pedidos_cliente.html', {'todos': todos})
