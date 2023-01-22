@@ -526,6 +526,7 @@ def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantid
     collection = bd['produtos']
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
     item.estado = "Aceite!"
+    item.dataentrega = datetime.datetime.now()
     item.save()
     collection.update_one({"id": id_produto}, {"$inc": {"stock": quantidade}})
     return redirect('pedidos_fornecedor')
