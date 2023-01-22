@@ -107,6 +107,15 @@
               href="{% url 'pedidos_cliente' %}">Pedidos Não Finalizados</a>
           </li>
           {% endif %}
+          {% if user.is_authenticated %}
+          {% if request.session.tipouser == "Fornecedor" %}
+          <li class="nav-item">
+            <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
+              href="{% url 'pedidos_fornecedor' %}"><img src="https://cdn-icons-png.flaticon.com/512/481/481659.png"
+                alt="" width="24" height="24" class="d-inline-block align-text-top"></a>
+          </li>
+          {% endif %}
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -114,7 +123,7 @@
   <div>
     {% block content %} {% endblock%}
   </div>
-  
+
 </body>
 
 </html>

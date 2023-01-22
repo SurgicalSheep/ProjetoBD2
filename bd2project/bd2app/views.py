@@ -498,3 +498,39 @@ def ativar_produto(request, produto_id):
         form = request.POST
         context = {'form': form}
         return render(request, 'ativar_produto.html', context)
+def pedidos_fornecedor(request):
+    collection2 = bd['produtos']
+    class class_pedidos_fornecedor:
+            def __init__(self, id_pedidofornecedor, id_fornecedor, id_produto, nome_produto, quantidade, datapedido):
+                self.id_pedidofornecedor = id_pedidofornecedor
+                self.id_fornecedor = id_fornecedor
+                self.id_produto = id_produto
+                self.nome_produto = nome_produto
+                self.quantidade = quantidade
+                self.datapedido = datapedido
+    aux_pedidos_fornecedor = PedidoFornecedor.objects.filter(id_fornecedor=request.user.id, estado="Por verificar").values()
+    pedidos_fornecedor = []
+    for x in aux_pedidos_fornecedor:
+            varproduto = collection2.find_one({"id": x["id_produto"]})
+            varid_pedidofornecedor = x["id_pedidofornecedor"]
+            varid_produto = x["id_produto"]
+            varid_fornecedor = x["id_fornecedor"]
+            varnome_produto = varproduto["nome"]
+            varquantidade = x["quantidade"]
+            vardatapedido = x["datapedido"]
+            p = class_pedidos_fornecedor(varid_pedidofornecedor, varid_fornecedor, varid_produto, varnome_produto, varquantidade, vardatapedido)
+            pedidos_fornecedor.append(p)
+    return render(request, 'pedidos_fornecedor.html', {'pedidos_fornecedor': pedidos_fornecedor})
+
+def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantidade):
+    collection = bd['produtos']
+    item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
+    item.estado = "Aceite!"
+    item.save()
+    collection.update_one({"id": id_produto}, {"$inc": {"stock": quantidade}})
+    return redirect('pedidos_fornecedor')
+
+def rejeitar_pedidos_fornecedor(request, id_pedidofornecedor):
+    item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
+    item.delete()
+    return redirect('pedidos_fornecedor')

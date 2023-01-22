@@ -1,0 +1,39 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+<div style="margin: auto;width: 50%;text-align: center;">
+<h2 >Lista de pedidos:</h2>
+
+{% if pedidos_fornecedor|length == 0 %}
+    <h4>Não apresenta nenhum pedido de momento!</h4>
+{% else %}
+    <table frame=hsides rules=rows style="width: 100%;border: solid 1px black;">
+        <thead style="background-color: white;text-align: center;">
+            <th>Data Pedido:</th>
+            <th>Produto:</th>
+            <th>Quantidade:</th>
+            <th>Ações</th>
+        </thead>
+        <tbody>
+            {% for k in pedidos_fornecedor %}
+            <tr style="border-bottom: 1px solid #000;"></tr>
+                <tr style="background-color: white;text-align:center;">
+                    <td style="text-align: center;">{{k.datapedido}}</td>
+                    <td style="text-align: center;">{{k.nome_produto}}</td>
+                    <td style="text-align: center;">{{k.quantidade}}</td>
+                    <td style="text-align: center;">
+                        <button style="margin: auto; border: 2px solid" type="button" class="btn btn-outline-success" onclick="window.location.href='aceitar_pedidos_fornecedor/{{k.id_pedidofornecedor}}/{{k.id_produto}}/{{k.quantidade}}'">
+                            <a style="font-weight: 500;">Confirmar</a>
+                        </button>
+                        <button style="margin: auto; border: 2px solid" type="button" class="btn btn-outline-danger" onclick="window.location.href='rejeitar_pedidos_fornecedor/{{k.id_pedidofornecedor}}'">
+                            <a style="font-weight: 500;">Cancelar</a>
+                        </button>
+                    </td>
+                </tr>
+                <tr style="border-bottom: 1px solid #000;"></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+</div>
+{% endblock %}
