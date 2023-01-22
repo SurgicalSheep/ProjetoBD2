@@ -177,23 +177,29 @@ def carrinho(request):
 
 
 def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produto_preco,produto_imagem):
-    quantity = request.POST.get('quantidade')
     if request.method == 'POST':
-        #if request.user.is_authenticated:
+        quantity = int(request.POST.get('quantidade'))
+        if request.user.is_authenticated:
         ##fazer cena normal
         #else:
         ##fazer carrinho anonimo
-        item = itens_carrinho_model.objects.create(**{
-            'id_carrinho': request.user.id,
-            'id_produto': produto_id,
-            'quantidade': quantity,
-            'nome_produto': produto_nome,
-            'preco_produto': produto_preco,
-            'imagem_produto': produto_imagem,
-            'desconto_produto': produto_desconto
-        })
-        item.save()
-        return redirect('todos_produtos')
+            verificacao = itens_carrinho_model.objects.filter(id_carrinho=request.user.id, id_produto=produto_id).first()
+            if verificacao:
+                verificacao.quantidade += quantity
+                verificacao.save()
+                return redirect('todos_produtos')
+            else:
+                item = itens_carrinho_model.objects.create(**{
+                    'id_carrinho': request.user.id,
+                    'id_produto': produto_id,
+                    'quantidade': quantity,
+                    'nome_produto': produto_nome,
+                    'preco_produto': produto_preco,
+                    'imagem_produto': produto_imagem,
+                    'desconto_produto': produto_desconto
+                })
+                item.save()
+                return redirect('todos_produtos')
     else:
         form = request.POST
         return render(request, 'adicionar_carrinho.html', {'form': form})
