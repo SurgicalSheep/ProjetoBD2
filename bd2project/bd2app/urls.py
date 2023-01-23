@@ -53,5 +53,6 @@ urlpatterns = [
     path('pedidos_fornecedor', views.pedidos_fornecedor, name='pedidos_fornecedor'),
     path('aceitar_pedidos_fornecedor/<int:id_pedidofornecedor>/<int:id_produto>/<int:quantidade>', views.aceitar_pedidos_fornecedor, name='aceitar_pedidos_fornecedor'),
     path('rejeitar_pedidos_fornecedor/<int:id_pedidofornecedor>', views.rejeitar_pedidos_fornecedor, name='rejeitar_pedidos_fornecedor'),
+    path('out_of_stock', views.out_of_stock, name='out_of_stock'),
 ]
 handler404='bd2app.views.error404'

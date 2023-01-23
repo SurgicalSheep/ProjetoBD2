@@ -2,14 +2,12 @@
 {% block content %}
 
 <div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color: rgb(248, 236, 245);text-align: center;">
-    <div style="text-align: center;">
-        <img src={{products.imagem}} style="width: 20em;height: 15em;" alt={{products.descricao}}>
-    </div>
+
     <h2>Confirme que pretende adicionar o item ao carrinho!</h2>
     <h4>E indique a quantidade pretendida!</h4>
     <form action="" method="POST">
         {% csrf_token %}
-        <input type="number" name=quantidade min="1" value="quantidade"></input>
+        <input type="number" name=quantidade min="1" max="{{stock}}" value="quantidade"></input>
         <input type="hidden" name=id value="{{products.id}}"></input>
         <input type="hidden" name=desconto value="{{products.desconto}}"></input>
         <input type="hidden" name=nome value="{{products.nome}}"></input>
@@ -20,5 +18,6 @@
     <button style="width:20%;margin: auto;" type="button" class="btn btn-primary" onclick="window.location.href='/todos_produtos'">Voltar</button>
 
 </div>
+
 
 {% endblock %}

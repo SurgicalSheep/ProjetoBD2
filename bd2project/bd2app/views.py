@@ -225,8 +225,14 @@ def carrinho(request):
 
 
 def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produto_preco,produto_imagem):
+    col = bd["produtos"]
+    stock = col.find_one({"id": produto_id})["stock"]
     if request.method == 'POST':
         quantity = int(request.POST.get('quantidade'))
+        #no form ja meti verificacao mas convem ter verificacao no backend tbm entao
+        #se o utilizador conseguir pedir mais do que o stock (alterando o html)
+        if stock < quantity:
+            return redirect('out_of_stock')
         if request.user.is_authenticated:
         ##fazer cena normal
         #else:
@@ -244,13 +250,13 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
                     'nome_produto': produto_nome,
                     'preco_produto': produto_preco,
                     'imagem_produto': produto_imagem,
-                    'desconto_produto': produto_desconto
+                    'desconto_produto': produto_desconto,
                 })
                 item.save()
                 return redirect('todos_produtos')
     else:
         form = request.POST
-        return render(request, 'adicionar_carrinho.html', {'form': form})
+        return render(request, 'adicionar_carrinho.html', {'form': form, 'stock': stock})
 
 def remover_produto_carrinho(request, produto_id):
     
@@ -586,3 +592,6 @@ def rejeitar_pedidos_fornecedor(request, id_pedidofornecedor):
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
     item.delete()
     return redirect('pedidos_fornecedor')
+
+def out_of_stock(request):
+    return render(request, 'out_of_stock.html')
