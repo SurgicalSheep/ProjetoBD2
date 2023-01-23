@@ -24,11 +24,11 @@ def index(request):
             elif request.session["tipouser"] == "Comercial Tipo 1":
                 return redirect('homepage_comerciantetipo1')
     col = bd["produtos"]
-    produtos_promocao = col.find({'active': True}).sort("desconto", -1).limit(6)
+    produtos_promocao = col.find({'active': True, 'desconto': {'$gt': 0}}).sort("desconto", -1).limit(6) #maybe mudar isto para nao serem só 6?
     produtos_nao_ativos = col.find({'active': False})
     inactive_product_ids = [int(str(product['id'])) for product in produtos_nao_ativos]
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM top6_itens_mais_vendidos(%s)", (inactive_product_ids,))
+    cursor.execute("SELECT * FROM top6_itens_mais_vendidos(%s)", (inactive_product_ids,)) #e aqui tb
     top6 = cursor.fetchall()
     product_ids = [item[0] for item in top6]
     produtos_mais_vendidos = col.find({'id': {'$in': product_ids}})
