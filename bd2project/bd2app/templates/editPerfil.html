@@ -1,0 +1,23 @@
+{% extends "navbar.html" %}
+{% block content %}
+
+<form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
+    {% csrf_token %}
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <label for="nome" class="form-label">Nome:</label>
+        <input type="text" class="form-control" name="nome" placeholder="Nome" value="{{user.nome}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <label for="email" class="form-label">Email:</label>
+        <input type="email" class="form-control" name="email" placeholder="Email" value="{{user.email}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <label for="morada" class="form-label">Morada:</label>
+        <input type="address" class="form-control" name="morada" placeholder="Morada" value="{{user.morada}}" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="submit" class="btn btn-primary" name="Guardar" value="Save">
+    </div>
+</form>
+
+{% endblock %}

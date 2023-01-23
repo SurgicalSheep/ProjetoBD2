@@ -38,6 +38,44 @@ def index(request):
 def error404(request,exception=None):
     return render(request, '404.html')
 
+@login_required
+def verPerfil(request):
+    userMongo = bd["utilizadores"].find_one({"id":request.user.id})
+    return render(request, 'showPerfil.html', {'user': userMongo})
+
+@login_required
+def editarPerfil(request):
+    userMongo = bd["utilizadores"].find_one({"id":request.user.id})
+    if request.method == 'POST':
+        nome = request.POST["nome"]
+        email = request.POST["email"]
+        morada = request.POST["morada"]
+        user = User.objects.get(id=request.user.id)
+        if user is not None:
+            updatePerfil(request.user.id, nome, email, morada)
+            user.email = email
+            user.save()
+            return redirect('verPerfil')
+    return render(request, 'editPerfil.html', {'user': userMongo})
+
+@login_required
+def mudarPass(request):
+    if request.method == 'POST':
+        oldPass = request.POST["oldPass"]
+        newPass = request.POST["newPass"]
+        confNewPass = request.POST["confNewPass"]
+        user = User.objects.get(id=request.user.id)
+        if user is not None:
+            if user.check_password(oldPass):
+                if newPass == confNewPass:
+                    user.set_password(newPass)
+                    user.save()
+                    return redirect('logoutUser')
+                else:
+                    return HttpResponse("Passwords don't match")#meter bonito
+            return HttpResponse("A password está mal!")#meter bonito
+    return render(request, 'changePassword.html')
+
 def registro(request):
     context = {}
     if request.method == 'POST':
@@ -58,6 +96,7 @@ def registro(request):
             login(request,u)
             insere_ut(request.user.id,nome, tipouser, morada, username, email)
             request.session['tipouser'] = tipouser
+            request.session['nome'] = nome
             print(request.user.id)
 
         return redirect('todos_users')
@@ -68,6 +107,8 @@ def registro(request):
 
 
 def loginUser(request):
+    if request.user.is_authenticated:
+        return redirect('index')
     if request.method == 'POST':
         form = loginUserForm(request.POST)
         if 'entrar' in request.POST:
@@ -80,7 +121,9 @@ def loginUser(request):
                     if not userMongo["active"]:
                         return HttpResponse("User not active")#meter isto bonito
                     tipoUser = userMongo["tipouser"]
+                    nome = userMongo["nome"]
                     request.session['tipouser'] = tipoUser
+                    request.session['nome'] = nome
                     login(request,user)
                     return redirect("/")
                 else:

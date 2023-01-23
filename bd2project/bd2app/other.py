@@ -68,6 +68,10 @@ def updateUserMongo(id_user, nome, email, morada, tipouser, active):
     collection = bd['utilizadores']
     collection.update_one({"id": id_user}, {"$set": {"nome": nome, "morada": morada, "email": email, "active": bool(active), "tipouser": tipouser}})
 
+def updatePerfil(id_user, nome, email, morada):
+    collection = bd['utilizadores']
+    collection.update_one({"id": id_user}, {"$set": {"nome": nome, "morada": morada, "email": email}})
+
 def desativarUserMongo(id):
     collection = bd['utilizadores']
     collection.update_one({"id": id}, {"$set": {"active": False}})
