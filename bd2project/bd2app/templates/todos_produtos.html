@@ -1,4 +1,5 @@
 {% extends "navbar.html" %}
+{% load math_extras %}
 
 {% block content %}
 <div style="margin: auto;width: 50%;text-align: center;">
@@ -11,34 +12,45 @@
     <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
         <div class="card-body">
 
-            <img src="{{product.imagem}}" style="height: 50%;" class="card-img-top" alt="imagem não disponível" onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+            <img src="{{product.imagem}}" style="height: 50%;" class="card-img-top" alt="imagem não disponível"
+                onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
             <h6 class="card-title">{{product.nome}}</h6>
-            <h6 class="card-title">Preço unitário: {{product.preco}} €, Desconto: {{product.desconto}} %, Stock:
+            {% if product.desconto == 0 %}
+            <h6 class="card-title">Preço unitário: {{product.preco}}€ , Desconto: {{product.desconto}} %, Stock:
                 {{product.stock}}</h6>
+            {% else %}
+            <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{product.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{product.preco_com_desconto}} € </b><br> Desconto: {{product.desconto}} %, Stock:
+                {{product.stock}}</h6>
+            {% endif %}
 
             {% if product.active %}
-            <a href="/produto/adicionar_carrinho/{{product.id}}/{{product.desconto}}/{{product.nome}}/{{product.preco}}/{{product.imagem}}"
+            {% if product.stock > 0 %}
+            <a href="/produto/adicionar_carrinho/{{product.id}}/{{product.desconto}}/{{product.nome}}/{{product.preco_com_desconto}}/{{product.imagem}}"
                 class="btn btn-success">Comprar</a>
+            
+            
+            {% else %}
+            <a class="btn btn-warning">Indisponível</a>
             {% endif %}
-            
+            {% endif %}
+
             <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
-            
-            
+
+
             {% if request.session %}
             {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
             <a href="/produto/editar_produto/{{product.id}}" style="margin-top: 1.7%;"
                 class="btn btn-warning">Editar</a>
             {% endif %}
             {% endif %}
-            
+
             {% if request.session %}
             {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
             {% if product.active == 1 %}
             <a href="/produto/desativar_produto/{{product.id}}" style="margin-top: 1.7%;"
                 class="btn btn-danger">Desativar</a>
             {% else %}
-            <a href="/produto/ativar_produto/{{product.id}}" style="margin-top: 1.7%;"
-                class="btn btn-info">Ativar</a>
+            <a href="/produto/ativar_produto/{{product.id}}" style="margin-top: 1.7%;" class="btn btn-info">Ativar</a>
             {% endif %}
             {% endif %}
             {% endif %}

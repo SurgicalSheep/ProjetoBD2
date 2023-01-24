@@ -9,7 +9,7 @@ class todos_pedidos_model(models.Model):
     id_cliente = models.IntegerField()
     preco_total = models.DecimalField(max_digits=10, decimal_places=2)
     estado = models.CharField(max_length=255)
-    data = models.DateField()
+    data = models.DateTimeField()
     class Meta:
         managed = False
         db_table = 'pedidos'

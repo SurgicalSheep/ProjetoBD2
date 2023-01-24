@@ -12,9 +12,9 @@ def insere_ut(id,nome,tipouser,morada,username,email):
     carrinho.save()
     return x
 
-def novo_produto_insert(nome,preco,marca,cor,imagem,descricao,stock,desconto,categoria):
+def novo_produto_insert(nome,preco,marca,cor,imagem,descricao,stock,desconto,categoria,preco_com_desconto):
     col = bd["produtos"]
-    doc = {"id": product_max_id(),"nome":nome,"preco":preco,"marca":marca,"cor":cor,"imagem":imagem, "descricao":descricao,"stock":stock,"desconto":desconto,"categoria":categoria,"active":True }
+    doc = {"id": product_max_id(),"nome":nome,"preco":preco,"marca":marca,"cor":cor,"imagem":imagem, "descricao":descricao,"stock":stock,"desconto":desconto,"categoria":categoria,"active":True,"preco_com_desconto":preco_com_desconto} 
     x = col.insert_one(doc)
     return x
 

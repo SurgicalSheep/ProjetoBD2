@@ -13,8 +13,13 @@
 
             <img src="{{products.imagem}}" style="height: 50%;" class="card-img-top" alt="imagem não disponível" onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
             <h6 class="card-title">{{products.nome}}</h6>
-            <h6 class="card-title">Preço unitário: {{products.preco}} €, Desconto: {{products.desconto}} %, Stock:
+            {% if products.desconto == 0 %}
+            <h6 class="card-title">Preço unitário: {{products.preco}}€ , Desconto: {{products.desconto}} %, Stock:
                 {{products.stock}}</h6>
+            {% else %}
+            <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{products.preco_com_desconto}} € </b><br> Desconto: {{products.desconto}} %, Stock:
+                {{products.stock}}</h6>
+            {% endif %}
 
             <a href="/produto/{{products.id}}/" class="btn btn-primary">Visualizar</a>
 

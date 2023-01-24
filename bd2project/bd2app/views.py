@@ -14,6 +14,7 @@ from django.http import HttpResponse, JsonResponse
 from django.db import connection
 from django.http import JsonResponse
 from bson.objectid import ObjectId
+from .templatetags.math_extras import mul
 # Create your views here.
 
 def index(request):
@@ -157,8 +158,9 @@ def novo_produto(request):
         cor = data.get("cor")
         stock = int(data.get("stock"))
         categoria = data.get("categoria")
+        preco_com_desconto = Decimal128(mul(preco,desconto))
         novo_produto_insert(nome, preco, marca, cor, imagem,
-                            descricao, stock, desconto, categoria)
+                            descricao, stock, desconto, categoria, preco_com_desconto)
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -212,10 +214,10 @@ def todos_pedidos(request):
 # ainda por acabar e meio que um teste
 
 
-def novo_pedido(request):
-    utilizador = todos_pedidos_model(
-        id_pedido=1, id_utilizador=1, preco=50, data='2020-12-12', estado='pendente')
-    utilizador.save()
+# def novo_pedido(request):
+#     utilizador = todos_pedidos_model(
+#         id_pedido=1, id_utilizador=1, preco=50, data='2020-12-12', estado='pendente')
+#     utilizador.save()
 
 #@login_required
 def carrinho(request):
@@ -224,7 +226,7 @@ def carrinho(request):
     return render(request, 'carrinho.html', {'itens': itens, 'carrinho': carrinho})
 
 
-def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produto_preco,produto_imagem):
+def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produto_preco_com_desconto,produto_imagem,):
     col = bd["produtos"]
     stock = col.find_one({"id": produto_id})["stock"]
     if request.method == 'POST':
@@ -248,7 +250,7 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
                     'id_produto': produto_id,
                     'quantidade': quantity,
                     'nome_produto': produto_nome,
-                    'preco_produto': produto_preco,
+                    'preco_produto': produto_preco_com_desconto,
                     'imagem_produto': produto_imagem,
                     'desconto_produto': produto_desconto,
                 })
@@ -456,9 +458,10 @@ def editar_produto(request, produto_id):
         cor = data.get("cor")
         stock = int(data.get("stock"))
         categoria = data.get("categoria")
+        preco_com_desconto = Decimal128(mul(preco,desconto))
         # update the document in the mongodb collection
         collection = bd['produtos']
-        collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria}})
+        collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria, "preco_com_desconto": preco_com_desconto}})
         #atualizar o produto nos carrinhos
         preco_pg = Decimal(data.get("preco"))
         itens_carrinho = itens_carrinho_model.objects.filter(id_produto=produto_id)
@@ -526,7 +529,7 @@ def encomendas_cliente(request):
     return render(request, 'encomendas_cliente.html', {'todos': todos})
 
 def encomenda(request,id_encomenda):
-    todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda, estado="Encomenda Enviada!")
+    todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda)
     encomenda = Itens_Pedido.objects.filter(id_pedido=id_encomenda)
     return render(request, 'encomenda.html', {'encomenda': encomenda,'todos': todos})
 
