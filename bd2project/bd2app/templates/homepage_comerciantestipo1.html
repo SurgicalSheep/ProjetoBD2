@@ -8,16 +8,21 @@
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
     {% for products in products %}
 
+    {% if products.active == 0 %}
+    <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);border: 2px solid red;">
+    {% else %}
     <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+    {% endif %}
         <div class="card-body">
 
-            <img src="{{products.imagem}}" style="height: 50%;" class="card-img-top" alt="imagem não disponível" onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+            <img src="{{products.imagem}}" style="height: 50%;" class="card-img-top" alt="imagem não disponível"
+                onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
             <h6 class="card-title">{{products.nome}}</h6>
             {% if products.desconto == 0 %}
-            <h6 class="card-title">Preço unitário: {{products.preco}}€ , Desconto: {{products.desconto}} %, Stock:
+            <h6 class="card-title">Preço unitário: {{products.preco}}€ <br> Desconto: {{products.desconto}} %, Stock:
                 {{products.stock}}</h6>
             {% else %}
-            <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{products.preco_com_desconto}} € </b><br> Desconto: {{products.desconto}} %, Stock:
+            <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{ products.preco_com_desconto|floatformat:2 }} € </b><br> Desconto: {{products.desconto}} %, Stock:
                 {{products.stock}}</h6>
             {% endif %}
 
@@ -33,8 +38,12 @@
             
             {% if request.session %}
             {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+            {% if products.active == 1 %}
             <a href="/produto/desativar_produto/{{products.id}}" style="margin-top: 1.7%;"
                 class="btn btn-danger">Desativar</a>
+            {% else %}
+            <a href="/produto/ativar_produto/{{products.id}}" style="margin-top: 1.7%;" class="btn btn-info">Ativar</a>
+            {% endif %}
             {% endif %}
             {% endif %}
 
