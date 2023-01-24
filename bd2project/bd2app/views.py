@@ -125,6 +125,20 @@ def loginUser(request):
                     nome = userMongo["nome"]
                     request.session['tipouser'] = tipoUser
                     request.session['nome'] = nome
+                    if 'carrinho' in request.session:
+                        cursor = connection.cursor()
+                        x = "["
+                        l = len(request.session['carrinho'])
+                        y = 0
+                        for item in request.session['carrinho']:
+                            y+=1
+                            if(l == y):
+                                x+=str(item)
+                            else:
+                                x+=str(item)+","
+                        x+="]"
+                        cursor.execute("call carrinho_anonimo(ARRAY"+x+","+str(user.id)+")")
+                        del request.session['carrinho']
                     login(request,user)
                     return redirect("/")
                 else:
@@ -236,9 +250,7 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
         if stock < quantity:
             return redirect('out_of_stock')
         if request.user.is_authenticated:
-        ##fazer cena normal
-        #else:
-        ##fazer carrinho anonimo
+            ##fazer cena normal
             verificacao = itens_carrinho_model.objects.filter(id_carrinho=request.user.id, id_produto=produto_id).first()
             if verificacao:
                 verificacao.quantidade += quantity
@@ -256,6 +268,16 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
                 })
                 item.save()
                 return redirect('todos_produtos')
+        else:
+            #carrinho anonimo
+            if 'carrinho' not in request.session:
+                request.session['carrinho'] = []
+            carrinho = request.session['carrinho']
+            for x in range(quantity):
+                carrinho.append(produto_id)
+            request.session['carrinho'] = carrinho
+            pprint(carrinho)
+            return redirect('todos_produtos')
     else:
         form = request.POST
         return render(request, 'adicionar_carrinho.html', {'form': form, 'stock': stock})
