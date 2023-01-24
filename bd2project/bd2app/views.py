@@ -172,7 +172,7 @@ def novo_produto(request):
         cor = data.get("cor")
         stock = int(data.get("stock"))
         categoria = data.get("categoria")
-        preco_com_desconto = Decimal128(mul(preco,desconto))
+        preco_com_desconto = float(mul(preco,desconto))
         novo_produto_insert(nome, preco, marca, cor, imagem,
                             descricao, stock, desconto, categoria, preco_com_desconto)
         return redirect('todos_produtos')
@@ -206,6 +206,8 @@ def desativar_produto(request, produto_id):
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
             desativar_produto_other(produto_id)
+        if getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+            return redirect('homepage_comerciantetipo1')
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -480,7 +482,7 @@ def editar_produto(request, produto_id):
         cor = data.get("cor")
         stock = int(data.get("stock"))
         categoria = data.get("categoria")
-        preco_com_desconto = Decimal128(mul(preco,desconto))
+        preco_com_desconto = float(mul(preco,desconto))
         # update the document in the mongodb collection
         collection = bd['produtos']
         collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria, "preco_com_desconto": preco_com_desconto}})
@@ -576,6 +578,8 @@ def ativar_produto(request, produto_id):
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
             ativar_produto_other(produto_id)
+        if getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+            return redirect('homepage_comerciantetipo1')
         return redirect('todos_produtos')
     else:
         form = request.POST
