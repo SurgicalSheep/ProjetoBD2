@@ -496,6 +496,7 @@ def decrement_quantity(request, id_carrinho, id_produto):
 #         return 1
 
 def homepage_comerciantetipo1(request):
+        number_users()
     #if request.method == 'GET':
         products = todos_produtos_other()
         return render(request, "homepage_comerciantestipo1.html", {'products': products})
@@ -595,3 +596,23 @@ def rejeitar_pedidos_fornecedor(request, id_pedidofornecedor):
 
 def out_of_stock(request):
     return render(request, 'out_of_stock.html')
+
+def number_sells_per_day():
+    cursor = connection.cursor()
+    cursor.execute("select * from n_sells_per_day()")
+    results = cursor.fetchall()
+    #for x in results:
+        #print(x[0])
+        #print(x[1])
+    return 0
+
+def number_users():
+    collection = bd['utilizadores']
+    n_users = collection.count_documents({'active': True, 'approved': True})
+    print(n_users)
+    return 0
+
+
+    
+
+
