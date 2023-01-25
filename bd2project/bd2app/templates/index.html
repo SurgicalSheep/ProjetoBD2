@@ -13,18 +13,28 @@
         <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: rgb(248, 236, 245);">
             <div class="card-body">
 
-                <img src="{{produtos_promocao.imagem}}" style="height:50%;" class="card-img-top" alt="imagem não disponível"
-                onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+                <img src="{{produtos_promocao.imagem}}" style="height:50%;" class="card-img-top"
+                    alt="imagem não disponível"
+                    onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
                 <h6 class="card-title">{{produtos_promocao.nome}}</h6>
                 {% if produtos_promocao.desconto == 0 %}
-                <h6 class="card-title">Preço unitário: {{produtos_promocao.preco}}€ , Desconto: {{produtos_promocao.desconto}} %, Stock:
+                <h6 class="card-title">Preço unitário: {{produtos_promocao.preco}}€ , Desconto:
+                    {{produtos_promocao.desconto}} %, Stock:
                     {{produtos_promocao.stock}}</h6>
                 {% else %}
-                <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{produtos_promocao.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{produtos_promocao.preco_com_desconto|floatformat:2}} € </b><br> Desconto: {{produtos_promocao.desconto}} %, Stock:
+                <h6 class="card-title">Preço unitário: <del
+                        style="color: rgb(143, 143, 143);">{{produtos_promocao.preco}}€</del>,<b
+                        style="color: rgb(0, 0, 0)"> {{produtos_promocao.preco_com_desconto|floatformat:2}} € </b><br>
+                    Desconto: {{produtos_promocao.desconto}} %, Stock:
                     {{produtos_promocao.stock}}</h6>
                 {% endif %}
-                <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}/{{produtos_promocao.desconto}}/{{produtos_promocao.nome}}/{{produtos_promocao.preco_com_desconto}}/{{produtos_promocao.imagem}}"
-                    class="btn btn-success">Comprar</a>
+
+                {% if produtos_promocao.stock > 0 %}
+                <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar</a>
+                {% else %}
+                <a class="btn btn-warning">Indisponível</a>
+                {% endif %}
+
                 <a href="/produto/{{produtos_promocao.id}}/" class="btn btn-primary">Visualizar</a>
             </div>
         </div>
@@ -42,18 +52,28 @@
         <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: rgb(248, 236, 245);">
             <div class="card-body">
 
-                <img src="{{produtos_mais_vendidos.imagem}}" style="height:50%;" class="card-img-top" alt="imagem não disponível"
-                onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+                <img src="{{produtos_mais_vendidos.imagem}}" style="height:50%;" class="card-img-top"
+                    alt="imagem não disponível"
+                    onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
                 <h6 class="card-title">{{produtos_mais_vendidos.nome}}</h6>
                 {% if produtos_mais_vendidos.desconto == 0 %}
-                <h6 class="card-title">Preço unitário: {{produtos_mais_vendidos.preco}}€ , Desconto: {{produtos_mais_vendidos.desconto}} %, Stock:
+                <h6 class="card-title">Preço unitário: {{produtos_mais_vendidos.preco}}€ , Desconto:
+                    {{produtos_mais_vendidos.desconto}} %, Stock:
                     {{produtos_mais_vendidos.stock}}</h6>
                 {% else %}
-                <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{produtos_mais_vendidos.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{produtos_mais_vendidos.preco_com_desconto|floatformat:2}} € </b><br> Desconto: {{product.desconto}} %, Stock:
+                <h6 class="card-title">Preço unitário: <del
+                        style="color: rgb(143, 143, 143);">{{produtos_mais_vendidos.preco}}€</del>,<b
+                        style="color: rgb(0, 0, 0)"> {{produtos_mais_vendidos.preco_com_desconto|floatformat:2}} €
+                    </b><br> Desconto: {{produtos_mais_vendidos.desconto}} %, Stock:
                     {{produtos_mais_vendidos.stock}}</h6>
                 {% endif %}
-                <a href="/produto/adicionar_carrinho/{{produtos_mais_vendidos.id}}/{{produtos_mais_vendidos.desconto}}/{{produtos_mais_vendidos.nome}}/{{produtos_mais_vendidos.preco_com_desconto}}/{{produtos_mais_vendidos.imagem}}"
-                    class="btn btn-success">Comprar</a>
+
+                {% if produtos_mais_vendidos.stock > 0 %}
+                <a href="/produto/adicionar_carrinho/{{produtos_mais_vendidos.id}}" class="btn btn-success">Comprar</a>
+                {% else %}
+                <a class="btn btn-warning">Indisponível</a>
+                {% endif %}
+
                 <a href="/produto/{{produtos_mais_vendidos.id}}/" class="btn btn-primary">Visualizar</a>
             </div>
         </div>
@@ -68,12 +88,14 @@
     <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px">
         {% for categorias in categorias %}
 
-        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: rgb(248, 236, 245);" cursor:pointer; onmouseover='this.style.cursor="pointer"' onclick="location.href='/categoria/{{categorias}}/';">
-            <div class="card-body" style="display: flex; align-items: center; justify-content: center;text-align: center;">
+        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: rgb(248, 236, 245);" cursor:pointer;
+            onmouseover='this.style.cursor="pointer"' onclick="location.href='/categoria/{{categorias}}/';">
+            <div class="card-body"
+                style="display: flex; align-items: center; justify-content: center;text-align: center;">
                 <h4 class="card-title">{{categorias}}</h4>
             </div>
         </div>
-        
+
         {% endfor %}
     </div>
 </div>

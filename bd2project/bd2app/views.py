@@ -15,6 +15,7 @@ from django.db import connection
 from django.http import JsonResponse
 from bson.objectid import ObjectId
 from .templatetags.math_extras import mul
+from django.contrib import messages #import messages
 # Create your views here.
 
 def index(request):
@@ -238,13 +239,17 @@ def todos_pedidos(request):
 #@login_required
 def carrinho(request):
     carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
-    itens = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto') #nao esquecer que o id do carrinho vai ter que ser sempre igual ao do cliente
-    return render(request, 'carrinho.html', {'itens': itens, 'carrinho': carrinho})
+    itens_pg = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto') #nao esquecer que o id do carrinho vai ter que ser sempre igual ao do cliente
+    col = bd["produtos"]
+    product_ids = [item.id_produto for item in itens_pg]
+    itens2 = col.find({'id': {'$in': product_ids}}) 
+    return render(request, 'carrinho.html', {'itens2': itens2,'itens_pg':itens_pg, 'carrinho': carrinho})
 
 
-def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produto_preco_com_desconto,produto_imagem,):
+def adicionar_carrinho(request, produto_id):
     col = bd["produtos"]
     stock = col.find_one({"id": produto_id})["stock"]
+    produto_preco_com_desconto = col.find_one({"id": produto_id})["preco_com_desconto"]
     if request.method == 'POST':
         quantity = int(request.POST.get('quantidade'))
         #no form ja meti verificacao mas convem ter verificacao no backend tbm entao
@@ -263,10 +268,7 @@ def adicionar_carrinho(request, produto_id, produto_desconto,produto_nome,produt
                     'id_carrinho': request.user.id,
                     'id_produto': produto_id,
                     'quantidade': quantity,
-                    'nome_produto': produto_nome,
                     'preco_produto': produto_preco_com_desconto,
-                    'imagem_produto': produto_imagem,
-                    'desconto_produto': produto_desconto,
                 })
                 item.save()
                 return redirect('todos_produtos')
@@ -321,10 +323,7 @@ def inserir_pedido(id_carrinho):
             id_pedido=id_pedido_x,
             id_produto=item_carrinho.id_produto,
             quantidade=item_carrinho.quantidade,
-            nome_produto=item_carrinho.nome_produto,
-            preco_produto=item_carrinho.preco_produto,
-            imagem_produto=item_carrinho.imagem_produto,
-            desconto_produto=item_carrinho.desconto_produto
+            preco_produto=item_carrinho.preco_produto
     )
         # Update stock in MongoDB collection
         col = bd["produtos"]
@@ -372,7 +371,7 @@ def rejeitar_utilizador(request, id_user):
 def categoria(request, categoria):
     col = bd["produtos"]
     products = col.find({"categoria": categoria})
-    print(products)
+    #print(products)
     return render(request, 'categoria.html', {'products': products, 'categoria': categoria})
 
 def homepage_fornecedores(request):
@@ -500,10 +499,16 @@ def editar_produto(request, produto_id):
         return render(request, 'editar_produto.html', {'produto': produto})
 
 def increment_quantity(request, id_carrinho, id_produto):
+    col = bd['produtos']
+    stock = col.find_one({"id": id_produto})["stock"]
     item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
-    item.quantidade += 1
-    item.save()
     carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    if item.quantidade < stock:
+        item.quantidade += 1
+        item.save()
+        carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    else:
+        messages.warning(request, 'Stock máximo atingido!') #not working
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
 
 def decrement_quantity(request, id_carrinho, id_produto):
@@ -553,10 +558,13 @@ def encomendas_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado__in=["Encomenda Enviada!", "Encomenda Cancelada!"]).order_by('-data')
     return render(request, 'encomendas_cliente.html', {'todos': todos})
 
-def encomenda(request,id_encomenda):
+def encomenda(request,id_encomenda): #falta checkar esta
     todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda)
     encomenda = Itens_Pedido.objects.filter(id_pedido=id_encomenda)
-    return render(request, 'encomenda.html', {'encomenda': encomenda,'todos': todos})
+    col = bd["produtos"]
+    product_ids = [item.id_produto for item in encomenda]
+    itens2 = col.find({'id': {'$in': product_ids}}) 
+    return render(request, 'encomenda.html', {'encomenda': encomenda,'todos': todos,'itens2': itens2})
 
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado="Em Processamento!").order_by('-data')

@@ -10,26 +10,33 @@
             <b>{{products.nome}}</b>
         </div>
         <br>
-        <b>ID do produto:</b> {{products.id}}
+        <b>ID do produto :</b> {{products.id}}
         <br>
-        <b>Categoria:</b> {{products.categoria}}
+        <b>Categoria :</b> {{products.categoria}}
         <br>
-        <b>Descrição:</b> {{products.descricao}}
+        <b>Descrição :</b> {{products.descricao}}
         <br>
-        <b>Cor:</b> {{products.cor}}
+        <b>Cor :</b> {{products.cor}}
         <br>
-        <b>Marca:</b> {{products.marca}}
+        <b>Marca :</b> {{products.marca}}
         <br>
-        <b>Preco sem desconto:</b> <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del>
+        <b>Preço :</b> <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del> <b>{{products.preco_com_desconto|floatformat:2}}€</b>
         <br>
-        <b>Preco com desconto:</b> <b>{{products.preco_com_desconto|floatformat:2}}€</b>
+        <b>Desconto :</b> {{products.desconto}} %
         <br>
-        <b>Desconto:</b> {{products.desconto}} %
+        <b>Stock :</b> {{products.stock}}
         <br>
-        <b>Stock:</b> {{products.stock}}
-        <br>
-        <a href="#" class="btn btn-success">Comprar</a>
-        <a href="#" class="btn btn-danger">Apagar</a> #apenas disponivel com cargo especifico
+        <a href="/produto/adicionar_carrinho/{{products.id}}" class="btn btn-success">Comprar</a>
+        {% if request.session %}
+            {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+            {% if products.active == 1 %}
+            <a href="/produto/desativar_produto/{{products.id}}" 
+                class="btn btn-danger">Desativar</a>
+            {% else %}
+            <a href="/produto/ativar_produto/{{products.id}}" class="btn btn-info">Ativar</a>
+            {% endif %}
+            {% endif %}
+            {% endif %}
     </div>
 
 </div>
