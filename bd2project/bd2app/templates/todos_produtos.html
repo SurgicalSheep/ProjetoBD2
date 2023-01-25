@@ -8,7 +8,7 @@
 
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
     {% for product in products %}
-    {% if product.active or request.session.tipouser == "Administrador" %}
+    {% if product.active or request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
         {% if product.active == 0 %}
         <div class="card" style="width: 18rem;margin-left: 1%;background-color: #f8d7d7;border-radius: 10px;">
         {% else %}

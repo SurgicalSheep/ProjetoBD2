@@ -97,13 +97,18 @@
     }
 
     .dropdown {
-    z-index: 9999; /* set to a high value to ensure it's always above the carousel */
-}
+      z-index: 9999;
+      /* set to a high value to ensure it's always above the carousel */
+    }
 
-.carousel {
-    z-index: 1; /* set to a lower value to ensure it's always below the dropdown */
-}
+    .carousel {
+      z-index: 1;
+      /* set to a lower value to ensure it's always below the dropdown */
+    }
 
+    #icone_carrinho:hover img {
+    content: url(https://i.ibb.co/Tt1mY0c/carrinho-laranja.png);
+}
   </style>
 </head>
 
@@ -124,7 +129,8 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if not request.user.is_authenticated %}
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'registro' %}">Registro Utilizador</a>
           </li>
           {% endif %}
@@ -138,19 +144,23 @@
           {% endif %}
           {% endif %}
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'todos_users' %}">Apresentar todos os utilizadores</a>
           </li>
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'novo_produto' %}">Registro Produto</a>
           </li>
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'todos_produtos' %}">Apresentar todos os produtos</a>
           </li>
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'todos_pedidos' %}">Todos Pedidos</a>
           </li>
           <!-- <form>
@@ -159,24 +169,27 @@
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
-              href="{% url 'carrinho' %}"><img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt=""
-                width="24" height="24" class="d-inline-block align-text-top"></a>
+              href="{% url 'carrinho' %}" id="icone_carrinho"><img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="" width="24"
+                height="24" class="d-inline-block align-text-top"></a>
           </li>
           {% if not request.user.is_authenticated %}
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'loginUser' %}">Login</a>
           </li>
           {% endif %}
           {% if request.user.is_authenticated %}
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'encomendas_cliente' %}">Encomendas Cliente</a>
           </li>
           {% endif %}
           {% if request.user.is_authenticated %}
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'pedidos_cliente' %}">Pedidos Não Finalizados</a>
           </li>
           {% endif %}
@@ -198,7 +211,7 @@
               <div id="myDropdown" class="dropdown-content">
                 <a href="{% url 'verPerfil' %}" style="font-family: Merriweather Sans;">Ver Perfil</a>
                 <a href="{% url 'editarPerfil' %}" style="font-family: Merriweather Sans;">Editar Perfil</a>
-                <a href="{% url 'mudarPass' %}"style="font-family: Merriweather Sans;">Mudar Password</a>
+                <a href="{% url 'mudarPass' %}" style="font-family: Merriweather Sans;">Mudar Password</a>
                 <a href="{% url 'logoutUser' %}" style="font-family: Merriweather Sans;">Logout</a>
               </div>
             </div>
