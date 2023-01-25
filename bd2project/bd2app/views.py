@@ -358,13 +358,14 @@ def utilizador_por_confirmar(request):
 
 def aceitar_utilizador(request, id_user):
     collection = bd['utilizadores']
-    collection.update_one({"id": id_user}, {"$set": {"approved": True}})
+    collection.update_one({"id": id_user}, {"$set": {"approved": True, "id_utilizador": request.user.id}})
     return redirect('utilizador_por_confirmar')
 
 def rejeitar_utilizador(request, id_user):
     user = User.objects.filter(id=id_user)
     user.delete()
     collection = bd['utilizadores']
+    collection.update_one({"id": id_user}, {"$set": {"id_utilizador": request.user.id}})
     collection.delete_one({"id": id_user})
     return redirect('utilizador_por_confirmar')
 

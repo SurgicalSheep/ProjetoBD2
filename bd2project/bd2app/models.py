@@ -59,3 +59,10 @@ class PedidoFornecedor(models.Model):
     class Meta:
         managed = False
         db_table = 'pedidos_fornecedor'
+
+class Logs_plpgsql(models.Model):
+    id_log = models.AutoField(primary_key=True)
+    id_utilizador = models.IntegerField(null=False)
+    data = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(max_length=255, null=False)
+    nome_tabela = models.CharField(max_length=255, null=False)
