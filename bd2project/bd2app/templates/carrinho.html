@@ -1,7 +1,10 @@
 {% extends "navbar.html" %}
 {% load math_extras %}
 
+
+
 {% block content %}
+
 <div style="margin: auto;width: 50%;text-align: center;">
     <h2 style="margin-left: 1.5%;">Aqui tem o seu carrinho </h2>
     <h6 style="margin-left: 1.5%;" id="precocarrinho" data-precocarrinho="{{carrinho.preco_total}}"><u>Preço do
@@ -17,24 +20,25 @@
     <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
         <div class="card-body" style="text-align: center;">
             <img src="{{itens.imagem}}" style="height: 45%;" class="card-img-top" alt="...">
-                <h6 class="card-title">Nome do produto: {{itens.nome}}</h6>
-                <h6 class="card-title" id="preco{{itens.id}}" data-preco="{{itens.preco_com_desconto}}">Preço
-                    unitário: {{itens.preco_com_desconto}} € {% if item_pg.quantidade > 1 %}
-                    ({{itens.preco_com_desconto|multiply:item_pg.quantidade|floatformat:2}}€) {% endif %}</h6>
-                <h6 class="card-title">Desconto: {{itens.desconto}} %</h6>
-                <h6 class="card-title" data-item-id="{{itens.id}}">
-                    <label id="quantidade{{itens.id}}">Quantidade: {{item_pg.quantidade}}</label>
-                    <button class="increment" data-carrinho-id="{{carrinho.id_carrinho}}"
-                        data-item-id="{{itens.id}}">+</button>
-                    <button class="decrement" data-carrinho-id="{{carrinho.id_carrinho}}"
-                        data-item-id="{{itens.id}}">-</button>
-                </h6>
-                <form action="{% url 'remover_produto_carrinho' produto_id=itens.id %}" method="post">
-                    {% csrf_token %}
-                    <input type="submit" value="Remover">
-                </form>
+            <h6 class="card-title">Nome do produto: {{itens.nome}}</h6>
+            <h6 class="card-title" id="preco{{itens.id}}" data-preco="{{itens.preco_com_desconto}}">Preço
+                unitário: {{itens.preco_com_desconto}} € {% if item_pg.quantidade > 1 %}
+                ({{itens.preco_com_desconto|multiply:item_pg.quantidade|floatformat:2}}€) {% endif %}</h6>
+            <h6 class="card-title">Desconto: {{itens.desconto}} %</h6>
+            <h6 class="card-title" data-item-id="{{itens.id}}">
+                <label id="quantidade{{itens.id}}">Quantidade: {{item_pg.quantidade}}</label>
+                <button class="increment" data-carrinho-id="{{carrinho.id_carrinho}}"
+                    data-item-id="{{itens.id}}">+</button>
+                <button class="decrement" data-carrinho-id="{{carrinho.id_carrinho}}"
+                    data-item-id="{{itens.id}}">-</button>
+            </h6>
+            <form action="{% url 'remover_produto_carrinho' produto_id=itens.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Remover">
+            </form>
         </div>
     </div>
+
 
     {% endfor %}
 </div>

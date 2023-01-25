@@ -15,6 +15,7 @@ from django.db import connection
 from django.http import JsonResponse
 from bson.objectid import ObjectId
 from .templatetags.math_extras import mul
+from django.contrib import messages #import messages
 # Create your views here.
 
 def index(request):
@@ -497,10 +498,16 @@ def editar_produto(request, produto_id):
         return render(request, 'editar_produto.html', {'produto': produto})
 
 def increment_quantity(request, id_carrinho, id_produto):
+    col = bd['produtos']
+    stock = col.find_one({"id": id_produto})["stock"]
     item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
-    item.quantidade += 1
-    item.save()
     carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    if item.quantidade < stock:
+        item.quantidade += 1
+        item.save()
+        carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+    else:
+        messages.warning(request, 'Stock máximo atingido!') #not working
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
 
 def decrement_quantity(request, id_carrinho, id_produto):
