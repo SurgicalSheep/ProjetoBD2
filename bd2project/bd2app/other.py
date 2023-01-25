@@ -72,13 +72,13 @@ def updatePerfil(id_user, nome, email, morada):
     collection = bd['utilizadores']
     collection.update_one({"id": id_user}, {"$set": {"nome": nome, "morada": morada, "email": email}})
 
-def desativarUserMongo(id):
+def desativarUserMongo(id, idgestor):
     collection = bd['utilizadores']
-    collection.update_one({"id": id}, {"$set": {"active": False}})
+    collection.update_one({"id": id}, {"$set": {"active": False, "id_utilizador": idgestor}})
 
-def ativarUserMongo(id):
+def ativarUserMongo(id, idgestor):
     collection = bd['utilizadores']
-    collection.update_one({"id": id}, {"$set": {"active": True}})
+    collection.update_one({"id": id}, {"$set": {"active": True, "id_utilizador": idgestor}})
 
 def adicionarProdutoCarrinhoAnonimo(id):    
     #request.session['carrinho'].append(id)

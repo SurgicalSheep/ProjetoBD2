@@ -452,7 +452,7 @@ def desativarUser(request, id_user):
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         return redirect('index')
     if request.method == 'POST':
-        desativarUserMongo(id_user)
+        desativarUserMongo(id_user, request.user.id)
         return redirect('editarUsers')
     return render(request,'desativarUser.html' ,{'id_user': id_user})
 
@@ -461,7 +461,7 @@ def ativarUser(request, id_user):
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         return redirect('mudarEstadoClientes')
     if request.method == 'POST':
-        ativarUserMongo(id_user)
+        ativarUserMongo(id_user, request.user.id)
         return redirect('editarUsers')
     return render(request,'ativarUser.html' ,{'id_user': id_user})
     
