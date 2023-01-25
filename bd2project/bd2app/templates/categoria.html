@@ -21,7 +21,7 @@
                 <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{products.preco_com_desconto|floatformat:2}} € </b><br> Desconto: {{products.desconto}} %, Stock:
                     {{products.stock}}</h6>
                 {% endif %}
-                <a href="/produto/adicionar_carrinho/{{products.id}}/{{products.desconto}}/{{products.nome}}/{{products.preco_com_desconto}}/{{products.imagem}}"
+                <a href="/produto/adicionar_carrinho/{{products.id}}"
                     class="btn btn-success">Comprar</a>
                 <a href="/produto/{{products.id}}/" class="btn btn-primary">Visualizar</a>
             </div>

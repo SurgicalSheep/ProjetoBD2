@@ -15,7 +15,9 @@ def mul(value, arg):
     x = decimal_value * decimal_arg
     return x / 100
 
-
+@register.filter(name='zip')
+def zip_lists(a, b):
+    return zip(a, b)
 
 
 

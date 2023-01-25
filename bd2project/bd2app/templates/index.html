@@ -23,7 +23,7 @@
                 <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{produtos_promocao.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{produtos_promocao.preco_com_desconto|floatformat:2}} € </b><br> Desconto: {{produtos_promocao.desconto}} %, Stock:
                     {{produtos_promocao.stock}}</h6>
                 {% endif %}
-                <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}/{{produtos_promocao.desconto}}/{{produtos_promocao.nome}}/{{produtos_promocao.preco_com_desconto}}/{{produtos_promocao.imagem}}"
+                <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}"
                     class="btn btn-success">Comprar</a>
                 <a href="/produto/{{produtos_promocao.id}}/" class="btn btn-primary">Visualizar</a>
             </div>
@@ -52,7 +52,7 @@
                 <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{produtos_mais_vendidos.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{produtos_mais_vendidos.preco_com_desconto|floatformat:2}} € </b><br> Desconto: {{product.desconto}} %, Stock:
                     {{produtos_mais_vendidos.stock}}</h6>
                 {% endif %}
-                <a href="/produto/adicionar_carrinho/{{produtos_mais_vendidos.id}}/{{produtos_mais_vendidos.desconto}}/{{produtos_mais_vendidos.nome}}/{{produtos_mais_vendidos.preco_com_desconto}}/{{produtos_mais_vendidos.imagem}}"
+                <a href="/produto/adicionar_carrinho/{{produtos_mais_vendidos.id}}"
                     class="btn btn-success">Comprar</a>
                 <a href="/produto/{{produtos_mais_vendidos.id}}/" class="btn btn-primary">Visualizar</a>
             </div>
