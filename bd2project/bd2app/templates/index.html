@@ -4,28 +4,31 @@
 <div style="margin: auto;width: 100%">
     <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="https://img001.prntscr.com/file/img001/XGnfx9i4Scmlm6gjxWYaAQ.png" style="height: 15em;" class="d-block w-100" alt="...">
-          </div>
-          <div class="carousel-item">
-            <img src="https://www.tooltyp.com/wp-content/uploads/2014/10/1900x920-8-beneficios-de-usar-imagenes-en-nuestros-sitios-web.jpg" style="height: 15em;" class="d-block w-100" alt="...">
-          </div>
-          <div class="carousel-item">
-            <img src="https://www.bitmag.com.br/wp-content/uploads/2022/05/a-cute-corgi-lives-in-a-house-made-out-of-sushi-1200x675.jpg" style="height: 15em;" class="d-block w-100" alt="...">
-          </div>
+            <div class="carousel-item active">
+                <img src="https://img001.prntscr.com/file/img001/XGnfx9i4Scmlm6gjxWYaAQ.png" style="height: 15em;"
+                    class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="https://www.tooltyp.com/wp-content/uploads/2014/10/1900x920-8-beneficios-de-usar-imagenes-en-nuestros-sitios-web.jpg"
+                    style="height: 15em;" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="https://www.bitmag.com.br/wp-content/uploads/2022/05/a-cute-corgi-lives-in-a-house-made-out-of-sushi-1200x675.jpg"
+                    style="height: 15em;" class="d-block w-100" alt="...">
+            </div>
         </div>
-      </div>
+    </div>
 </div>
 <div style="margin: 1%;">
-    <h3 style="text-align: left;">Produtos em promoção!</h3>
+    <h3 style="text-align: left;font-family: 'Secular One';">Produtos em promoção!</h3>
 
     <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px">
         {% for produtos_promocao in produtos_promocao %}
 
-        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: rgb(248, 236, 245);">
+        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
             <div class="card-body">
 
-                <img src="{{produtos_promocao.imagem}}" style="height:50%;" class="card-img-top"
+                <img src="{{produtos_promocao.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top"
                     alt="imagem não disponível"
                     onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
                 <h6 class="card-title">{{produtos_promocao.nome}}</h6>
@@ -56,15 +59,15 @@
 </div>
 
 <div style="margin: 1%;">
-    <h3 style="text-align: left;">Produtos mais vendidos!</h3>
+    <h3 style="text-align: left;font-family: 'Secular One';">Produtos mais vendidos!</h3>
 
     <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px">
         {% for produtos_mais_vendidos in produtos_mais_vendidos %}
 
-        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: rgb(248, 236, 245);">
+        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
             <div class="card-body">
 
-                <img src="{{produtos_mais_vendidos.imagem}}" style="height:50%;" class="card-img-top"
+                <img src="{{produtos_mais_vendidos.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top"
                     alt="imagem não disponível"
                     onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
                 <h6 class="card-title">{{produtos_mais_vendidos.nome}}</h6>
@@ -95,13 +98,15 @@
 </div>
 
 <div style="margin: 1%;">
-    <h3 style="text-align: left;">Produtos por categorias</h3>
+    <h3 style="text-align: left;font-family: Secular One;">Produtos por categorias</h3>
 
     <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px">
         {% for categorias in categorias %}
 
-        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: rgb(248, 236, 245);" cursor:pointer;
-            onmouseover='this.style.cursor="pointer"' onclick="location.href='/categoria/{{categorias}}/';">
+        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px; cursor: pointer;"
+        onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
+        onclick="location.href='/categoria/{{categorias}}/';">
+
             <div class="card-body"
                 style="display: flex; align-items: center; justify-content: center;text-align: center;">
                 <h4 class="card-title">{{categorias}}</h4>

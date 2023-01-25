@@ -10,13 +10,13 @@
     {% for product in products %}
     {% if product.active or request.session.tipouser == "Administrador" %}
         {% if product.active == 0 %}
-        <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);border: 2px solid red;">
+        <div class="card" style="width: 18rem;margin-left: 1%;background-color: #f8d7d7;border-radius: 10px;">
         {% else %}
-        <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+        <div class="card" style="width: 18rem;margin-left: 1%;background-color: #def2f5;border-radius: 10px;">
         {% endif %}
         <div class="card-body">
 
-            <img src="{{product.imagem}}" style="height: 50%;" class="card-img-top" alt="imagem não disponível"
+            <img src="{{product.imagem}}" style="height: 50%;border-radius: 10px;" class="card-img-top" alt="imagem não disponível"
                 onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
             <h6 class="card-title">{{product.nome}}</h6>
             {% if product.desconto == 0 %}
