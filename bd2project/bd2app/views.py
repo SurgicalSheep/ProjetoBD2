@@ -140,6 +140,7 @@ def loginUser(request):
                         x+="]"
                         cursor.execute("call carrinho_anonimo(ARRAY"+x+","+str(user.id)+")")
                         del request.session['carrinho']
+                        del request.session['carrinhoAnonimo']
                     login(request,user)
                     return redirect("/")
                 else:
@@ -167,7 +168,7 @@ def novo_produto(request):
         nome = data.get("nome")
         descricao = data.get("descricao")
         imagem = data.get("imagem")
-        preco = Decimal128(data.get("preco"))
+        preco = float(data.get("preco"))
         desconto = int(data.get("desconto"))
         marca = data.get("marca")
         cor = data.get("cor")
@@ -238,12 +239,22 @@ def todos_pedidos(request):
 
 #@login_required
 def carrinho(request):
-    carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
-    itens_pg = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto') #nao esquecer que o id do carrinho vai ter que ser sempre igual ao do cliente
-    col = bd["produtos"]
-    product_ids = [item.id_produto for item in itens_pg]
-    itens2 = col.find({'id': {'$in': product_ids}}) 
-    return render(request, 'carrinho.html', {'itens2': itens2,'itens_pg':itens_pg, 'carrinho': carrinho})
+    if request.user.is_authenticated:
+        carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
+        itens_pg = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto') #nao esquecer que o id do carrinho vai ter que ser sempre igual ao do cliente
+        col = bd["produtos"]
+        product_ids = [item.id_produto for item in itens_pg]
+        itens2 = col.find({'id': {'$in': product_ids}}) 
+        return render(request, 'carrinho.html', {'itens2': itens2,'itens_pg':itens_pg, 'carrinho': carrinho})
+    else:
+        if not 'carrinhoAnonimo' in request.session:
+            request.session['carrinhoAnonimo'] = []
+        carrinhoAnonimo = request.session['carrinhoAnonimo']
+        precoTotal = 0
+        for x in carrinhoAnonimo:
+            precoTotal += x['preco_com_desconto'] * x['quantidade']
+        precoTotal = round(precoTotal, 2)
+        return render(request,'carrinhoAnonimo.html',{'carrinho':carrinhoAnonimo,'precoTotal':precoTotal})
 
 
 def adicionar_carrinho(request, produto_id):
@@ -276,11 +287,27 @@ def adicionar_carrinho(request, produto_id):
             #carrinho anonimo
             if 'carrinho' not in request.session:
                 request.session['carrinho'] = []
+            if 'carrinhoAnonimo' not in request.session:
+                request.session['carrinhoAnonimo'] = []
             carrinho = request.session['carrinho']
+            carrinhoAnonimo = request.session['carrinhoAnonimo']
+            produtoExists = False
+            col = bd['produtos']
+            for item in carrinhoAnonimo:
+                if item['id'] == produto_id:
+                    item["quantidade"] += quantity
+                    produtoExists = True
+                    break
+
+            
+            if not produtoExists:
+                produto = col.find_one({"id": produto_id})
+                del produto["_id"]
+                produto["quantidade"] = quantity
+                carrinhoAnonimo.append(produto)
             for x in range(quantity):
                 carrinho.append(produto_id)
             request.session['carrinho'] = carrinho
-            pprint(carrinho)
             return redirect('todos_produtos')
     else:
         form = request.POST
@@ -296,6 +323,21 @@ def remover_produto_carrinho(request, produto_id):
         context = {'form': form}
         return render(request, 'carrinho.html', context)
 
+def removerProdutoCarrinhoAnonimo(request, produto_id):
+    carrinhoAnonimo = request.session['carrinhoAnonimo']
+    if request.method == 'POST':
+        for x in carrinhoAnonimo:
+            if x['id'] == produto_id:
+                request.session['carrinhoAnonimo'].remove(x)
+                request.session.modified = True
+                break
+        return redirect('carrinho')
+    else:
+        form = request.POST
+        context = {'form': form}
+        return render(request, 'carrinhoAnonimo.html', context)
+
+@login_required
 def pagamento(request,id_carrinho):
     context = {}
     if request.method == 'POST':
@@ -518,6 +560,36 @@ def decrement_quantity(request, id_carrinho, id_produto):
         item.save()
     carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
+
+def incrementQuantityAnonimo(request, id_produto):
+    carrinhoAux = request.session['carrinhoAux']
+    col = bd['produtos']
+    produto = col.find_one({"id": id_produto})
+    item = None
+    for x in carrinhoAux:
+        if x['id_produto'] == id_produto:
+            if x['quantidade'] < produto["stock"]:
+                x['quantidade'] += 1
+                x['preco']+=produto['preco']
+                pprint(x['quantidade'])
+                item["quantidade"] = x["quantidade"]
+                item["preco_com_desconto"] = x["preco_com_desconto"]
+    else:
+        messages.warning(request, 'Stock máximo atingido!') #not working
+    return JsonResponse({'quantity': item["quantidade"],'total': item["preco_com_desconto"]})
+
+def decrementQuantityAnonimo(request, id_produto):
+    carrinhoAux = request.session['carrinhoAux']
+    col = bd['produtos']
+    produto = col.find_one({"id": id_produto})
+    item = None
+    for x in carrinhoAux:
+        if x['id_produto'] == id_produto:
+            if x['quantidade'] > 1:
+                x['quantidade'] -= 1
+                x['preco']-=produto['preco']
+                item = x
+    return JsonResponse({'quantity': item.quantidade,'total': item.preco_com_desconto})
 
 # def editar_preco_carrinho(request, id_produto):
 #     item = get_object_or_404(itens_carrinho_model, id_produto=id_produto)
