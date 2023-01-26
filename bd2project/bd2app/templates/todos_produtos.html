@@ -8,58 +8,118 @@
 
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
     {% for product in products %}
-    {% if product.active or request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
-        {% if product.active == 0 %}
-        <div class="card" style="width: 18rem;margin-left: 1%;background-color: #f8d7d7;border-radius: 10px;">
-        {% else %}
-        <div class="card" style="width: 18rem;margin-left: 1%;background-color: #def2f5;border-radius: 10px;">
-        {% endif %}
+
+    <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
         <div class="card-body">
 
-            <img src="{{product.imagem}}" style="height: 50%;border-radius: 10px;" class="card-img-top" alt="imagem não disponível"
+
+            <img src="{{product.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top imagensitens"
+                alt="imagem não disponível"
                 onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
-            <h6 class="card-title">{{product.nome}}</h6>
-            {% if product.desconto == 0 %}
-            <h6 class="card-title">Preço unitário: {{product.preco}}€ <br> Desconto: {{product.desconto}} %, Stock:
-                {{product.stock}}</h6>
-            {% else %}
-            <h6 class="card-title">Preço unitário: <del style="color: rgb(143, 143, 143);">{{product.preco}}€</del>,<b style="color: rgb(0, 0, 0)"> {{ product.preco_com_desconto|floatformat:2 }} € </b><br> Desconto: {{product.desconto}} %, Stock:
-                {{product.stock}}</h6>
-            {% endif %}
+            <h5 class="card-title">{{product.nome}}</h5>
 
-            {% if product.active %}
-            {% if product.stock > 0 %}
-            <a href="/produto/adicionar_carrinho/{{product.id}}"
-                class="btn btn-success">Comprar</a>
-            {% else %}
-            <a class="btn btn-secondary">Indisponível</a>
-            {% endif %}
-            {% endif %}
-
+            {% if product.desconto == 0 %} <!-- desconto 0 -->
+            {% if product.stock > 0 %}<!-- desconto 0 com stock-->
+            <h6>{{product.categoria}}</h6>
+            <label style="color: green;"><b>✔️ Em stock ({{product.stock}})</b></label>
+            <h3 class="card-title"><b
+                    style="color: #FA7F08;">{{product.preco_com_desconto|floatformat:2}}€</b></h3>
+            <a href="/produto/adicionar_carrinho/{{product.id}}" class="btn btn-success">Comprar</a>
             <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
-
-
             {% if request.session %}
             {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
             <a href="/produto/editar_produto/{{product.id}}" style="margin-top: 1.7%;"
                 class="btn btn-warning">Editar</a>
+                {% if request.session %}
+                {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+                {% if product.active == 1 %}
+                <a href="/produto/desativar_produto/{{product.id}}" style="margin-top: 1.7%;"
+                    class="btn btn-danger">Desativar</a>
+                {% else %}
+                <a href="/produto/ativar_produto/{{product.id}}" style="margin-top: 1.7%;" class="btn btn-info">Ativar</a>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+            {% endif %}
+            {% endif %}
+            {% else %}<!-- desconto 0 sem stock-->
+            <h6>{{product.categoria}}</h6>
+            <label><b style="color: #F2CB05;">⚠️ Indisponível</b></label>
+            <!-- <h3><br><br></h3> -->
+            <a class="btn btn-secondary">Indisponível</a>
+            <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
+            {% if request.session %}
+            {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+            <a href="/produto/editar_produto/{{product.id}}" style="margin-top: 1.7%;"
+                class="btn btn-warning">Editar</a>
+                {% if request.session %}
+                {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+                {% if product.active == 1 %}
+                <a href="/produto/desativar_produto/{{product.id}}" style="margin-top: 1.7%;"
+                    class="btn btn-danger">Desativar</a>
+                {% else %}
+                <a href="/produto/ativar_produto/{{product.id}}" style="margin-top: 1.7%;" class="btn btn-info">Ativar</a>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+            {% endif %}
             {% endif %}
             {% endif %}
 
+            {% else %}
+            {% if product.stock > 0 %} <!-- desconto maior que 0. stock existente -->
+            <h6>{{product.categoria}}</h6>
+            <label><b style="color: green;">✔️ Em stock ({{product.stock}})</b> <b
+                    style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{product.desconto}}%</b></label>
+            <h3 class="card-title"><b
+                    style="color: #FA7F08;">{{product.preco_com_desconto|floatformat:2}}€</b> <label
+                    style="color: #7c7c7c;font-size: medium;"><del>{{product.preco}}€</del></label>
+            </h3>
+            <a href="/produto/adicionar_carrinho/{{product.id}}" class="btn btn-success">Comprar</a>
+            <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
             {% if request.session %}
             {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
-            {% if product.active == 1 %}
-            <a href="/produto/desativar_produto/{{product.id}}" style="margin-top: 1.7%;"
-                class="btn btn-danger">Desativar</a>
-            {% else %}
-            <a href="/produto/ativar_produto/{{product.id}}" style="margin-top: 1.7%;" class="btn btn-info">Ativar</a>
+            <a href="/produto/editar_produto/{{product.id}}" style="margin-top: 1.7%;"
+                class="btn btn-warning">Editar</a>
+                {% if request.session %}
+                {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+                {% if product.active == 1 %}
+                <a href="/produto/desativar_produto/{{product.id}}" style="margin-top: 1.7%;"
+                    class="btn btn-danger">Desativar</a>
+                {% else %}
+                <a href="/produto/ativar_produto/{{product.id}}" style="margin-top: 1.7%;" class="btn btn-info">Ativar</a>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+            {% endif %}
+            {% endif %}
+            {% else %}<!-- desconto maior que 0. sem stock -->
+            <h6>{{product.categoria}}</h6>
+            <label><b style="color: #F2CB05;">⚠️ Indisponível</b></label>
+            <a class="btn btn-secondary">Indisponível</a>
+            <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
+            {% if request.session %}
+            {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+            <a href="/produto/editar_produto/{{product.id}}" style="margin-top: 1.7%;"
+                class="btn btn-warning">Editar</a>
+                {% if request.session %}
+                {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+                {% if product.active == 1 %}
+                <a href="/produto/desativar_produto/{{product.id}}" style="margin-top: 1.7%;"
+                    class="btn btn-danger">Desativar</a>
+                {% else %}
+                <a href="/produto/ativar_produto/{{product.id}}" style="margin-top: 1.7%;" class="btn btn-info">Ativar</a>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+            {% endif %}
             {% endif %}
             {% endif %}
             {% endif %}
 
         </div>
     </div>
-    {% endif %}
+
     {% endfor %}
 </div>
 {% endblock %}

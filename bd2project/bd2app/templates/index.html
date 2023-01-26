@@ -44,7 +44,7 @@
                 <label style="color: green;"><b>✔️ Em stock ({{produtos_promocao.stock}})</b></label>
                 <h3 class="card-title"><b
                         style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b></h3>
-                <a href="/produto/adicionar_carrinho/{{product.id}}" class="btn btn-success">Comprar</a>
+                <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar</a>
                 {% else %}<!-- desconto 0 sem stock-->
                 <h6>{{produtos_promocao.categoria}}</h6>
                 <label style="color: yellow;">⚠️ Indisponível</label>

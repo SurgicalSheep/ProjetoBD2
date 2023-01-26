@@ -1,8 +1,6 @@
 {% extends "navbar.html" %}
 {% load math_extras %}
 
-
-
 {% block content %}
 
 <div style="margin: auto;width: 50%;text-align: center;">
@@ -17,24 +15,31 @@
 
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
     {% for itens, item_pg in itens2|zip:itens_pg %}
-    <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+    <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
         <div class="card-body" style="text-align: center;">
-            <img src="{{itens.imagem}}" style="height: 45%;" class="card-img-top" alt="...">
+            <img src="{{itens.imagem}}" style="height: 45%;border-radius: 10px;cursor: pointer;" class="card-img-top"
+                alt="imagem não disponível"
+                onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
             <h6 class="card-title">Nome do produto: {{itens.nome}}</h6>
-            <h6 class="card-title" id="preco{{itens.id}}" data-preco="{{itens.preco_com_desconto}}">Preço
-                unitário: {{itens.preco_com_desconto}} € {% if item_pg.quantidade > 1 %}
-                ({{itens.preco_com_desconto|multiply:item_pg.quantidade|floatformat:2}}€) {% endif %}</h6>
-            <h6 class="card-title">Desconto: {{itens.desconto}} %</h6>
+
+            <label> <b
+                    style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{itens.desconto}}%</b></label>
+            <h3 class="card-title"><b
+                    style="color: #FA7F08;">{{itens.preco_com_desconto|floatformat:2}}€</b> <label
+                    style="color: #7c7c7c;font-size: medium;"><del>{{itens.preco}}€</del></label>
+            </h3>
+
+            
             <h6 class="card-title" data-item-id="{{itens.id}}">
                 <label id="quantidade{{itens.id}}">Quantidade: {{item_pg.quantidade}}</label>
-                <button class="increment" data-carrinho-id="{{carrinho.id_carrinho}}"
-                    data-item-id="{{itens.id}}">+</button>
-                <button class="decrement" data-carrinho-id="{{carrinho.id_carrinho}}"
-                    data-item-id="{{itens.id}}">-</button>
+                <button class="increment btn-primary" data-carrinho-id="{{carrinho.id_carrinho}}"
+                    data-item-id="{{itens.id}}" style="text-align: center;">+</button>
+                <button class="decrement btn-primary" data-carrinho-id="{{carrinho.id_carrinho}}"
+                    data-item-id="{{itens.id}}" style="text-align: center;width: 12.5%;">-</button>
             </h6>
             <form action="{% url 'remover_produto_carrinho' produto_id=itens.id %}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Remover">
+                <input type="submit" class="btn btn-danger" value="Remover">
             </form>
         </div>
     </div>
