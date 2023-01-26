@@ -518,7 +518,7 @@ def editar_produto(request, produto_id):
         nome = data.get("nome")
         descricao = data.get("descricao")
         imagem = data.get("imagem")
-        preco = Decimal128(data.get("preco"))
+        preco = float(data.get("preco"))
         desconto = int(data.get("desconto"))
         marca = data.get("marca")
         cor = data.get("cor")

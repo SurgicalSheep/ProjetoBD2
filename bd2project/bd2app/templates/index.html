@@ -28,29 +28,44 @@
         <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
             <div class="card-body">
 
-                <img src="{{produtos_promocao.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top"
-                    alt="imagem não disponível"
+                <img src="{{produtos_promocao.imagem}}" style="height:50%;border-radius: 10px;"
+                    class="card-img-top" alt="imagem não disponível"
                     onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
-                <h6 class="card-title">{{produtos_promocao.nome}}</h6>
-                {% if produtos_promocao.desconto == 0 %}
-                <h6 class="card-title">Preço unitário: {{produtos_promocao.preco}}€ , Desconto:
-                    {{produtos_promocao.desconto}} %, Stock:
-                    {{produtos_promocao.stock}}</h6>
-                {% else %}
-                <h6 class="card-title">Preço unitário: <del
-                        style="color: rgb(143, 143, 143);">{{produtos_promocao.preco}}€</del>,<b
-                        style="color: rgb(0, 0, 0)"> {{produtos_promocao.preco_com_desconto|floatformat:2}} € </b><br>
-                    Desconto: {{produtos_promocao.desconto}} %, Stock:
-                    {{produtos_promocao.stock}}</h6>
-                {% endif %}
+                <h5 class="card-title">{{produtos_promocao.nome}}</h5>
 
-                {% if produtos_promocao.stock > 0 %}
-                <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar</a>
-                {% else %}
+                {% if produtos_promocao.desconto == 0 %} <!-- desconto 0 -->
+                {% if produtos_promocao.stock > 0 %}<!-- desconto 0 com stock-->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label style="color: green;"><b>✔️ Em stock ({{produtos_promocao.stock}})</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b></h3>
+                <a href="/produto/adicionar_carrinho/{{product.id}}" class="btn btn-success">Comprar</a>
+                <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
+                {% else %}<!-- desconto 0 sem stock-->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label style="color: yellow;">⚠️ Indisponível</label>
                 <a class="btn btn-warning">Indisponível</a>
+                <a href="/produto/{{product.id}}/" class="btn btn-primary">Visualizar</a>
                 {% endif %}
 
+                {% else %}
+                {% if produtos_promocao.stock > 0 %} <!-- desconto maior que 0. stock existente -->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label><b style="color: green;">✔️ Em stock ({{produtos_promocao.stock}})</b> <b
+                        style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{produtos_promocao.desconto}}%</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #7c7c7c;font-size: medium;"><del>{{produtos_promocao.preco}}€</del></label>
+                </h3>
+                <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar</a>
                 <a href="/produto/{{produtos_promocao.id}}/" class="btn btn-primary">Visualizar</a>
+                {% else %}<!-- desconto maior que 0. sem stock -->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label style="color: yellow;">⚠️ Indisponível</label>
+                <a class="btn btn-warning">Indisponível</a>
+                <a href="/produto/{{produtos_promocao.id}}/" class="btn btn-primary">Visualizar</a>
+                {% endif %}
+                {% endif %}
             </div>
         </div>
 
@@ -67,29 +82,43 @@
         <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
             <div class="card-body">
 
-                <img src="{{produtos_mais_vendidos.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top"
-                    alt="imagem não disponível"
+                <img src="{{produtos_mais_vendidos.imagem}}" style="height:50%;border-radius: 10px;"
+                    class="card-img-top" alt="imagem não disponível"
                     onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
-                <h6 class="card-title">{{produtos_mais_vendidos.nome}}</h6>
-                {% if produtos_mais_vendidos.desconto == 0 %}
-                <h6 class="card-title">Preço unitário: {{produtos_mais_vendidos.preco}}€ , Desconto:
-                    {{produtos_mais_vendidos.desconto}} %, Stock:
-                    {{produtos_mais_vendidos.stock}}</h6>
-                {% else %}
-                <h6 class="card-title">Preço unitário: <del
-                        style="color: rgb(143, 143, 143);">{{produtos_mais_vendidos.preco}}€</del>,<b
-                        style="color: rgb(0, 0, 0)"> {{produtos_mais_vendidos.preco_com_desconto|floatformat:2}} €
-                    </b><br> Desconto: {{produtos_mais_vendidos.desconto}} %, Stock:
-                    {{produtos_mais_vendidos.stock}}</h6>
-                {% endif %}
+                <h5 class="card-title">{{produtos_mais_vendidos.nome}}</h5>
 
-                {% if produtos_mais_vendidos.stock > 0 %}
+                {% if produtos_mais_vendidos.desconto == 0 %} <!-- desconto 0 -->
+                {% if produtos_mais_vendidos.stock > 0 %}<!-- desconto 0 com stock-->
+                <h6>{{produtos_mais_vendidos.categoria}}</h6>
+                <label style="color: green;"><b>✔️ Em stock ({{produtos_mais_vendidos.stock}})</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{produtos_mais_vendidos.preco_com_desconto|floatformat:2}}€</b></h3>
                 <a href="/produto/adicionar_carrinho/{{produtos_mais_vendidos.id}}" class="btn btn-success">Comprar</a>
-                {% else %}
-                <a class="btn btn-warning">Indisponível</a>
+                <a href="/produto/{{produtos_mais_vendidos.id}}/" class="btn btn-primary">Visualizar</a>
+                {% else %}<!-- desconto 0 sem stock-->
+                <h6>{{produtos_mais_vendidos.categoria}}</h6>
+                <label style="background-color: #F2CB05;">⚠️ Indisponível</label>
+                <a href="/produto/{{produtos_mais_vendidos.id}}/" class="btn btn-primary">Visualizar</a>
                 {% endif %}
 
+                {% else %}
+                {% if produtos_mais_vendidos.stock > 0 %} <!-- desconto maior que 0. stock existente -->
+                <h6>{{produtos_mais_vendidos.categoria}}</h6>
+                <label><b style="color: green;">✔️ Em stock ({{produtos_mais_vendidos.stock}})</b> <b
+                        style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{produtos_mais_vendidos.desconto}}%</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{produtos_mais_vendidos.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #7c7c7c;font-size: medium;"><del>{{produtos_mais_vendidos.preco}}€</del></label>
+                </h3>
+                <a href="/produto/adicionar_carrinho/{{produtos_mais_vendidos.id}}" class="btn btn-success">Comprar</a>
                 <a href="/produto/{{produtos_mais_vendidos.id}}/" class="btn btn-primary">Visualizar</a>
+                {% else %}<!-- desconto maior que 0. sem stock -->
+                <h6>{{produtos_mais_vendidos.categoria}}</h6>
+                <label style="background-color: #F2CB05;">⚠️ Indisponível</label>
+                <a href="/produto/{{produtos_mais_vendidos.id}}/" class="btn btn-primary">Visualizar</a>
+                {% endif %}
+                {% endif %}
+
             </div>
         </div>
 
@@ -103,9 +132,10 @@
     <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px">
         {% for categorias in categorias %}
 
-        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px; cursor: pointer;"
-        onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
-        onclick="location.href='/categoria/{{categorias}}/';">
+        <div class="card"
+            style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px; cursor: pointer;"
+            onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
+            onclick="location.href='/categoria/{{categorias}}/';">
 
             <div class="card-body"
                 style="display: flex; align-items: center; justify-content: center;text-align: center;">
