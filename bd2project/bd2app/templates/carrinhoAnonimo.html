@@ -1,0 +1,84 @@
+{% extends "navbar.html" %}
+{% load math_extras %}
+
+
+
+{% block content %}
+
+<div style="margin: auto;width: 50%;text-align: center;">
+    <h2 style="margin-left: 1.5%;">Aqui tem o seu carrinho </h2>
+    <h6 style="margin-left: 1.5%;" id="precocarrinho" data-precocarrinho="{{carrinho.preco_total}}"><u>Preço do
+            carrinho:</u> <b>{{precoTotal}} €</b></h6>
+    <a type="button" class="btn btn-primary" href="{% url 'todos_produtos' %}">Voltar atrás</a>
+    {% if carrinho.preco_total > 0 %}
+    <a type="button" class="btn btn-success" href="{% url 'pagamento' id_carrinho=carrinho.id_carrinho%}"> Pagamento</a>
+    {% endif %}
+</div>
+
+<div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
+    {% for item in carrinho %}
+    <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+        <div class="card-body" style="text-align: center;">
+            <img src="{{item.imagem}}" style="height: 45%;" class="card-img-top" alt="...">
+            <h6 class="card-title">Nome do produto: {{item.nome}}</h6>
+            <h6 class="card-title" id="preco{{item.id}}" data-preco="{{item.preco_com_desconto}}">Preço
+                unitário: {{item.preco_com_desconto}} € {% if item.quantidade > 1 %}
+                ({{item.preco_com_desconto|multiply:item.quantidade|floatformat:2}}€) {% endif %}</h6>
+            <h6 class="card-title">Desconto: {{item.desconto}} %</h6>
+            <h6 class="card-title" data-item-id="{{item.id}}">
+                <label id="quantidade{{item.id}}">Quantidade: {{item.quantidade}}</label>
+                <button class="increment" data-carrinho-id="{{item.id}}"
+                    data-item-id="{{item.id}}">+</button>
+                <button class="decrement" data-carrinho-id="{{item.id}}"
+                    data-item-id="{{item.id}}">-</button>
+            </h6>
+            <form action="{% url 'removerProdutoCarrinhoAnonimo' produto_id=item.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Remover">
+            </form>
+        </div>
+    </div>
+
+
+    {% endfor %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="application/javascript" async>
+    $(document).ready(function () {
+        $('.increment').unbind('click').click(function () {
+            var itemId = $(this).data('item-id');
+            var carrinhoId = $(this).data('carrinho-id');
+            var preco = $('#preco' + itemId).data('preco');
+            $.ajax({
+                url: '/incrementQuantityAnonimo/' + itemId + '/',
+                success: function (data) {
+                    document.getElementById("quantidade" + itemId).innerHTML = "Quantidade: " + data.quantity;
+                    document.getElementById("precocarrinho").innerHTML = "<u>Preço do carrinho:</u> <b>" + data.total + "</b> €";
+                    if (data.quantity > 1)
+                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " € (" + (data.quantity * preco).toFixed(2) + "€)";
+                    else
+                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " €";
+                }
+            });
+        });
+        $('.decrement').unbind('click').click(function () {
+            var itemId = $(this).data('item-id');
+            var carrinhoId = $(this).data('carrinho-id');
+            var preco = $('#preco' + itemId).data('preco');
+            $.ajax({
+                url: '/decrementQuantityAnonimo/' + itemId + '/',
+                success: function (data) {
+                    document.getElementById("quantidade" + itemId).innerHTML = "Quantidade: " + data.quantity;
+                    document.getElementById("precocarrinho").innerHTML = "<u>Preço do carrinho:</u> <b>" + data.total + "</b> €";
+                    if (data.quantity > 1)
+                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " € (" + (data.quantity * preco).toFixed(2) + "€)";
+                    else
+                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " €";
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
