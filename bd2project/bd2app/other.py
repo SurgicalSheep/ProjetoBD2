@@ -12,9 +12,9 @@ def insere_ut(id,nome,tipouser,morada,username,email):
     carrinho.save()
     return x
 
-def novo_produto_insert(nome,preco,marca,cor,imagem,descricao,stock,desconto,categoria,preco_com_desconto):
+def novo_produto_insert(nome,preco,marca,cor,imagem,descricao,stock,desconto,categoria,preco_com_desconto, idgestor):
     col = bd["produtos"]
-    doc = {"id": product_max_id(),"nome":nome,"preco":preco,"marca":marca,"cor":cor,"imagem":imagem, "descricao":descricao,"stock":stock,"desconto":desconto,"categoria":categoria,"active":True,"preco_com_desconto":preco_com_desconto} 
+    doc = {"id": product_max_id(),"nome":nome,"preco":preco,"marca":marca,"cor":cor,"imagem":imagem, "descricao":descricao,"stock":stock,"desconto":desconto,"categoria":categoria,"active":True,"preco_com_desconto":preco_com_desconto, "id_utilizador": idgestor} 
     x = col.insert_one(doc)
     return x
 
@@ -44,14 +44,14 @@ def user_max_id():
         newid = max_id[0]['id'] + 1
     return newid
 
-def desativar_produto_other(id):
+def desativar_produto_other(id, idgestor):
     collection = bd['produtos']
-    x = collection.update_one({"id": id}, {"$set": {"active": False}})
+    x = collection.update_one({"id": id}, {"$set": {"active": False, "id_utilizador": idgestor}})
     return x
 
-def ativar_produto_other(id):
+def ativar_produto_other(id, idgestor):
     collection = bd['produtos']
-    x = collection.update_one({"id": id}, {"$set": {"active": True}})
+    x = collection.update_one({"id": id}, {"$set": {"active": True, "id_utilizador": idgestor}})
     return x
 
 def remover_produto_carrinho_other(produto_id, carrinho_id):
@@ -64,9 +64,9 @@ def getTipoUserMongo(id):
     user = collection.find_one({"id": id})
     return user["tipouser"]
 
-def updateUserMongo(id_user, nome, email, morada, tipouser, active):
+def updateUserMongo(id_user, nome, email, morada, tipouser, active, idgestor):
     collection = bd['utilizadores']
-    collection.update_one({"id": id_user}, {"$set": {"nome": nome, "morada": morada, "email": email, "active": bool(active), "tipouser": tipouser}})
+    collection.update_one({"id": id_user}, {"$set": {"nome": nome, "morada": morada, "email": email, "active": bool(active), "tipouser": tipouser, "id_utilizador": idgestor}})
 
 def updatePerfil(id_user, nome, email, morada):
     collection = bd['utilizadores']

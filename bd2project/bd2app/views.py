@@ -175,7 +175,7 @@ def novo_produto(request):
         categoria = data.get("categoria")
         preco_com_desconto = float(mul(preco,desconto))
         novo_produto_insert(nome, preco, marca, cor, imagem,
-                            descricao, stock, desconto, categoria, preco_com_desconto)
+                            descricao, stock, desconto, categoria, preco_com_desconto, request.user.id)
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -206,7 +206,7 @@ def desativar_produto(request, produto_id):
     context = {}
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
-            desativar_produto_other(produto_id)
+            desativar_produto_other(produto_id, request.user.id)
         if getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
             return redirect('homepage_comerciantetipo1')
         return redirect('todos_produtos')
@@ -433,7 +433,7 @@ def editarUser(request, id_user):
         if user is not None:
             if active == "False":
                 active = ""
-            updateUserMongo(id_user, nome, email, morada, tipouser, active)
+            updateUserMongo(id_user, nome, email, morada, tipouser, active, request.user.id)
             user.email = email
             user.save()
             return redirect('editarUsers')
@@ -485,7 +485,7 @@ def editar_produto(request, produto_id):
         preco_com_desconto = float(mul(preco,desconto))
         # update the document in the mongodb collection
         collection = bd['produtos']
-        collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria, "preco_com_desconto": preco_com_desconto}})
+        collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria, "preco_com_desconto": preco_com_desconto, "id_utilizador": request.user.id}})
         #atualizar o produto nos carrinhos
         preco_pg = Decimal(data.get("preco"))
         itens_carrinho = itens_carrinho_model.objects.filter(id_produto=produto_id)
@@ -586,7 +586,7 @@ def ativar_produto(request, produto_id):
     context = {}
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
-            ativar_produto_other(produto_id)
+            ativar_produto_other(produto_id, request.user.id)
         if getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
             return redirect('homepage_comerciantetipo1')
         return redirect('todos_produtos')
@@ -594,6 +594,7 @@ def ativar_produto(request, produto_id):
         form = request.POST
         context = {'form': form}
         return render(request, 'ativar_produto.html', context)
+        
 def pedidos_fornecedor(request):
     collection2 = bd['produtos']
     class class_pedidos_fornecedor:
