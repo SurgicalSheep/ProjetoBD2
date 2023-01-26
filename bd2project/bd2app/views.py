@@ -161,6 +161,7 @@ def logoutUser(request):
         pass
     return redirect('/')
 
+@login_required
 def novo_produto(request):
     context = {}
     if request.method == 'POST':
@@ -216,19 +217,22 @@ def desativar_produto(request, produto_id):
         context = {'form': form}
         return render(request, 'desativar_produto.html', context)
 
-
+@login_required
 def todos_pedidos(request):
-    if request.method == 'POST':
-        data = request.POST
-        id_pedido = data.get("id_pedido")
-        pedido_update = todos_pedidos_model.objects.get(id_pedido=id_pedido)
-        pedido_update.estado = "Encomenda Enviada!"
-        pedido_update.save()
-        return redirect('todos_pedidos')
+    if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+        if request.method == 'POST':
+            data = request.POST
+            id_pedido = data.get("id_pedido")
+            pedido_update = todos_pedidos_model.objects.get(id_pedido=id_pedido)
+            pedido_update.estado = "Encomenda Enviada!"
+            pedido_update.save()
+            return redirect('todos_pedidos')
+        else:
+            form = request.POST
+            todos = todos_pedidos_model.objects.all().order_by('estado','-id_pedido')
+            return render(request, 'todos_pedidos.html', {'todos': todos, 'form': form})
     else:
-        form = request.POST
-        todos = todos_pedidos_model.objects.all().order_by('estado','-id_pedido')
-        return render(request, 'todos_pedidos.html', {'todos': todos, 'form': form})
+        return redirect('pedidos_cliente')
 # ainda por acabar e meio que um teste
 
 
@@ -342,7 +346,7 @@ def pagamento(request,id_carrinho):
     context = {}
     if request.method == 'POST':
         inserir_pedido(id_carrinho)
-        return redirect('todos_pedidos')
+        return redirect('pedidos_cliente')
     else:
         form = request.POST
         context = {'form': form}
