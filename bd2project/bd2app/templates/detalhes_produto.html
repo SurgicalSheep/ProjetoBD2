@@ -3,12 +3,12 @@
 
 <div class="card" style="margin: 1%;margin-left: 10%;margin-right: 10%; background-color: #def2f5;border-radius: 10px">
     <div style="text-align: center;">
-        <img src={{products.imagem}} style="width: 20em;height: 15em;border-radius: 10px;cursor: pointer;"
-        onclick="location.href='/produto/{{produtos_promocao.id}}/';" class="card-img-top imagensitens"
+        <img src={{products.imagem}} style="width: 20em;height: 15em;border-radius: 10px;margin-top: 1%;"
+        class="card-img-top"
         alt="{{products.descricao}}"
         onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
     </div>
-    <div style="padding: 5%;">
+    <div style="padding: 5%;padding-top: 2%;">
         <div style="text-align: center;">
             <b>{{products.nome}}</b>
         </div>
@@ -27,9 +27,19 @@
         <br>
         <b>Stock :</b> {{products.stock}}
         <br>
+        {% if products.belongs_store == True or products.belongs_store == true %}
+        <b>O artigo é vendido pela loja!</b>
+        {% else %}
+        <b>O artigo é vendido por um parceiro externo (Marketplace)!</b>
+        {% endif %}
         <div style="padding-top: 2%;">
             <a href="/produto/adicionar_carrinho/{{products.id}}" class="btn btn-success">Comprar</a>
+
             {% if request.session %}
+            {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+            <a href="/produto/editar_produto/{{products.id}}"
+                class="btn btn-warning">Editar</a>
+                {% if request.session %}
                 {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
                 {% if products.active == 1 %}
                 <a href="/produto/desativar_produto/{{products.id}}" 
@@ -39,6 +49,8 @@
                 {% endif %}
                 {% endif %}
                 {% endif %}
+            {% endif %}
+            {% endif %}
         </div>
 
     </div>
