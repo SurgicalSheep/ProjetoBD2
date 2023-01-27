@@ -153,7 +153,8 @@ def loginUser(request):
         pag = 'login.html'
         context = {'form': form}
     return render(request, pag, context)
-
+   
+@login_required
 def logoutUser(request):
     try:
         if 'tipouser' in request.session:
@@ -319,6 +320,7 @@ def adicionar_carrinho(request, produto_id):
         form = request.POST
         return render(request, 'adicionar_carrinho.html', {'form': form, 'stock': stock})
 
+#@login_required acho q precisa
 def remover_produto_carrinho(request, produto_id):
     
     if request.method == 'POST':
@@ -354,6 +356,7 @@ def pagamento(request,id_carrinho):
         context = {'form': form}
     return render(request, 'pagamento.html', context=context)
 
+@login_required
 def inserir_pedido(id_carrinho):
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
@@ -394,20 +397,23 @@ def delete_carrinho(id_carrinho):
 #        itens_carrinho = itens_carrinho_model.objects.get(id_produto=produto_id,id_carrinho=carrinho_id)
 #        itens_carrinho.quantidade = request.POST.get("quantidade")
 #        itens_carrinho.save()
-
+@login_required
 def acaoutilizador(request, id_user, acao, nome):
     return render(request, 'acao_utilizador.html', {'id_user': id_user, 'acao': acao, 'nome': nome})
-    
+
+@login_required  
 def utilizador_por_confirmar(request):
     collection = bd['utilizadores']
     users = collection.find({"approved": False})
     return render(request, 'utilizador_por_confirmar.html', {'users': users})
 
+@login_required
 def aceitar_utilizador(request, id_user):
     collection = bd['utilizadores']
     collection.update_one({"id": id_user}, {"$set": {"approved": True, "id_utilizador": request.user.id}})
     return redirect('utilizador_por_confirmar')
 
+@login_required
 def rejeitar_utilizador(request, id_user):
     user = User.objects.filter(id=id_user)
     user.delete()
@@ -422,6 +428,7 @@ def categoria(request, categoria):
     #print(products)
     return render(request, 'categoria.html', {'products': products, 'categoria': categoria})
 
+@login_required
 def homepage_fornecedores(request):
     if(request.user.is_authenticated):
         class produto:
@@ -448,6 +455,7 @@ def homepage_fornecedores(request):
             produtos.append(p)
     return render(request, 'homepage_fornecedores.html', {'produtos': produtos})
 
+@login_required
 def desativar_produto_fornecedor(request, id_produto, id_fornecedor):
     if not(getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Fornecedor"):
         redirect('index')
@@ -457,6 +465,7 @@ def desativar_produto_fornecedor(request, id_produto, id_fornecedor):
         return redirect('homepage_fornecedores')
     return redirect('/gerir_produtos_fornecedor/'+str(id_fornecedor))
 
+@login_required
 def ativar_produto_fornecedor(request, id_produto, id_fornecedor):
     if not(getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Fornecedor"):
         redirect('index')
@@ -554,6 +563,7 @@ def editar_produto(request, produto_id):
         produto = collection.find_one({"id": produto_id})
         return render(request, 'editar_produto.html', {'produto': produto})
 
+#@login_required
 def increment_quantity(request, id_carrinho, id_produto):
     col = bd['produtos']
     stock = col.find_one({"id": id_produto})["stock"]
@@ -567,6 +577,7 @@ def increment_quantity(request, id_carrinho, id_produto):
         messages.warning(request, 'Stock máximo atingido!') #not working
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
 
+#@login_required
 def decrement_quantity(request, id_carrinho, id_produto):
     item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
     if item.quantidade > 1:
@@ -614,12 +625,14 @@ def decrementQuantityAnonimo(request, id_produto):
 #         item.save()
 #         return 1
 
+@login_required
 def homepage_comerciantetipo1(request):
         number_users()
     #if request.method == 'GET':
         products = todos_produtos_other()
         return render(request, "homepage_comerciantestipo1.html", {'products': products})
 
+@login_required
 def solicitar_produto(request, id_product):
     context = {}
     if request.method == 'POST':
@@ -640,10 +653,12 @@ def solicitar_produto(request, id_product):
         fornecedores = todos_fornecedores_produto_other(id_product)
         return render(request, "lista_fornecedores_produto.html", {'fornecedores': fornecedores,'form': form})
 
+@login_required
 def encomendas_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado__in=["Encomenda Enviada!", "Encomenda Cancelada!"]).order_by('-data')
     return render(request, 'encomendas_cliente.html', {'todos': todos})
 
+@login_required
 def encomenda(request,id_encomenda): #falta checkar esta
     todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda)
     encomenda = Itens_Pedido.objects.filter(id_pedido=id_encomenda)
@@ -652,10 +667,12 @@ def encomenda(request,id_encomenda): #falta checkar esta
     itens2 = col.find({'id': {'$in': product_ids}}) 
     return render(request, 'encomenda.html', {'encomenda': encomenda,'todos': todos,'itens2': itens2})
 
+@login_required
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado="Em Processamento!").order_by('-data')
     return render(request, 'pedidos_cliente.html', {'todos': todos})
 
+@login_required
 def encomenda_cancelar(request, id_encomenda): #falta atualizar o stock depois de cancelar
     todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda, estado="Em Processamento!")
     todos.estado = "Encomenda Cancelada!"
@@ -680,7 +697,8 @@ def ativar_produto(request, produto_id):
         form = request.POST
         context = {'form': form}
         return render(request, 'ativar_produto.html', context)
-        
+
+@login_required
 def pedidos_fornecedor(request):
     collection2 = bd['produtos']
     class class_pedidos_fornecedor:
@@ -705,6 +723,7 @@ def pedidos_fornecedor(request):
             pedidos_fornecedor.append(p)
     return render(request, 'pedidos_fornecedor.html', {'pedidos_fornecedor': pedidos_fornecedor})
 
+@login_required
 def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantidade):
     collection = bd['produtos']
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
@@ -714,6 +733,7 @@ def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantid
     collection.update_one({"id": id_produto}, {"$inc": {"stock": quantidade}})
     return redirect('pedidos_fornecedor')
 
+@login_required
 def rejeitar_pedidos_fornecedor(request, id_pedidofornecedor):
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
     item.delete()
@@ -776,6 +796,7 @@ def gerir_produtos_fornecedor (request, id_user):
     
     return render(request, 'gerir_produtos_fornecedor.html', {'produtos': produtos, 'fornecedor': fornecedor})
 
+@login_required
 def add_produtos_fornecedor(request, id_fornecedor):
     context = {}
     if request.method == 'POST':
