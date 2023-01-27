@@ -166,6 +166,8 @@ def logoutUser(request):
 
 @login_required
 def novo_produto(request):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Parceiro"):
+        return redirect("index")
     context = {}
     if request.method == 'POST':
         data = request.POST
@@ -397,6 +399,7 @@ def delete_carrinho(id_carrinho):
 #        itens_carrinho = itens_carrinho_model.objects.get(id_produto=produto_id,id_carrinho=carrinho_id)
 #        itens_carrinho.quantidade = request.POST.get("quantidade")
 #        itens_carrinho.save()
+
 @login_required
 def acaoutilizador(request, id_user, acao, nome):
     return render(request, 'acao_utilizador.html', {'id_user': id_user, 'acao': acao, 'nome': nome})
