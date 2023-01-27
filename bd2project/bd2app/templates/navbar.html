@@ -161,7 +161,7 @@
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
               onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
-              href="{% url 'todos_produtos' %}">Apresentar todos os produtos</a>
+              href="{% url 'todos_produtos' '1' %}">Apresentar todos os produtos</a>
           </li>
           {% if request.user.is_authenticated %}
           {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}

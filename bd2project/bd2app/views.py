@@ -20,7 +20,7 @@ from django.contrib import messages #import messages
 
 def index(request):
     if request.user.is_authenticated:
-        if request.session:
+        if request.session: 
             if request.session["tipouser"] == "Fornecedor":
                 return redirect('homepage_fornecedores')
             elif request.session["tipouser"] == "Comercial Tipo 1":
@@ -189,9 +189,9 @@ def novo_produto(request):
         context = {'form': form}
         return render(request, 'novo_produto.html', context)
 
-def todos_produtos(request):
+def todos_produtos(request, belongs_store):
     if request.method == 'GET':
-        products = todos_produtos_other()
+        products = todos_produtos_other(belongs_store)
         return render(request, "todos_produtos.html", {'products': products})
 
 @login_required
@@ -632,7 +632,7 @@ def decrementQuantityAnonimo(request, id_produto):
 def homepage_comerciantetipo1(request):
         number_users()
     #if request.method == 'GET':
-        products = todos_produtos_other()
+        products = todos_produtos_other(1)
         return render(request, "homepage_comerciantestipo1.html", {'products': products})
 
 @login_required
