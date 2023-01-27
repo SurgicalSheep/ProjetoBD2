@@ -195,10 +195,15 @@ def novo_produto(request):
         context = {'form': form}
         return render(request, 'novo_produto.html', context)
 
-def todos_produtos(request, belongs_store):
+def todos_produtos(request):
     if request.method == 'GET':
-        products = todos_produtos_other(belongs_store)
+        products = todos_produtos_other()
         return render(request, "todos_produtos.html", {'products': products})
+
+def todos_produtos_marketplace(request):
+    if request.method == 'GET':
+        products = todos_produtos_other_marketplace()
+        return render(request, "todos_produtos_marketplace.html", {'products': products})
 
 @login_required
 def todos_users(request):

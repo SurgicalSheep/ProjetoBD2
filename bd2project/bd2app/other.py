@@ -22,12 +22,14 @@ def novo_produto_insert(nome, preco, marca, cor, imagem, descricao, stock, desco
     x = col.insert_one(doc)
     return x
 
-def todos_produtos_other(belongs_store):
+def todos_produtos_other():
     collection = bd['produtos']
-    if belongs_store == 0:
-        return collection.find({'belongs_store': False})
     return collection.find({'belongs_store': True})
 
+def todos_produtos_other_marketplace():
+    collection = bd['produtos']
+    return collection.find({'belongs_store': False})
+    
 def todos_users_other():
     collection = bd['utilizadores']
     return collection.find()
