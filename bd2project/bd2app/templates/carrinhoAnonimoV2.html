@@ -1,40 +1,45 @@
 {% extends "navbar.html" %}
 {% load math_extras %}
 
-
-
 {% block content %}
 
 <div style="margin: auto;width: 50%;text-align: center;">
     <h2 style="margin-left: 1.5%;">Aqui tem o seu carrinho </h2>
-    <h6 style="margin-left: 1.5%;" id="precocarrinho" data-precocarrinho="{{carrinho.preco_total}}"><u>Preço do
-            carrinho:</u> <b>{{precoTotal}} €</b></h6>
+    <h6 style="margin-left: 1.5%;" id="precocarrinho" data-precocarrinho="{{precoTotal}}"><u>Preço do
+            carrinho:</u> <b>{{precoTotal|floatformat:2}} €</b></h6>
     <a type="button" class="btn btn-primary" href="{% url 'todos_produtos' %}">Voltar atrás</a>
-    {% if carrinho.preco_total > 0 %}
-    <a type="button" class="btn btn-success" href="{% url 'pagamento' id_carrinho=carrinho.id_carrinho%}"> Pagamento</a>
+    {% if precoTotal > 0 %}
+    <a type="button" class="btn btn-success" href="{% url 'loginUser' %}"> Pagamento</a>
     {% endif %}
 </div>
 
 <div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
     {% for item in carrinho %}
-    <div class="card" style="width: 18rem;margin-left: 1%;background-color: rgb(248, 236, 245);">
+    <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
         <div class="card-body" style="text-align: center;">
-            <img src="{{item.imagem}}" style="height: 45%;" class="card-img-top" alt="...">
+            <img src="{{item.imagem}}" style="height: 45%;border-radius: 10px;cursor: pointer;" class="card-img-top"
+                alt="imagem não disponível"
+                onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
             <h6 class="card-title">Nome do produto: {{item.nome}}</h6>
-            <h6 class="card-title" id="preco{{item.id}}" data-preco="{{item.preco_com_desconto}}">Preço
-                unitário: {{item.preco_com_desconto}} € {% if item.quantidade > 1 %}
-                ({{item.preco_com_desconto|multiply:item.quantidade|floatformat:2}}€) {% endif %}</h6>
-            <h6 class="card-title">Desconto: {{item.desconto}} %</h6>
+
+            <label> <b
+                    style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{item.desconto}}%</b></label>
+            <h3 class="card-title"><b
+                    style="color: #FA7F08;">{{item.preco_com_desconto|floatformat:2}}€</b> <label
+                    style="color: #7c7c7c;font-size: medium;"><del>{{item.preco}}€</del></label>
+            </h3>
+
+            
             <h6 class="card-title" data-item-id="{{item.id}}">
                 <label id="quantidade{{item.id}}">Quantidade: {{item.quantidade}}</label>
-                <button class="increment" data-carrinho-id="{{item.id}}"
-                    data-item-id="{{item.id}}">+</button>
-                <button class="decrement" data-carrinho-id="{{item.id}}"
-                    data-item-id="{{item.id}}">-</button>
+                <button class="increment btn-primary" data-carrinho-id="{{carrinho.id_carrinho}}"
+                    data-item-id="{{item.id}}" style="text-align: center;">+</button>
+                <button class="decrement btn-primary" data-carrinho-id="{{carrinho.id_carrinho}}"
+                    data-item-id="{{item.id}}" style="text-align: center;width: 12.5%;">-</button>
             </h6>
             <form action="{% url 'removerProdutoCarrinhoAnonimo' produto_id=item.id %}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Remover">
+                <input type="submit" class="btn btn-danger" value="Remover">
             </form>
         </div>
     </div>
