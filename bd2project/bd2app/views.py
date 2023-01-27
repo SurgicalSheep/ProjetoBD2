@@ -100,8 +100,8 @@ def registro(request):
             request.session['tipouser'] = tipouser
             request.session['nome'] = nome
             print(request.user.id)
-
-        return redirect('todos_users')
+            logout(request)
+        return redirect('loginUser')
     else:
         form = request.POST
         context = {'form': form}
@@ -191,7 +191,7 @@ def todos_produtos(request):
         products = todos_produtos_other()
         return render(request, "todos_produtos.html", {'products': products})
 
-
+@login_required
 def todos_users(request):
     context = {}
     if request.method == 'GET':
