@@ -16,7 +16,10 @@
             <img src="{{product.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top imagensitens"
                 alt="imagem não disponível"
                 onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
-            <h5 class="card-title">{{product.nome}}</h5>
+                <h5 style="cursor: pointer;" class="card-title" id="card-title-nome"
+                onclick="location.href='/produto/{{product.id}}/';"
+                onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">
+                {{product.nome}}</h5>
 
             {% if product.desconto == 0 %} <!-- desconto 0 -->
             {% if product.stock > 0 %}<!-- desconto 0 com stock-->

@@ -1,16 +1,17 @@
 {% extends "navbar.html" %}
 {% block content %}
 
-<div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color: rgb(248, 236, 245);">
+<div class="card" style="margin: 1%;margin-left: 10%;margin-right: 10%; background-color: #def2f5;border-radius: 10px">
     <div style="text-align: center;">
-        <img src={{products.imagem}} style="width: 20em;height: 15em;" alt={{products.descricao}}>
+        <img src={{products.imagem}} style="width: 20em;height: 15em;border-radius: 10px;cursor: pointer;"
+        onclick="location.href='/produto/{{produtos_promocao.id}}/';" class="card-img-top imagensitens"
+        alt="{{products.descricao}}"
+        onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
     </div>
     <div>
         <div style="text-align: center;">
             <b>{{products.nome}}</b>
         </div>
-        <br>
-        <b>ID do produto :</b> {{products.id}}
         <br>
         <b>Categoria :</b> {{products.categoria}}
         <br>
