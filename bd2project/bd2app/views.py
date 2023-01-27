@@ -96,7 +96,7 @@ def registro(request):
             u = User.objects.create_user(username=username,password=password)
             u.save()
             login(request,u)
-            insere_ut(request.user.id,nome, tipouser, morada, username, email)
+            insere_ut(request.user.id, nome, tipouser, morada, username, email)
             request.session['tipouser'] = tipouser
             request.session['nome'] = nome
             print(request.user.id)
