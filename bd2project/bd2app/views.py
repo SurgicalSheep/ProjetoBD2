@@ -122,6 +122,8 @@ def loginUser(request):
                     userMongo = bd["utilizadores"].find_one({"id":user.id})
                     if not userMongo["active"]:
                         return HttpResponse("User not active")#meter isto bonito
+                    if not userMongo["approved"]:
+                        return HttpResponse("User not approved")#meter isto bonito
                     tipoUser = userMongo["tipouser"]
                     nome = userMongo["nome"]
                     request.session['tipouser'] = tipoUser
