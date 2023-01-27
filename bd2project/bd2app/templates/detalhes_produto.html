@@ -8,7 +8,7 @@
         alt="{{products.descricao}}"
         onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
     </div>
-    <div>
+    <div style="padding: 5%;">
         <div style="text-align: center;">
             <b>{{products.nome}}</b>
         </div>
@@ -27,17 +27,20 @@
         <br>
         <b>Stock :</b> {{products.stock}}
         <br>
-        <a href="/produto/adicionar_carrinho/{{products.id}}" class="btn btn-success">Comprar</a>
-        {% if request.session %}
-            {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
-            {% if products.active == 1 %}
-            <a href="/produto/desativar_produto/{{products.id}}" 
-                class="btn btn-danger">Desativar</a>
-            {% else %}
-            <a href="/produto/ativar_produto/{{products.id}}" class="btn btn-info">Ativar</a>
-            {% endif %}
-            {% endif %}
-            {% endif %}
+        <div style="padding-top: 2%;">
+            <a href="/produto/adicionar_carrinho/{{products.id}}" class="btn btn-success">Comprar</a>
+            {% if request.session %}
+                {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+                {% if products.active == 1 %}
+                <a href="/produto/desativar_produto/{{products.id}}" 
+                    class="btn btn-danger">Desativar</a>
+                {% else %}
+                <a href="/produto/ativar_produto/{{products.id}}" class="btn btn-info">Ativar</a>
+                {% endif %}
+                {% endif %}
+                {% endif %}
+        </div>
+
     </div>
 
 </div>

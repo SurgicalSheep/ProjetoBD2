@@ -128,21 +128,27 @@ def loginUser(request):
                     nome = userMongo["nome"]
                     request.session['tipouser'] = tipoUser
                     request.session['nome'] = nome
-                    if 'carrinho' in request.session:
-                        cursor = connection.cursor()
-                        x = "["
-                        l = len(request.session['carrinho'])
-                        y = 0
-                        for item in request.session['carrinho']:
-                            y+=1
-                            if(l == y):
-                                x+=str(item)
-                            else:
-                                x+=str(item)+","
-                        x+="]"
-                        cursor.execute("call carrinho_anonimo(ARRAY"+x+","+str(user.id)+")")
-                        del request.session['carrinho']
-                        del request.session['carrinhoAnonimo']
+                    if 'carrinhoAnonimo' in request.session:
+                        carrinhoAnonimo = request.session['carrinhoAnonimo']
+                        carrinho=[]
+                        for x in carrinhoAnonimo:
+                            for y in range(x["quantidade"]):
+                                carrinho.append(x["id"])
+                        if len(carrinho) > 0:
+                            cursor = connection.cursor()
+                            x = "["
+                            l = len(carrinho)
+                            y = 0
+                            for item in carrinho:
+                                y+=1
+                                if(l == y):
+                                    x+=str(item)
+                                else:
+                                    x+=str(item)+","
+                            x+="]"
+                            pprint(carrinho)
+                            cursor.execute("call carrinho_anonimo(ARRAY"+x+","+str(user.id)+")")
+                            del request.session['carrinhoAnonimo']
                     login(request,user)
                     return redirect("/")
                 else:
@@ -263,7 +269,7 @@ def carrinho(request):
         for x in carrinhoAnonimo:
             precoTotal += x['preco_com_desconto'] * x['quantidade']
         precoTotal = round(precoTotal, 2)
-        return render(request,'carrinhoAnonimo.html',{'carrinho':carrinhoAnonimo,'precoTotal':precoTotal})
+        return render(request,'carrinhoAnonimoV2.html',{'carrinho':carrinhoAnonimo,'precoTotal':precoTotal})
 
 
 def adicionar_carrinho(request, produto_id):
@@ -294,11 +300,8 @@ def adicionar_carrinho(request, produto_id):
                 return redirect('todos_produtos')
         else:
             #carrinho anonimo
-            if 'carrinho' not in request.session:
-                request.session['carrinho'] = []
             if 'carrinhoAnonimo' not in request.session:
                 request.session['carrinhoAnonimo'] = []
-            carrinho = request.session['carrinho']
             carrinhoAnonimo = request.session['carrinhoAnonimo']
             produtoExists = False
             col = bd['produtos']
@@ -314,9 +317,7 @@ def adicionar_carrinho(request, produto_id):
                 del produto["_id"]
                 produto["quantidade"] = quantity
                 carrinhoAnonimo.append(produto)
-            for x in range(quantity):
-                carrinho.append(produto_id)
-            request.session['carrinho'] = carrinho
+
             return redirect('todos_produtos')
     else:
         form = request.POST
@@ -590,34 +591,38 @@ def decrement_quantity(request, id_carrinho, id_produto):
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
 
 def incrementQuantityAnonimo(request, id_produto):
-    carrinhoAux = request.session['carrinhoAux']
+    carrinhoAnonimo = request.session['carrinhoAnonimo']
     col = bd['produtos']
     produto = col.find_one({"id": id_produto})
-    item = None
-    for x in carrinhoAux:
-        if x['id_produto'] == id_produto:
+    item = {}
+    pprint(carrinhoAnonimo)
+
+    for x in carrinhoAnonimo:
+        if x['id'] == id_produto:
             if x['quantidade'] < produto["stock"]:
                 x['quantidade'] += 1
                 x['preco']+=produto['preco']
-                pprint(x['quantidade'])
+                request.session.modified = True
                 item["quantidade"] = x["quantidade"]
                 item["preco_com_desconto"] = x["preco_com_desconto"]
-    else:
-        messages.warning(request, 'Stock máximo atingido!') #not working
-    return JsonResponse({'quantity': item["quantidade"],'total': item["preco_com_desconto"]})
+            else:
+                 messages.warning(request, 'Stock máximo atingido!') #not working
+    return JsonResponse({'quantity': item["quantidade"],'total': item["preco_com_desconto"]*item['quantidade']})
 
 def decrementQuantityAnonimo(request, id_produto):
-    carrinhoAux = request.session['carrinhoAux']
+    carrinhoAnonimo = request.session['carrinhoAnonimo']
     col = bd['produtos']
     produto = col.find_one({"id": id_produto})
-    item = None
-    for x in carrinhoAux:
-        if x['id_produto'] == id_produto:
+    item = {}
+    for x in carrinhoAnonimo:
+        if x['id'] == id_produto:
             if x['quantidade'] > 1:
                 x['quantidade'] -= 1
-                x['preco']-=produto['preco']
+                request.session.modified = True
+                item["quantidade"] = x["quantidade"]
+                item["preco_com_desconto"] = x["preco_com_desconto"]
                 item = x
-    return JsonResponse({'quantity': item.quantidade,'total': item.preco_com_desconto})
+    return JsonResponse({'quantity': item["quantidade"],'total': item["preco_com_desconto"]*item['quantidade']})
 
 # def editar_preco_carrinho(request, id_produto):
 #     item = get_object_or_404(itens_carrinho_model, id_produto=id_produto)
