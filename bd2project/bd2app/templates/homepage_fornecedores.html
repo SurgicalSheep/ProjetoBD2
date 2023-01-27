@@ -14,9 +14,9 @@
             <h6 class="card-title">Preço do produto: {{x.preco}} €</h6>
             <h6 class="card-title">id: {{x.id}}</h6>
             {% if x.disponivel %}
-                <button style="margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/desativar_produto_fornecedor/{{x.id}}'">Desativar</button>
+                <button style="margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/desativar_produto_fornecedor/{{x.id}}/{{request.user.id}}'">Desativar</button>
             {% else %}
-                <button style="margin: auto;" type="button" class="btn btn-success" onclick="window.location.href='/ativar_produto_fornecedor/{{x.id}}'">Ativar</button>
+                <button style="margin: auto;" type="button" class="btn btn-success" onclick="window.location.href='/ativar_produto_fornecedor/{{x.id}}/{{request.user.id}}'">Ativar</button>
             {% endif%}
         </div>
     </div>

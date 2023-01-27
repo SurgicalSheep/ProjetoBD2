@@ -446,15 +446,23 @@ def homepage_fornecedores(request):
             produtos.append(p)
     return render(request, 'homepage_fornecedores.html', {'produtos': produtos})
 
-def desativar_produto_fornecedor(request, id_produto):
+def desativar_produto_fornecedor(request, id_produto, id_fornecedor):
+    if not(getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Fornecedor"):
+        redirect('index')
     collection = bd['produtos_fornecedores']
-    collection.update_one({"id_produto": id_produto, "id_fornecedor": request.user.id}, {"$set": {"disponivel": False}})
-    return redirect('homepage_fornecedores')
+    collection.update_one({"id_produto": id_produto, "id_fornecedor": id_fornecedor}, {"$set": {"disponivel": False, "id_utilizador": request.user.id}})
+    if getTipoUserMongo(request.user.id) == "Fornecedor":
+        return redirect('homepage_fornecedores')
+    return redirect('/gerir_produtos_fornecedor/'+str(id_fornecedor))
 
-def ativar_produto_fornecedor(request, id_produto):
+def ativar_produto_fornecedor(request, id_produto, id_fornecedor):
+    if not(getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Fornecedor"):
+        redirect('index')
     collection = bd['produtos_fornecedores']
-    collection.update_one({"id_produto": id_produto, "id_fornecedor": request.user.id}, {"$set": {"disponivel": True}})
-    return redirect('homepage_fornecedores')
+    collection.update_one({"id_produto": id_produto, "id_fornecedor": id_fornecedor}, {"$set": {"disponivel": True, "id_utilizador": request.user.id}})
+    if getTipoUserMongo(request.user.id) == "Fornecedor":
+        return redirect('homepage_fornecedores')
+    return redirect('/gerir_produtos_fornecedor/'+str(id_fornecedor))
 
 @login_required
 def editarUsers(request):
@@ -727,7 +735,55 @@ def number_users():
     print(n_users)
     return 0
 
-
+@login_required
+def gerir_fornecedores (request):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('index')
+    collection = bd['utilizadores']
+    users = collection.find({"approved": True, "active": True,"tipouser": "Fornecedor"})
+    return render(request, 'gerir_fornecedores.html', {'users': users})
+        
+@login_required
+def gerir_produtos_fornecedor (request, id_user):
+    if not (getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Administrador"):
+        return redirect('index')
+    class produto:
+        def __init__(self, id, nome, preco, imagem, desconto, disponivel):
+            self.id = id
+            self.nome = nome
+            self.preco = preco
+            self.imagem = imagem
+            self.desconto = desconto
+            self.disponivel = disponivel
+    collection = bd['produtos_fornecedores']
+    collection2 = bd['produtos']
+    collection3 = bd['utilizadores']
+    fornecedor = collection3.find_one({"id": id_user}, {"_id": 0, "id": 1, "nome": 1})
+    produtos=[]
+    produtos_fornecedor = collection.find({"id_fornecedor": id_user})
+    for x in produtos_fornecedor:
+        varproduto = collection2.find_one({"id": x["id_produto"]})
+        varid = varproduto["id"]
+        varpreco = x["preco_unitario"]
+        vardisponivel = x["disponivel"]
+        varimagem = varproduto["imagem"]
+        vardesconto = varproduto["desconto"]
+        varnome = varproduto["nome"]
+        p = produto(varid, varnome, varpreco, varimagem, vardesconto, vardisponivel)
+        produtos.append(p)
     
+    return render(request, 'gerir_produtos_fornecedor.html', {'produtos': produtos, 'fornecedor': fornecedor})
 
-
+def add_produtos_fornecedor(request, id_fornecedor):
+    context = {}
+    if request.method == 'POST':
+        collection = bd['produtos_fornecedores']
+        data = request.POST
+        id_produto = int(data.get("id_produto"))
+        preco_unitario =  float(data.get("preco_unitario"))
+        collection.insert_one({"id_fornecedor": id_fornecedor,"id_produto": id_produto,"preco_unitario":preco_unitario,"disponivel": True, "id_utilizador": request.user.id})
+        return redirect('/gerir_produtos_fornecedor/'+str(id_fornecedor))
+    else:
+        form = request.POST
+        produtos = todos_produtos_fornecedor_n_fornece_other(id_fornecedor)
+        return render(request, "novo_produto_fornecedor.html", {'id_fornecedor': id_fornecedor,'form': form, 'produtos': produtos})

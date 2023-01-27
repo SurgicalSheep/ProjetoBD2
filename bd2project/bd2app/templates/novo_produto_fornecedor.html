@@ -1,0 +1,24 @@
+{% extends "navbar.html" %}
+{% block content %}
+<div style="margin: auto;width: 50%;text-align: center;"><h2>Registo de um novo produto</h2></div>
+
+
+<form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
+    {% csrf_token %}
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="preco_unitario" placeholder="Preço Unitário" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <select class="custom-select" name="id_produto" id="inputGroupSelect01">
+          <option selected>Escolher o produto</option>
+          {% for x in produtos %}
+          <option value="{{x.id}}">{{x.nome}}</option>
+          {% endfor %}
+        </select>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="submit" class="btn btn-primary" name="inserir" value="Inserir">
+    </div>
+</form>
+
+{% endblock %}

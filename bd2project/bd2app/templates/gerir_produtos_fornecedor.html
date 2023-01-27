@@ -1,0 +1,45 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+
+<h2 style="margin-left: 2%; margin-top: 2%;"><b>Os Produtos que o fornecedor <u>{{fornecedor.nome}}</u> fornece:</b>
+</h2>
+
+{% if produtos|length == 0 %}
+<h3 style="margin-left: 2%; margin-top: 2%;"> Este fornecedor não fornece nenhum produto!</h3>
+{% endif %}
+
+<div class="row row-cols-1 row-cols-md-4 g-4" style="margin:10px">
+
+    <div class="card" style="cursor: pointer; width: 16rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;"
+        onclick="window.location.href='/add_produtos_fornecedor/{{fornecedor.id}}'">
+        <div class="card-body" style="text-align: center;">
+            <h2 class="card-title">Adicionar produto</h6>
+        </div>
+    </div>
+
+    {% for x in produtos %}
+
+    <div class="card" style="width: 16rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
+        <div class="card-body" style="text-align: center;">
+            <img src="{{x.imagem}}" style="height: 50%;border-radius: 10px;" class="card-img-top"
+                alt="imagem não disponível"
+                onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+            <h6 class="card-title">Nome do produto: {{x.nome}}</h6>
+            <h6 class="card-title">Preço do produto: {{x.preco}} €</h6>
+            <h6 class="card-title">id: {{x.id}}</h6>
+            {% if x.disponivel %}
+            <button style="margin: auto;" type="button" class="btn btn-danger"
+                onclick="window.location.href='/desativar_produto_fornecedor/{{x.id}}/{{fornecedor.id}}'">Desativar</button>
+            {% else %}
+            <button style="margin: auto;" type="button" class="btn btn-success"
+                onclick="window.location.href='/ativar_produto_fornecedor/{{x.id}}/{{fornecedor.id}}'">Ativar</button>
+            {% endif%}
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

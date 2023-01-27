@@ -60,3 +60,6 @@ class Logs_plpgsql(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=255, null=False)
     nome_tabela = models.CharField(max_length=255, null=False)
+    class Meta:
+        managed = False
+        db_table = 'logs_plpgsql'

@@ -91,3 +91,11 @@ def converterCarrinhoAnonimoParaLogado(id):
 def todos_fornecedores_produto_other(id_produto):
     collection = bd['produtos_fornecedores']
     return collection.find({"id_produto": id_produto})
+
+def todos_produtos_fornecedor_n_fornece_other(idfornecedor):
+    collection = bd['produtos_fornecedores']
+    collection2 = bd['produtos']
+    produtos_que_fornece = [x["id_produto"] for x in collection.find({"id_fornecedor": idfornecedor}, {"_id": 0,"id_produto": 1})]
+    produtos = collection2.find({ "id": { "$nin": produtos_que_fornece } }, {"_id": 0,"id": 1, "nome":1}).sort("nome",1)
+    return produtos
+    
