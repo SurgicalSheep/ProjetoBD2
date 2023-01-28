@@ -135,7 +135,7 @@ def registroAdmin(request):
         except User.DoesNotExist:
             u = User.objects.create_user(username=username,password=password)
             u.save()
-            insere_ut_admin(request.user.id, nome, tipouser, morada, username, email)
+            insere_ut(request.user.id, nome, tipouser, morada, username, email)
         return redirect('index')
     else:
         form = request.POST
