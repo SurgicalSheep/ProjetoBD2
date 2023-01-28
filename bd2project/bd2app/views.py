@@ -118,6 +118,30 @@ def registro(request):
         context = {'form': form}
         return render(request, 'registro.html', context)
 
+def registroAdmin(request):
+    context = {}
+    if request.method == 'POST':
+        data = request.POST
+        nome = data.get("nome")
+        username = data.get("username")
+        password = data.get("password")
+        tipouser = data.get("tipouser")
+        morada = data.get("morada")
+        email = data.get("email")
+
+        try:
+            u = User.objects.get(username=username)
+            return HttpResponse("Username exists")#meter isto bonito
+        except User.DoesNotExist:
+            u = User.objects.create_user(username=username,password=password)
+            u.save()
+            insere_ut_admin(request.user.id, nome, tipouser, morada, username, email)
+        return redirect('index')
+    else:
+        form = request.POST
+        context = {'form': form}
+        return render(request, 'registro.html', context)
+
 
 def loginUser(request):
     if request.user.is_authenticated:

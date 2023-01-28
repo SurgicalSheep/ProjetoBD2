@@ -143,19 +143,19 @@
           </li>
           {% endif %}
           {% if request.session %}
-          {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+          {% if request.session.tipouser == "Administrador" %}
           <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;"
-              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
-              href="{% url 'utilizador_por_confirmar' %}">Utilizadores por confirmar</a>
+            <div class="dropdown">
+              <button onclick="dropDownUser()" class="dropbtn" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;">Gerir Utilizadores</button>
+              <div id="dropDownUser" class="dropdown-content">
+                <a href="{% url 'todos_users' %}" style="font-family: Merriweather Sans;">Mostrar todos os utilizadores</a>
+                <a href="{% url 'editarUsers' %}" style="font-family: Merriweather Sans;">Editar utilizadores</a>
+                <a href="{% url 'utilizador_por_confirmar' %}" style="font-family: Merriweather Sans;">Utilizadores por confirmar</a>
+              </div>
+            </div>
           </li>
           {% endif %}
           {% endif %}
-          <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;"
-              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
-              href="{% url 'todos_users' %}">Apresentar todos os utilizadores</a>
-          </li>
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
               onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
@@ -239,6 +239,9 @@
   toggle between hiding and showing the dropdown content */
     function myFunction() {
       document.getElementById("myDropdown").classList.toggle("show");
+    }
+    function dropDownUser() {
+      document.getElementById("dropDownUser").classList.toggle("show");
     }
 
     // Close the dropdown menu if the user clicks outside of it

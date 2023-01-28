@@ -5,6 +5,15 @@ bd = pymongo.MongoClient("mongodb+srv://eletropoggers_admin:faroladlucas@projeto
 
 def insere_ut(id,nome,tipouser,morada,username,email):
     col = bd["utilizadores"]
+    doc = {"id": id,"nome":nome,"tipouser":tipouser,"morada":morada, "username":username, "email":email,"active":False}
+    x = col.insert_one(doc)
+    #criar tambem um carrinho de compras para o user
+    carrinho = carrinho_compras(id_carrinho=id,id_cliente=id,preco_total=0)
+    carrinho.save()
+    return x
+
+def insere_ut_admin(id,nome,tipouser,morada,username,email):
+    col = bd["utilizadores"]
     doc = {"id": id,"nome":nome,"tipouser":tipouser,"morada":morada, "username":username, "email":email,"active":True}
     x = col.insert_one(doc)
     #criar tambem um carrinho de compras para o user
