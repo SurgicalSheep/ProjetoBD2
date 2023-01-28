@@ -157,7 +157,6 @@ def loginUser(request):
                                 else:
                                     x+=str(item)+","
                             x+="]"
-                            pprint(carrinho)
                             cursor.execute("call carrinho_anonimo(ARRAY"+x+","+str(user.id)+")")
                             del request.session['carrinhoAnonimo']
                     login(request,user)
@@ -618,16 +617,13 @@ def incrementQuantityAnonimo(request, id_produto):
     col = bd['produtos']
     produto = col.find_one({"id": id_produto})
     item = {}
-    pprint(carrinhoAnonimo)
-
     for x in carrinhoAnonimo:
         if x['id'] == id_produto:
+            item["quantidade"] = x["quantidade"]
+            item["preco_com_desconto"] = x["preco_com_desconto"]
             if x['quantidade'] < produto["stock"]:
                 x['quantidade'] += 1
-                x['preco']+=produto['preco']
                 request.session.modified = True
-                item["quantidade"] = x["quantidade"]
-                item["preco_com_desconto"] = x["preco_com_desconto"]
             else:
                  messages.warning(request, 'Stock máximo atingido!') #not working
     return JsonResponse({'quantity': item["quantidade"], 'total': round(item["preco_com_desconto"]*item['quantidade'], 2)})
@@ -639,11 +635,11 @@ def decrementQuantityAnonimo(request, id_produto):
     item = {}
     for x in carrinhoAnonimo:
         if x['id'] == id_produto:
+            item["quantidade"] = x["quantidade"]
+            item["preco_com_desconto"] = x["preco_com_desconto"]
             if x['quantidade'] > 1:
                 x['quantidade'] -= 1
                 request.session.modified = True
-                item["quantidade"] = x["quantidade"]
-                item["preco_com_desconto"] = x["preco_com_desconto"]
                 item = x
     return JsonResponse({'quantity': item["quantidade"],'total': round(item["preco_com_desconto"]*item['quantidade'], 2)})
 
