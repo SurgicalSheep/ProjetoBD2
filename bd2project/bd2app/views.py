@@ -23,8 +23,8 @@ def index(request):
         if request.session: 
             if request.session["tipouser"] == "Fornecedor":
                 return redirect('homepage_fornecedores')
-            elif request.session["tipouser"] == "Comercial Tipo 1":
-                return redirect('homepage_comerciantetipo1')
+            elif request.session["tipouser"] == "Comercial Tipo 1" or request.session["tipouser"] == "Administrador":
+                return redirect('todos_produtos')
     col = bd["produtos"]
     produtos_promocao = col.find({'active': True, 'desconto': {'$gt': 0}}).sort("desconto", -1).limit(6) #maybe mudar isto para nao serem só 6?
     produtos_nao_ativos = col.find({'active': False})
@@ -224,7 +224,6 @@ def todos_users(request):
         users = todos_users_other()
         return render(request, pag, {'users': users})
 
-
 def detalhes_produto(request, produto_id):
     col = bd["produtos"]
     products = col.find_one({"id": produto_id})
@@ -248,8 +247,6 @@ def desativar_produto(request, produto_id):
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
             desativar_produto_other(produto_id, request.user.id)
-        if getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
-            return redirect('homepage_comerciantetipo1')
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -661,12 +658,6 @@ def decrementQuantityAnonimo(request, id_produto):
 #         item.save()
 #         return 1
 
-@login_required
-def homepage_comerciantetipo1(request):
-        number_users()
-    #if request.method == 'GET':
-        products = todos_produtos_other()
-        return render(request, "homepage_comerciantestipo1.html", {'products': products})
 
 @login_required
 def solicitar_produto(request, id_product):
@@ -683,7 +674,7 @@ def solicitar_produto(request, id_product):
         'datapedido': datetime.datetime.now(),
         'estado': "Por verificar"
         })
-        return redirect('homepage_comerciantetipo1')
+        return redirect('todos_produtos')
     else:
         form = request.POST
         fornecedores = todos_fornecedores_produto_other(id_product)
@@ -726,8 +717,6 @@ def ativar_produto(request, produto_id):
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
             ativar_produto_other(produto_id, request.user.id)
-        if getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
-            return redirect('homepage_comerciantetipo1')
         return redirect('todos_produtos')
     else:
         form = request.POST
