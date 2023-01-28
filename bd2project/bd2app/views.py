@@ -35,7 +35,18 @@ def index(request):
     product_ids = [item[0] for item in top6]
     produtos_mais_vendidos = col.find({'id': {'$in': product_ids}})
     categorias = col.distinct("categoria")
-    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias})
+    col2 = bd["produtos_visitados"]
+    # Find all unique product IDs visited by the current user
+    product_ids = col2.find({"id_user": request.user.id}).sort([("quantidade", -1)])
+    # Create a new list containing the id_produto field
+    sorted_product_ids = [product["id_produto"] for product in product_ids]
+    # Find all products corresponding to the product IDs
+    recomendacoes = []
+    for product_id in sorted_product_ids:
+        product = col.find_one({"id": product_id})
+        if product:
+            recomendacoes.append(product)
+    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias, 'recomendacoes':recomendacoes})
 
 def error404(request,exception=None):
     return render(request, '404.html')
@@ -217,6 +228,18 @@ def todos_users(request):
 def detalhes_produto(request, produto_id):
     col = bd["produtos"]
     products = col.find_one({"id": produto_id})
+    if request.user.is_authenticated:
+        col2 = bd["produtos_visitados"]
+        # Check if the product has already been visited by the user
+        existing_visit = col2.find_one({"id_produto": produto_id, "id_user": request.user.id})
+
+        if existing_visit:
+        # If the product has already been visited, increment the quantity field by 1
+            col2.update_one({"id_produto": produto_id, "id_user": request.user.id}, {"$inc": {"quantidade": 1}})
+        else:
+            # If the product has not been visited, insert a new document with quantity set to 1
+            col2.insert_one({"id_produto": produto_id, "id_user": request.user.id, "quantidade": 1})
+
     return render(request, 'detalhes_produto.html', {'products': products})
 
 @login_required
@@ -581,7 +604,7 @@ def increment_quantity(request, id_carrinho, id_produto):
     if item.quantidade < stock:
         item.quantidade += 1
         item.save()
-        carrinho = carrinho_compras.objects.get(id_cliente=request.user.id)
+        carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
     else:
         messages.warning(request, 'Stock máximo atingido!') #not working
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
@@ -642,7 +665,7 @@ def decrementQuantityAnonimo(request, id_produto):
 def homepage_comerciantetipo1(request):
         number_users()
     #if request.method == 'GET':
-        products = todos_produtos_other(1)
+        products = todos_produtos_other()
         return render(request, "homepage_comerciantestipo1.html", {'products': products})
 
 @login_required

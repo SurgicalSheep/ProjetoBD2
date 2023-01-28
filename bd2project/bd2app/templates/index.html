@@ -146,4 +146,56 @@
         {% endfor %}
     </div>
 </div>
+
+<div style="margin: 1%;">
+    <h3 style="text-align: left;font-family: 'Secular One';">Recomendações para si!</h3>
+    <!-- justify-content:center -->
+    <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px;">
+        {% for recomendacoes in recomendacoes %}
+
+        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
+            <div class="card-body">
+                <img src="{{recomendacoes.imagem}}" style="height:50%;border-radius: 10px;cursor: pointer;"
+                onclick="location.href='/produto/{{recomendacoes.id}}/';" class="card-img-top imagensitens"
+                alt="imagem não disponível"
+                    onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+                <h5 style="cursor: pointer;" class="card-title" id="card-title-nome"
+                onclick="location.href='/produto/{{recomendacoes.id}}/';"
+                onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">{{recomendacoes.nome}}</h5>
+
+                {% if recomendacoes.desconto == 0 %} <!-- desconto 0 -->
+                {% if recomendacoes.stock > 0 %}<!-- desconto 0 com stock-->
+                <h6>{{recomendacoes.categoria}}</h6>
+                <label style="color: green;"><b>✔️ Em stock ({{recomendacoes.stock}})</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{recomendacoes.preco_com_desconto|floatformat:2}}€</b></h3>
+                <div class="text-center"><a href="/produto/adicionar_carrinho/{{recomendacoes.id}}" class="btn btn-success">Comprar</a></div>
+                {% else %}<!-- desconto 0 sem stock-->
+                <h6>{{recomendacoes.categoria}}</h6>
+                <label style="background-color: #F2CB05;">⚠️ Indisponível</label>
+                {% endif %}
+
+                {% else %}
+                {% if recomendacoes.stock > 0 %} <!-- desconto maior que 0. stock existente -->
+                <h6>{{recomendacoes.categoria}}</h6>
+                <label><b style="color: green;">✔️ Em stock ({{recomendacoes.stock}})</b> <b
+                        style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{recomendacoes.desconto}}%</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{recomendacoes.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #7c7c7c;font-size: medium;"><del>{{recomendacoes.preco}}€</del></label>
+                </h3>
+                <div class="text-center"><a href="/produto/adicionar_carrinho/{{recomendacoes.id}}" class="btn btn-success">Comprar</a></div>
+                {% else %}<!-- desconto maior que 0. sem stock -->
+                <h6>{{recomendacoes.categoria}}</h6>
+                <label style="background-color: #F2CB05;">⚠️ Indisponível</label>
+                {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
 {% endblock %}
