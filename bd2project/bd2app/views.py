@@ -335,15 +335,13 @@ def adicionar_carrinho(request, produto_id):
                     item["quantidade"] += quantity
                     produtoExists = True
                     break
-
-            
             if not produtoExists:
                 produto = col.find_one({"id": produto_id})
                 del produto["_id"]
                 produto["quantidade"] = quantity
                 carrinhoAnonimo.append(produto)
-
-            return redirect('todos_produtos')
+            request.session.modified = True
+            return redirect('index')
     else:
         form = request.POST
         return render(request, 'adicionar_carrinho.html', {'form': form, 'stock': stock})
@@ -632,7 +630,7 @@ def incrementQuantityAnonimo(request, id_produto):
                 item["preco_com_desconto"] = x["preco_com_desconto"]
             else:
                  messages.warning(request, 'Stock máximo atingido!') #not working
-    return JsonResponse({'quantity': item["quantidade"],'total': item["preco_com_desconto"]*item['quantidade']})
+    return JsonResponse({'quantity': item["quantidade"], 'total': round(item["preco_com_desconto"]*item['quantidade'], 2)})
 
 def decrementQuantityAnonimo(request, id_produto):
     carrinhoAnonimo = request.session['carrinhoAnonimo']
@@ -647,7 +645,7 @@ def decrementQuantityAnonimo(request, id_produto):
                 item["quantidade"] = x["quantidade"]
                 item["preco_com_desconto"] = x["preco_com_desconto"]
                 item = x
-    return JsonResponse({'quantity': item["quantidade"],'total': item["preco_com_desconto"]*item['quantidade']})
+    return JsonResponse({'quantity': item["quantidade"],'total': round(item["preco_com_desconto"]*item['quantidade'], 2)})
 
 # def editar_preco_carrinho(request, id_produto):
 #     item = get_object_or_404(itens_carrinho_model, id_produto=id_produto)
