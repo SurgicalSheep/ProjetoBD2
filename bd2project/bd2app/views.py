@@ -165,23 +165,22 @@ def loginUser(request):
                     request.session['nome'] = nome
                     if 'carrinhoAnonimo' in request.session:
                         carrinhoAnonimo = request.session['carrinhoAnonimo']
-                        carrinho=[]
-                        for x in carrinhoAnonimo:
-                            for y in range(x["quantidade"]):
-                                carrinho.append(x["id"])
-                        if len(carrinho) > 0:
-                            cursor = connection.cursor()
-                            x = "["
-                            l = len(carrinho)
-                            y = 0
-                            for item in carrinho:
+                        if len(carrinhoAnonimo) > 0:
+                            x = "'["
+                            l = len(carrinhoAnonimo)
+                            y=0
+                            for item in carrinhoAnonimo:
                                 y+=1
-                                if(l == y):
-                                    x+=str(item)
-                                else:
-                                    x+=str(item)+","
-                            x+="]"
-                            cursor.execute("call carrinho_anonimo(ARRAY"+x+","+str(user.id)+")")
+                                x+="{"
+                                x+="\"id\":"+str(item["id"])+","
+                                x+="\"quantidade\":"+str(item["quantidade"])+","
+                                x+="\"preco\":"+str(item["preco"])
+                                x+="}"
+                                if y < l:
+                                    x+=","
+                            x+="]'"
+                            cursor = connection.cursor()
+                            cursor.execute("call carrinho_anonimo("+x+","+str(user.id)+")")
                             del request.session['carrinhoAnonimo']
                     login(request,user)
                     return redirect("/")
