@@ -27,10 +27,14 @@
         <select class="form-select" name="tipouser" aria-label="FormTipoUser">
             <option value="Cliente" selected>Cliente</option>
             <option value="Parceiro">Parceiro</option>
+            <option value="Fornecedor">Fornecedor</option>
+            {% if 'tipouser' in request.session %}
+            {% if request.session.tipouser == "Administrador" %}
             <option value="Comercial Tipo 1">Comercial Tipo 1</option>
             <option value="Comercial Tipo 2">Comercial Tipo 2</option>
-            <option value="Fornecedor">Fornecedor</option>
             <option value="Administrador">Administrador</option>
+            {% endif %}
+            {% endif %}
         </select>
     </div>
     <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
