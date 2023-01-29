@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import FileExtensionValidator
 
 class registo_util(forms.Form):
     logut = forms.CharField(label='Login', max_length=100,required=True)
@@ -11,4 +12,5 @@ class loginUserForm(forms.Form):
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}),label='Password')
 
-    
+class uploadFile(forms.Form):
+    file = forms.FileField()

@@ -4,7 +4,7 @@ import json
 from pprint import pprint
 from bson import Decimal128
 from django.shortcuts import redirect, render, get_object_or_404
-from bd2app.forms import registo_util,loginUserForm
+from bd2app.forms import *
 from bd2app.models import *
 from bd2app.other import *
 from django.contrib.auth import authenticate, login, logout
@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from bson.objectid import ObjectId
 from .templatetags.math_extras import mul
 from django.contrib import messages #import messages
+import xml.etree.ElementTree as ET
 # Create your views here.
 
 def index(request):
@@ -857,3 +858,27 @@ def add_produtos_fornecedor(request, id_fornecedor):
         form = request.POST
         produtos = todos_produtos_fornecedor_n_fornece_other(id_fornecedor)
         return render(request, "novo_produto_fornecedor.html", {'id_fornecedor': id_fornecedor,'form': form, 'produtos': produtos})
+
+def criarProdutosPorFicheiro(request):
+    if(request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1"):
+        return redirect('index')
+    if request.method == 'POST':
+        form = uploadFile(request.POST, request.FILES)
+        file = request.FILES['file']
+        if not (str(file).endswith(".xml") or str(file).endswith(".json")):
+            return HttpResponse("Ficheiro não é XML ou JSON")#meter bonito
+        if str(file).endswith(".xml"):
+            tree = ET.parse(file)
+            root = tree.getroot()
+            for child in root:
+                dados = {}
+                for value in child:
+                    dados[value.tag] = value.text
+                if not (dados["nome"] and dados["preco"] and dados["marca"] and dados["cor"] and dados["imagem"] and dados["descricao"] and dados["stock"] and dados["desconto"] and dados["categoria"] and dados["preco_com_desconto"]):
+                    return HttpResponse("Ficheiro XML mal formatado")
+                pprint(dados)
+                #todo inserir na bd
+            return HttpResponse(str(file)) 
+    else:
+        form = uploadFile()
+    return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
