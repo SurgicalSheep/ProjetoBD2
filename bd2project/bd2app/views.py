@@ -870,15 +870,30 @@ def criarProdutosPorFicheiro(request):
         if str(file).endswith(".xml"):
             tree = ET.parse(file)
             root = tree.getroot()
+            #verificar se o ficheiro está bem formatado
             for child in root:
                 dados = {}
                 for value in child:
                     dados[value.tag] = value.text
                 if not (dados["nome"] and dados["preco"] and dados["marca"] and dados["cor"] and dados["imagem"] and dados["descricao"] and dados["stock"] and dados["desconto"] and dados["categoria"] and dados["preco_com_desconto"]):
                     return HttpResponse("Ficheiro XML mal formatado")
-                pprint(dados)
+            #inserir na bd
+            for child in root:
+                dados = {}
+                for value in child:
+                    dados[value.tag] = value.text
                 #todo inserir na bd
-            return HttpResponse(str(file)) 
+        if str(file).endswith(".json"):
+            dadosFicheiro = json.load(file)
+            #verificar se o ficheiro está bem formatado
+            for produto in dadosFicheiro:
+                if not (produto["nome"] and produto["preco"] and produto["marca"] and produto["cor"] and produto["imagem"] and produto["descricao"] and produto["stock"] and produto["desconto"] and produto["categoria"] and produto["preco_com_desconto"]):
+                    return HttpResponse("Ficheiro JSON mal formatado")
+            #inserir na bd
+            for produto in dadosFicheiro:
+                print(produto)
+                #todo inserir na bd
+        return HttpResponse("Produtos inseridos com sucesso") 
     else:
         form = uploadFile()
     return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
