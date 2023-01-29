@@ -9,83 +9,13 @@
                     class="d-block w-100" alt="...">
             </div>
             <div class="carousel-item">
-                <img src="https://img001.prntscr.com/file/img001/NjIzGqV-SsGd6a9QVTAMJQ.png" style="height: 15em;"
+                <img src="https://img001.prntscr.com/file/img001/NjIzGqV-SsGd6a9QVTAMJQ.png"
+                    onclick="location.href='#section_promocao'" style="height: 15em;cursor: pointer;"
                     class="d-block w-100" alt="...">
             </div>
         </div>
     </div>
 </div>
-<div style="margin: 1%;">
-    <h3 style="text-align: left;font-family: 'Secular One';">Produtos em promoção!</h3>
-
-    <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px;justify-content:center">
-        {% for produtos_promocao in produtos_promocao %}
-
-        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
-            <div class="card-body">
-
-                <img src="{{produtos_promocao.imagem}}" style="height:50%;border-radius: 10px;cursor: pointer;"
-                    onclick="location.href='/produto/{{produtos_promocao.id}}/';" class="card-img-top imagensitens"
-                    alt="imagem não disponível"
-                    onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
-
-                <h5 style="cursor: pointer;" class="card-title" id="card-title-nome"
-                    onclick="location.href='/produto/{{produtos_promocao.id}}/';"
-                    onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">
-                    {{produtos_promocao.nome}}</h5>
-
-                {% if produtos_promocao.desconto == 0 %} <!-- desconto 0 -->
-                {% if produtos_promocao.stock > 0 %}<!-- desconto 0 com stock-->
-                <h6>{{produtos_promocao.categoria}}</h6>
-                <label style="color: green;"><b>✔️ Em stock ({{produtos_promocao.stock}})</b></label>
-                <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b></h3>
-                <div class="text-center">
-                    <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-cart3" viewBox="0 0 16 16">
-                            <path
-                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                        </svg>
-                    </a>
-                </div>
-                {% else %}<!-- desconto 0 sem stock-->
-                <h6>{{produtos_promocao.categoria}}</h6>
-                <label style="color: yellow;">⚠️ Indisponível</label>
-                <a class="btn btn-warning">Indisponível</a>
-                {% endif %}
-
-                {% else %}
-                {% if produtos_promocao.stock > 0 %} <!-- desconto maior que 0. stock existente -->
-                <h6>{{produtos_promocao.categoria}}</h6>
-                <label><b style="color: green;">✔️ Em stock ({{produtos_promocao.stock}})</b> <b
-                        style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{produtos_promocao.desconto}}%</b></label>
-                <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b> <label
-                        style="color: #7c7c7c;font-size: medium;"><del>{{produtos_promocao.preco}}€</del></label>
-                </h3>
-                <div class="text-center">
-                    <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-cart3" viewBox="0 0 16 16">
-                            <path
-                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                        </svg>
-                    </a>
-                </div>
-                {% else %}<!-- desconto maior que 0. sem stock -->
-                <h6>{{produtos_promocao.categoria}}</h6>
-                <label style="color: yellow;">⚠️ Indisponível</label>
-                <a class="btn btn-warning">Indisponível</a>
-                {% endif %}
-                {% endif %}
-            </div>
-        </div>
-
-        {% endfor %}
-    </div>
-</div>
-
 <div style="margin: 1%;">
     <h3 style="text-align: left;font-family: 'Secular One';">Produtos mais vendidos!</h3>
     <!-- justify-content:center -->
@@ -156,6 +86,77 @@
 </div>
 
 <div style="margin: 1%;">
+    <h3 style="text-align: left;font-family: 'Secular One';" id="section_promocao">Produtos em promoção!</h3>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px;justify-content:center">
+        {% for produtos_promocao in produtos_promocao %}
+
+        <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
+            <div class="card-body">
+
+                <img src="{{produtos_promocao.imagem}}" style="height:50%;border-radius: 10px;cursor: pointer;"
+                    onclick="location.href='/produto/{{produtos_promocao.id}}/';" class="card-img-top imagensitens"
+                    alt="imagem não disponível"
+                    onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
+
+                <h5 style="cursor: pointer;" class="card-title" id="card-title-nome"
+                    onclick="location.href='/produto/{{produtos_promocao.id}}/';"
+                    onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">
+                    {{produtos_promocao.nome}}</h5>
+
+                {% if produtos_promocao.desconto == 0 %} <!-- desconto 0 -->
+                {% if produtos_promocao.stock > 0 %}<!-- desconto 0 com stock-->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label style="color: green;"><b>✔️ Em stock ({{produtos_promocao.stock}})</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b></h3>
+                <div class="text-center">
+                    <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-cart3" viewBox="0 0 16 16">
+                            <path
+                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                        </svg>
+                    </a>
+                </div>
+                {% else %}<!-- desconto 0 sem stock-->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label style="color: yellow;">⚠️ Indisponível</label>
+                <a class="btn btn-warning">Indisponível</a>
+                {% endif %}
+
+                {% else %}
+                {% if produtos_promocao.stock > 0 %} <!-- desconto maior que 0. stock existente -->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label><b style="color: green;">✔️ Em stock ({{produtos_promocao.stock}})</b> <b
+                        style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{produtos_promocao.desconto}}%</b></label>
+                <h3 class="card-title"><b
+                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #7c7c7c;font-size: medium;"><del>{{produtos_promocao.preco}}€</del></label>
+                </h3>
+                <div class="text-center">
+                    <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-cart3" viewBox="0 0 16 16">
+                            <path
+                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                        </svg>
+                    </a>
+                </div>
+                {% else %}<!-- desconto maior que 0. sem stock -->
+                <h6>{{produtos_promocao.categoria}}</h6>
+                <label style="color: yellow;">⚠️ Indisponível</label>
+                <a class="btn btn-warning">Indisponível</a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+
+<div style="margin: 1%;">
     <h3 style="text-align: left;font-family: Secular One;">Produtos por categorias!</h3>
 
     <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px">
@@ -176,11 +177,19 @@
     </div>
 </div>
 
+{% if request.user.id > 0 %}
 <div style="margin: 1%;">
     <h3 style="text-align: left;font-family: 'Secular One';">Recomendações para si!</h3>
+    
+    {% if recomendacoes|length == 0 %}
+    <h5>Ainda não temos recomendações para si!</h5>
+
+    {% else %}
     <!-- justify-content:center -->
     <div class="row row-cols-1 row-cols-md-4 g-4 ml-0" style="margin:10px;">
         {% for recomendacoes in recomendacoes %}
+
+
 
         <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
             <div class="card-body">
@@ -237,9 +246,17 @@
                 {% endif %}
             </div>
         </div>
+        
 
         {% endfor %}
 
     </div>
+    {% endif %}
 </div>
+
+{% else %}
+<div>
+    
+</div>
+{% endif %}
 {% endblock %}
