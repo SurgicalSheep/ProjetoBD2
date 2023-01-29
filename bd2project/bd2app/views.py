@@ -42,11 +42,16 @@ def index(request):
     sorted_product_ids = [product["id_produto"] for product in product_ids]
     # Find all products corresponding to the product IDs
     recomendacoes = []
+    counter = 0
     for product_id in sorted_product_ids:
-        product = col.find_one({"id": product_id})
+        product = col.find_one({"id": product_id, "active": True})
         if product:
             recomendacoes.append(product)
-    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias, 'recomendacoes':recomendacoes})
+            counter += 1
+        if counter >= 6:
+            break
+    produtos_marketplace = col.find({'active': True, 'belongs_store': False}).sort("desconto", -1).limit(6)
+    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias, 'recomendacoes':recomendacoes, 'produtos_marketplace':produtos_marketplace})
 
 def error404(request,exception=None):
     return render(request, '404.html')
