@@ -2,16 +2,26 @@
 {% block content %}
 <div style="margin: auto;width: 50%;text-align: center;"><h2>Registo de um novo produto</h2></div>
 
-
-<form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
+<div class="d-flex justify-content-center">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div>
         {{form.file}}
+        <br>
+        <input type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;" name="inserir" value="Inserir">
     </div>
-    <div>
-        <input type="submit" class="btn btn-primary" name="inserir" value="Inserir">
-    </div>
-    
-</form>
 
+        
+</form>
+</div>
+
+<div>
+<h4 class="d-flex justify-content-center" style="margin: 0 auto;display: block;margin-top: 5%;">OU cole o conteudo aqui</h4>
+<form>
+    <div class="form-group">
+        <input type="text" class="form-control" style="width:80%;height:40vh; margin-left: 10%;margin-right: 10%;">
+        <input type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;" value="Inserir2">
+    </div>
+</form>
+</div>
 {% endblock %}
