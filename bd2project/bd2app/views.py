@@ -650,10 +650,10 @@ def incrementQuantityAnonimo(request, id_produto):
     item = {}
     for x in carrinhoAnonimo:
         if x['id'] == id_produto:
-            item["quantidade"] = x["quantidade"]
-            item["preco_com_desconto"] = x["preco"] * (100 - x["desconto"]) / 100 #mudei aqui
             if x['quantidade'] < produto["stock"]:
                 x['quantidade'] += 1
+                item["quantidade"] = x["quantidade"]
+                item["preco_com_desconto"] = x["preco"] * (100 - x["desconto"]) / 100 #mudei aqui
                 request.session.modified = True
             else:
                  messages.warning(request, 'Stock máximo atingido!') #not working
@@ -667,12 +667,11 @@ def decrementQuantityAnonimo(request, id_produto):
     item = {}
     for x in carrinhoAnonimo:
         if x['id'] == id_produto:
-            item["quantidade"] = x["quantidade"]
-            item["preco_com_desconto"] = x["preco"] * (100 - x["desconto"]) / 100 #mudei aqui
             if x['quantidade'] > 1:
                 x['quantidade'] -= 1
+                item["quantidade"] = x["quantidade"]
+                item["preco_com_desconto"] = x["preco"] * ((100 - x["desconto"]) / 100) #mudei aqui
                 request.session.modified = True
-                item = x
     return JsonResponse({'quantity': item["quantidade"],'total': round(item["preco_com_desconto"]*item['quantidade'], 2)})
 
 # def editar_preco_carrinho(request, id_produto):
