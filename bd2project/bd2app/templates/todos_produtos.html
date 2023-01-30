@@ -35,7 +35,7 @@
             <h6>{{product.categoria}}</h6>
             <label style="color: green;"><b>✔️ Em stock ({{product.stock}})</b></label>
             <h3 class="card-title"><b
-                    style="color: #FA7F08;">{{product.preco_com_desconto|floatformat:2}}€</b></h3>
+                    style="color: #FA7F08;">{{product.preco|mul:product.desconto|floatformat:2}}€</b></h3>
             <div class="text-center">
                 {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
                 <a href="/produto/solicitar_produto/{{product.id}}" class="btn btn-success">Encomendar</a>
@@ -116,7 +116,7 @@
             <h6>{{product.categoria}}</h6>
             <label><b style="color: green;">✔️ Em stock ({{product.stock}})</b> <b
                     style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{product.desconto}}%</b></label>
-            <h3 class="card-title"><b style="color: #FA7F08;">{{product.preco_com_desconto|floatformat:2}}€</b> <label
+            <h3 class="card-title"><b style="color: #FA7F08;">{{product.preco|mul:product.desconto|floatformat:2}}€</b> <label
                     style="color: #7c7c7c;font-size: medium;"><del>{{product.preco}}€</del></label>
             </h3>
             <div class="text-center">

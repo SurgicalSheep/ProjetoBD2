@@ -1,4 +1,5 @@
 {% extends "navbar.html" %}
+{% load math_extras %}
 
 {% block content %}
 
@@ -22,7 +23,7 @@
                 <h6>{{products.categoria}}</h6>
                 <label style="color: green;"><b>✔️ Em stock ({{products.stock}})</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{products.preco_com_desconto|floatformat:2}}€</b></h3>
+                        style="color: #FA7F08;">{{products.preco|mul:products.desconto|floatformat:2}}€</b></h3>
                 <div class="text-center"><a href="/produto/adicionar_carrinho/{{products.id}}" class="btn btn-success">Comprar</a></div>
                 {% else %}<!-- desconto 0 sem stock-->
                 <h6>{{products.categoria}}</h6>
@@ -35,7 +36,7 @@
                 <label><b style="color: green;">✔️ Em stock ({{products.stock}})</b> <b
                         style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{products.desconto}}%</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{products.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #FA7F08;">{{products.preco|mul:products.desconto|floatformat:2}}€</b> <label
                         style="color: #7c7c7c;font-size: medium;"><del>{{products.preco}}€</del></label>
                 </h3>
                 <div class="text-center"><a href="/produto/adicionar_carrinho/{{products.id}}" class="btn btn-success">Comprar</a></div>

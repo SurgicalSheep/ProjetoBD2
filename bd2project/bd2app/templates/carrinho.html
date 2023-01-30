@@ -29,16 +29,19 @@
                 <label style="color: #7c7c7c;font-size: medium;"><del>{{itens.preco}}€</del></label>
             </h3>
             {% if item_pg.quantidade > 1 %}
-            <h5 class="card-title">({{itens.preco|mul:itens.desconto|multiply:item_pg.quantidade|floatformat:2}}€)
+            <h5 class="card-title" id="preco{{itens.id}}" data-preco="{{itens.preco}}"
+                data-item-pg="{{item_pg.quantidade}}" data-item-desconto="{{itens.desconto}}">
+                ({{itens.preco|mul:itens.desconto|multiply:item_pg.quantidade|floatformat:2}}€)
+                <!-- falta mudar isto -->
             </h5>
             {% endif %}
 
             <h6 class="card-title" data-item-id="{{itens.id}}">
                 <label id="quantidade{{itens.id}}">Quantidade: {{item_pg.quantidade}}</label>
                 <button class="increment btn-primary" data-carrinho-id="{{carrinho.id_carrinho}}"
-                    data-item-id="{{itens.id}}" style="text-align: center;">+</button>
+                    data-item-id="{{itens.id}}" data-quantidade="{{item_pg.quantidade}}" style="text-align: center;">+</button>
                 <button class="decrement btn-primary" data-carrinho-id="{{carrinho.id_carrinho}}"
-                    data-item-id="{{itens.id}}" style="text-align: center;width: 12.5%;">-</button>
+                    data-item-id="{{itens.id}}" data-quantidade="{{item_pg.quantidade}}" style="text-align: center;width: 12.5%;">-</button>
             </h6>
             <form action="{% url 'remover_produto_carrinho' produto_id=itens.id %}" method="post">
                 {% csrf_token %}
@@ -58,15 +61,16 @@
             var itemId = $(this).data('item-id');
             var carrinhoId = $(this).data('carrinho-id');
             var preco = $('#preco' + itemId).data('preco');
+            var desconto = $('#preco' + itemId).data('item-desconto');
             $.ajax({
                 url: '/increment_quantity/' + carrinhoId + '/' + itemId + '/',
                 success: function (data) {
                     document.getElementById("quantidade" + itemId).innerHTML = "Quantidade: " + data.quantity;
                     document.getElementById("precocarrinho").innerHTML = "<u>Preço do carrinho:</u> <b>" + data.total + "</b> €";
                     if (data.quantity > 1)
-                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " € (" + (data.quantity * preco).toFixed(2) + "€)";
+                        document.getElementById("preco" + itemId).innerHTML = "(" + Math.ceil((preco * (100-desconto) * data.quantity /100)*100)/100 + "€)";
                     else
-                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " €";
+                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + Math.ceil((preco * (100-desconto) /100)*100)/100 + " €";
                 }
             });
         });
@@ -74,15 +78,16 @@
             var itemId = $(this).data('item-id');
             var carrinhoId = $(this).data('carrinho-id');
             var preco = $('#preco' + itemId).data('preco');
+            var desconto = $('#preco' + itemId).data('item-desconto');
             $.ajax({
                 url: '/decrement_quantity/' + carrinhoId + '/' + itemId + '/',
                 success: function (data) {
                     document.getElementById("quantidade" + itemId).innerHTML = "Quantidade: " + data.quantity;
                     document.getElementById("precocarrinho").innerHTML = "<u>Preço do carrinho:</u> <b>" + data.total + "</b> €";
                     if (data.quantity > 1)
-                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " € (" + (data.quantity * preco).toFixed(2) + "€)";
+                        document.getElementById("preco" + itemId).innerHTML = "(" + Math.ceil((preco * (100-desconto) * data.quantity /100)*100)/100 + "€)";
                     else
-                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + preco + " €";
+                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + Math.ceil((preco * (100-desconto) /100)*100)/100 + " €";
                 }
             });
         });

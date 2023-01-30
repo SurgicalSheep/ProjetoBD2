@@ -12,13 +12,13 @@ def insere_ut(id,nome,tipouser,morada,username,email):
     carrinho.save()
     return x
 
-def novo_produto_insert(nome, preco, marca, cor, imagem, descricao, stock, desconto, categoria, preco_com_desconto, idgestor):
+def novo_produto_insert(nome, preco, marca, cor, imagem, descricao, stock, desconto, categoria, idgestor):
     col = bd["produtos"]
     if getTipoUserMongo(idgestor) == "Parceiro":
         belongs = False
     else:
         belongs = True
-    doc = {"id": product_max_id(),"nome":nome, "preco":preco, "marca":marca, "cor":cor, "imagem":imagem, "descricao":descricao, "stock":stock, "desconto":desconto, "categoria":categoria, "active":True, "preco_com_desconto":preco_com_desconto, "id_utilizador": idgestor, "belongs_store": belongs} 
+    doc = {"id": product_max_id(),"nome":nome, "preco":preco, "marca":marca, "cor":cor, "imagem":imagem, "descricao":descricao, "stock":stock, "desconto":desconto, "categoria":categoria, "active":True, "id_utilizador": idgestor, "belongs_store": belongs} 
     x = col.insert_one(doc)
     return x
 

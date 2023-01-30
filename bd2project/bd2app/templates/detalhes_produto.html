@@ -1,4 +1,5 @@
 {% extends "navbar.html" %}
+{% load math_extras %}
 {% block content %}
 
 <div class="card" style="margin: 1%;margin-left: 10%;margin-right: 10%; background-color: #def2f5;border-radius: 10px">
@@ -21,7 +22,7 @@
         <br>
         <b>Marca :</b> {{products.marca}}
         <br>
-        <b>Preço :</b> <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del> <b>{{products.preco_com_desconto|floatformat:2}}€</b>
+        <b>Preço :</b> <del style="color: rgb(143, 143, 143);">{{products.preco}}€</del> <b>{{products.preco|mul:products.desconto|floatformat:2}}€</b>
         <br>
         <b>Desconto :</b> {{products.desconto}} %
         <br>

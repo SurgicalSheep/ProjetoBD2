@@ -1,5 +1,5 @@
 {% extends "navbar.html" %}
-
+{% load math_extras %}
 {% block content %}
 <div style="margin: auto;width: 100%">
     <div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-bs-ride="carousel">
@@ -44,7 +44,7 @@
                 <h6>{{produtos_mais_vendidos.categoria}}</h6>
                 <label style="color: green;"><b>✔️ Em stock ({{produtos_mais_vendidos.stock}})</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_mais_vendidos.preco_com_desconto|floatformat:2}}€</b></h3>
+                        style="color: #FA7F08;">{{produtos_mais_vendidos.preco|mul:produtos_mais_vendidos.desconto|floatformat:2}}€</b></h3>
                 <div class="text-center">
                     <a href="/produto/adicionar_carrinho/{{produtos_mais_vendidos.id}}" class="btn btn-success">Comprar
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -65,7 +65,7 @@
                 <label><b style="color: green;">✔️ Em stock ({{produtos_mais_vendidos.stock}})</b> <b
                         style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{produtos_mais_vendidos.desconto}}%</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_mais_vendidos.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #FA7F08;">{{produtos_mais_vendidos.preco|mul:produtos_mais_vendidos.desconto|floatformat:2}}€</b> <label
                         style="color: #7c7c7c;font-size: medium;"><del>{{produtos_mais_vendidos.preco}}€</del></label>
                 </h3>
                 <div class="text-center">
@@ -115,7 +115,7 @@
                 <h6>{{produtos_promocao.categoria}}</h6>
                 <label style="color: green;"><b>✔️ Em stock ({{produtos_promocao.stock}})</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b></h3>
+                        style="color: #FA7F08;">{{produtos_promocao.preco|mul:produtos_promocao.desconto|floatformat:2}}€</b></h3>
                 <div class="text-center">
                     <a href="/produto/adicionar_carrinho/{{produtos_promocao.id}}" class="btn btn-success">Comprar
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -137,7 +137,7 @@
                 <label><b style="color: green;">✔️ Em stock ({{produtos_promocao.stock}})</b> <b
                         style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{produtos_promocao.desconto}}%</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_promocao.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #FA7F08;">{{produtos_promocao.preco|mul:produtos_promocao.desconto|floatformat:2}}€</b> <label
                         style="color: #7c7c7c;font-size: medium;"><del>{{produtos_promocao.preco}}€</del></label>
                 </h3>
                 <div class="text-center">
@@ -212,7 +212,7 @@
                 <h6>{{recomendacoes.categoria}}</h6>
                 <label style="color: green;"><b>✔️ Em stock ({{recomendacoes.stock}})</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{recomendacoes.preco_com_desconto|floatformat:2}}€</b></h3>
+                        style="color: #FA7F08;">{{recomendacoes.preco|mul:recomendacoes.desconto|floatformat:2}}€</b></h3>
                 <div class="text-center">
                     <a href="/produto/adicionar_carrinho/{{recomendacoes.id}}" class="btn btn-success">Comprar
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -233,7 +233,7 @@
                 <label><b style="color: green;">✔️ Em stock ({{recomendacoes.stock}})</b> <b
                         style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{recomendacoes.desconto}}%</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{recomendacoes.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #FA7F08;">{{recomendacoes.preco|mul:recomendacoes.desconto|floatformat:2}}€</b> <label
                         style="color: #7c7c7c;font-size: medium;"><del>{{recomendacoes.preco}}€</del></label>
                 </h3>
                 <div class="text-center">
@@ -294,7 +294,7 @@
                 <h6>{{produtos_marketplace.categoria}}</h6>
                 <label style="color: green;"><b>✔️ Em stock ({{produtos_marketplace.stock}})</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_marketplace.preco_com_desconto|floatformat:2}}€</b></h3>
+                        style="color: #FA7F08;">{{produtos_marketplace.preco|mul:produtos_marketplace.desconto|floatformat:2}}€</b></h3>
                 <div class="text-center">
                     <a href="/produto/adicionar_carrinho/{{produtos_marketplace.id}}" class="btn btn-success">Comprar
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -316,7 +316,7 @@
                 <label><b style="color: green;">✔️ Em stock ({{produtos_marketplace.stock}})</b> <b
                         style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{produtos_marketplace.desconto}}%</b></label>
                 <h3 class="card-title"><b
-                        style="color: #FA7F08;">{{produtos_marketplace.preco_com_desconto|floatformat:2}}€</b> <label
+                        style="color: #FA7F08;">{{produtos_marketplace.preco|mul:produtos_marketplace.desconto|floatformat:2}}€</b> <label
                         style="color: #7c7c7c;font-size: medium;"><del>{{produtos_marketplace.preco}}€</del></label>
                 </h3>
                 <div class="text-center">

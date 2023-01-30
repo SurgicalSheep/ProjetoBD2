@@ -228,9 +228,8 @@ def novo_produto(request):
         cor = data.get("cor")
         stock = int(data.get("stock"))
         categoria = data.get("categoria")
-        preco_com_desconto = float(mul(preco,desconto))
         novo_produto_insert(nome, preco, marca, cor, imagem,
-                            descricao, stock, desconto, categoria, preco_com_desconto, request.user.id)
+                            descricao, stock, desconto, categoria, request.user.id)
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -312,7 +311,7 @@ def todos_pedidos(request):
 def carrinho(request):
     if request.user.is_authenticated:
         carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
-        itens_pg = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto') #nao esquecer que o id do carrinho vai ter que ser sempre igual ao do cliente
+        itens_pg = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto')
         col = bd["produtos"]
         product_ids = [item.id_produto for item in itens_pg]
         itens2 = col.find({'id': {'$in': product_ids}}) 
@@ -323,7 +322,7 @@ def carrinho(request):
         carrinhoAnonimo = request.session['carrinhoAnonimo']
         precoTotal = 0
         for x in carrinhoAnonimo:
-            precoTotal += x['preco_com_desconto'] * x['quantidade']
+            precoTotal += x['preco'] * (100 - x['desconto']) / 100 * x['quantidade'] #mudei isto
         precoTotal = round(precoTotal, 2)
         return render(request,'carrinhoAnonimoV2.html',{'carrinho':carrinhoAnonimo,'precoTotal':precoTotal})
 
@@ -331,7 +330,9 @@ def carrinho(request):
 def adicionar_carrinho(request, produto_id):
     col = bd["produtos"]
     stock = col.find_one({"id": produto_id})["stock"]
-    produto_preco_com_desconto = col.find_one({"id": produto_id})["preco_com_desconto"]
+    produto_preco = col.find_one({"id": produto_id})["preco"]
+    produto_desconto = col.find_one({"id": produto_id})["desconto"]
+    produto_preco_com_desconto = produto_preco * (100 - produto_desconto) / 100
     if request.method == 'POST':
         quantity = int(request.POST.get('quantidade'))
         #no form ja meti verificacao mas convem ter verificacao no backend tbm entao
@@ -604,10 +605,9 @@ def editar_produto(request, produto_id):
         cor = data.get("cor")
         stock = int(data.get("stock"))
         categoria = data.get("categoria")
-        preco_com_desconto = float(mul(preco,desconto))
         # update the document in the mongodb collection
         collection = bd['produtos']
-        collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria, "preco_com_desconto": preco_com_desconto, "id_utilizador": request.user.id}})
+        collection.update_one({"id": produto_id}, {"$set": {"nome": nome, "preco": preco, "marca": marca, "cor": cor, "imagem": imagem, "descricao": descricao, "stock": stock, "desconto": desconto, "categoria": categoria, "id_utilizador": request.user.id}})
         #atualizar o produto nos carrinhos
         preco_pg = Decimal(data.get("preco"))
         itens_carrinho = itens_carrinho_model.objects.filter(id_produto=produto_id)
@@ -651,7 +651,7 @@ def incrementQuantityAnonimo(request, id_produto):
     for x in carrinhoAnonimo:
         if x['id'] == id_produto:
             item["quantidade"] = x["quantidade"]
-            item["preco_com_desconto"] = x["preco_com_desconto"]
+            item["preco_com_desconto"] = x["preco"] * (100 - x["desconto"]) / 100 #mudei aqui
             if x['quantidade'] < produto["stock"]:
                 x['quantidade'] += 1
                 request.session.modified = True
@@ -667,7 +667,7 @@ def decrementQuantityAnonimo(request, id_produto):
     for x in carrinhoAnonimo:
         if x['id'] == id_produto:
             item["quantidade"] = x["quantidade"]
-            item["preco_com_desconto"] = x["preco_com_desconto"]
+            item["preco_com_desconto"] = x["preco"] * (100 - x["desconto"]) / 100 #mudei aqui
             if x['quantidade'] > 1:
                 x['quantidade'] -= 1
                 request.session.modified = True

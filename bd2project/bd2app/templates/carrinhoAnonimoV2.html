@@ -25,7 +25,7 @@
             <label> <b
                     style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{item.desconto}}%</b></label>
             <h3 class="card-title"><b
-                    style="color: #FA7F08;">{{item.preco_com_desconto|floatformat:2}}€</b> <label
+                    style="color: #FA7F08;">{{item.preco|mul:item.desconto|floatformat:2}}€</b> <label
                     style="color: #7c7c7c;font-size: medium;"><del>{{item.preco}}€</del></label>
             </h3>
 

@@ -21,9 +21,9 @@
         <div class="card-body" style="text-align: center;">
             <img src="{{item.imagem}}" style="height: 45%;" class="card-img-top" alt="...">
             <h6 class="card-title">Nome do produto: {{item.nome}}</h6>
-            <h6 class="card-title" id="preco{{item.id}}" data-preco="{{item.preco_com_desconto}}">Preço
-                unitário: {{item.preco_com_desconto}} € {% if item.quantidade > 1 %}
-                ({{item.preco_com_desconto|multiply:item.quantidade|floatformat:2}}€) {% endif %}</h6>
+            <h6 class="card-title" id="preco{{item.id}}" data-preco="{{item.preco|mul:item.desconto}}">Preço
+                unitário: {{item.preco|mul:item.desconto}} € {% if item.quantidade > 1 %}
+                ({{item.preco|mul:item.desconto|multiply:item.quantidade|floatformat:2}}€) {% endif %}</h6>
             <h6 class="card-title">Desconto: {{item.desconto}} %</h6>
             <h6 class="card-title" data-item-id="{{item.id}}">
                 <label id="quantidade{{item.id}}">Quantidade: {{item.quantidade}}</label>
