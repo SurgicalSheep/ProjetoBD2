@@ -8,7 +8,7 @@
     <h4>E indique a quantidade pretendida!</h4>
     <form action="" method="POST">
         {% csrf_token %}
-        <input type="number" name=quantidade min="1" max="{{stock}}" value="quantidade"></input>
+        <input type="number" name=quantidade min="1" max="{{stock}}" value="quantidade" required></input>
         <input type="hidden" name=id value="{{products.id}}"></input>
         <input type="hidden" name=desconto value="{{products.desconto}}"></input>
         <input type="hidden" name=nome value="{{products.nome}}"></input>
