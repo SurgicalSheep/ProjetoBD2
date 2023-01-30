@@ -3,8 +3,6 @@
 
 {% block content %}
 
-
-
 <div style="margin: auto;width: 50%;text-align: center;">
     <h2 style="margin-left: 1.5%;">Aqui tem o seu carrinho </h2>
     <h6 style="margin-left: 1.5%;" id="precocarrinho" data-precocarrinho="{{carrinho.preco_total}}"><u>Preço do
@@ -26,12 +24,15 @@
 
             <label> <b
                     style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{itens.desconto}}%</b></label>
-            <h3 class="card-title"><b
-                    style="color: #FA7F08;">{{itens.preco_com_desconto|floatformat:2}}€</b> <label
-                    style="color: #7c7c7c;font-size: medium;"><del>{{itens.preco}}€</del></label>
+            <h3 class="card-title" style="margin-bottom: 0;">
+                <b style="color: #FA7F08;">{{itens.preco|mul:itens.desconto|floatformat:2}}€</b>
+                <label style="color: #7c7c7c;font-size: medium;"><del>{{itens.preco}}€</del></label>
             </h3>
+            {% if item_pg.quantidade > 1 %}
+            <h5 class="card-title">({{itens.preco|mul:itens.desconto|multiply:item_pg.quantidade|floatformat:2}}€)
+            </h5>
+            {% endif %}
 
-            
             <h6 class="card-title" data-item-id="{{itens.id}}">
                 <label id="quantidade{{itens.id}}">Quantidade: {{item_pg.quantidade}}</label>
                 <button class="increment btn-primary" data-carrinho-id="{{carrinho.id_carrinho}}"

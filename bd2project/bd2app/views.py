@@ -4,7 +4,7 @@ import json
 from pprint import pprint
 from bson import Decimal128
 from django.shortcuts import redirect, render, get_object_or_404
-from bd2app.forms import registo_util,loginUserForm
+from bd2app.forms import *
 from bd2app.models import *
 from bd2app.other import *
 from django.contrib.auth import authenticate, login, logout
@@ -19,6 +19,7 @@ from dash import Dash, dcc, html
 import plotly.express as px
 import pandas as pd
 from django.contrib import messages #import messages
+import xml.etree.ElementTree as ET
 # Create your views here.
 
 def index(request):
@@ -45,11 +46,16 @@ def index(request):
     sorted_product_ids = [product["id_produto"] for product in product_ids]
     # Find all products corresponding to the product IDs
     recomendacoes = []
+    counter = 0
     for product_id in sorted_product_ids:
-        product = col.find_one({"id": product_id})
+        product = col.find_one({"id": product_id, "active": True})
         if product:
             recomendacoes.append(product)
-    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias, 'recomendacoes':recomendacoes})
+            counter += 1
+        if counter >= 6:
+            break
+    produtos_marketplace = col.find({'active': True, 'belongs_store': False}).sort("desconto", -1).limit(6)
+    return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias, 'recomendacoes':recomendacoes, 'produtos_marketplace':produtos_marketplace})
 
 def error404(request,exception=None):
     return render(request, '404.html')
@@ -950,3 +956,41 @@ def graficos_valvendas(request):
     else:
         form = request.POST
         return render(request, "estatisticas.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes})
+def criarProdutosPorFicheiro(request):
+    if(request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1"):
+        return redirect('index')
+    if request.method == 'POST':
+        form = uploadFile(request.POST, request.FILES)
+        file = request.FILES['file']
+        if not (str(file).endswith(".xml") or str(file).endswith(".json")):
+            return HttpResponse("Ficheiro não é XML ou JSON")#meter bonito
+        if str(file).endswith(".xml"):
+            tree = ET.parse(file)
+            root = tree.getroot()
+            #verificar se o ficheiro está bem formatado
+            for child in root:
+                dados = {}
+                for value in child:
+                    dados[value.tag] = value.text
+                if not (dados["nome"] and dados["preco"] and dados["marca"] and dados["cor"] and dados["imagem"] and dados["descricao"] and dados["stock"] and dados["desconto"] and dados["categoria"] and dados["preco_com_desconto"]):
+                    return HttpResponse("Ficheiro XML mal formatado")
+            #inserir na bd
+            for child in root:
+                dados = {}
+                for value in child:
+                    dados[value.tag] = value.text
+                #todo inserir na bd
+        if str(file).endswith(".json"):
+            dadosFicheiro = json.load(file)
+            #verificar se o ficheiro está bem formatado
+            for produto in dadosFicheiro:
+                if not (produto["nome"] and produto["preco"] and produto["marca"] and produto["cor"] and produto["imagem"] and produto["descricao"] and produto["stock"] and produto["desconto"] and produto["categoria"] and produto["preco_com_desconto"]):
+                    return HttpResponse("Ficheiro JSON mal formatado")
+            #inserir na bd
+            for produto in dadosFicheiro:
+                print(produto)
+                #todo inserir na bd
+        return HttpResponse("Produtos inseridos com sucesso") 
+    else:
+        form = uploadFile()
+    return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
