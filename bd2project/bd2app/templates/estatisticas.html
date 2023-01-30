@@ -1,0 +1,59 @@
+{% extends "index.html" %}
+{% block content %}
+<div style="display: flex; margin-left: 1%; margin-top: 1%;">
+    <div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 4rem; cursor: pointer;"
+        onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
+        onclick="location.href='graficos_nvendas';">
+        <h6 style="font-size: medium; font-family: Poppins;">Número de vendas</h6>
+    </div>
+    <div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 20px; cursor: pointer;"
+        onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
+        onclick="location.href='graficos_valvendas';">
+        <h6 style="font-size: medium; font-family: Poppins;">Valor das vendas</h6>
+    </div>
+</div>
+<div style="display: flex; margin-left: 1%; margin-top: 1%;">
+    <form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
+        {% csrf_token %}
+        <div style="float: left; width: 100%;">
+            <b>Escolha o ano: </b>
+            <b style="margin-left: 4%;">Escolha o mês: </b>
+        </div>
+        <br>
+        <div style="float: left; display: flex; margin-bottom: 10%;">
+            <select class="custom-select" style="width: 120px; float: left;" name="ano" id="inputGroupSelect01">
+                {% if anoselected != -1 %}
+                <option selected>{{anoselected}}</option>
+                {% endif %}
+                {% for x in ano %}
+                {% if x != anoselected %}
+                <option value="{{x}}">{{x}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <select class="custom-select" style="width: 120px; float: left; margin-left: 4%;" name="mes"
+                id="inputGroupSelect01">
+                {% if messelected != -1 %}
+                <option selected>{{messelected}}</option>
+                {% endif %}
+                {% for x in mes %}
+                {% if x != messelected %}
+                <option value="{{x}}">{{x}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+            <input style="float: left; margin-left: 4%;" type="submit" class="btn btn-primary" name="inserir"
+                value="Inserir">
+        </div>
+    </form>
+</div>
+
+<div id="bar-graph">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var fig = JSON.parse('{{ fig_json|safe }}');
+        Plotly.newPlot("bar-graph", fig.data, fig.layout);
+    </script>
+</div>
+
+{% endblock %}
