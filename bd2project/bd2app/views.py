@@ -3,6 +3,7 @@ from decimal import Decimal
 import json
 from pprint import pprint
 from bson import Decimal128
+from bson.objectid import ObjectId
 from django.shortcuts import redirect, render, get_object_or_404
 from bd2app.forms import *
 from bd2app.models import *
@@ -20,6 +21,7 @@ import plotly.express as px
 import pandas as pd
 from django.contrib import messages #import messages
 import xml.etree.ElementTree as ET
+from django.core import serializers
 # Create your views here.
 
 def index(request):
@@ -994,3 +996,30 @@ def criarProdutosPorFicheiro(request):
     else:
         form = uploadFile()
     return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
+
+@login_required
+def exportProdutos(request):
+    #semi feito
+    produtos = produtoMongo.getDataStore()
+    produtos = [product for product in produtos]
+    #json
+    # for product in produtos:
+    #     if '_id' in product:
+    #         product['_id'] = str(product['_id'])
+    # produtos = json.dumps(produtos)
+    # response = HttpResponse(produtos, content_type='application/xml')
+    # response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
+    # return response
+    # #xml
+    # root = ET.Element("root")
+    # for product in produtos:
+    #     prod = ET.SubElement(root, "produto")
+    #     for key, value in product.items():
+    #         elem = ET.SubElement(prod, key)
+    #         elem.text = str(value)
+
+    # xml_str = ET.tostring(root).decode("utf-8")
+    # response = HttpResponse(xml_str, content_type='application/xml')
+    # response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
+    # return response
+    
