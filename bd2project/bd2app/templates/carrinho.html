@@ -34,6 +34,11 @@
                 ({{itens.preco|mul:itens.desconto|multiply:item_pg.quantidade|floatformat:2}}€)
                 <!-- falta mudar isto -->
             </h5>
+            {% else %}
+            <h5 class="card-title" id="preco{{itens.id}}" data-preco="{{itens.preco}}"
+                data-item-pg="{{item_pg.quantidade}}" data-item-desconto="{{itens.desconto}}">
+                <!-- falta mudar isto -->
+            </h5>
             {% endif %}
 
             <h6 class="card-title" data-item-id="{{itens.id}}">
@@ -67,10 +72,12 @@
                 success: function (data) {
                     document.getElementById("quantidade" + itemId).innerHTML = "Quantidade: " + data.quantity;
                     document.getElementById("precocarrinho").innerHTML = "<u>Preço do carrinho:</u> <b>" + data.total + "</b> €";
-                    if (data.quantity > 1)
+                    if (data.quantity > 1){
+                        console.log(data)
                         document.getElementById("preco" + itemId).innerHTML = "(" + Math.ceil((preco * (100-desconto) * data.quantity /100)*100)/100 + "€)";
+                    } 
                     else
-                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + Math.ceil((preco * (100-desconto) /100)*100)/100 + " €";
+                        document.getElementById("preco" + itemId).innerHTML = "";
                 }
             });
         });
@@ -87,7 +94,7 @@
                     if (data.quantity > 1)
                         document.getElementById("preco" + itemId).innerHTML = "(" + Math.ceil((preco * (100-desconto) * data.quantity /100)*100)/100 + "€)";
                     else
-                        document.getElementById("preco" + itemId).innerHTML = "Preço unitário: " + Math.ceil((preco * (100-desconto) /100)*100)/100 + " €";
+                        document.getElementById("preco" + itemId).innerHTML = "";
                 }
             });
         });
