@@ -1,13 +1,13 @@
 {% extends "navbar.html" %}
 {% block content %}
-<div style="margin: auto;width: 50%;text-align: center;"><h2>Registo de um novo produto</h2></div>
+<div style="margin: auto;width: 50%;text-align: center;"><h2>Registo de vários produtos</h2></div>
 
 <div class="d-flex justify-content-center">
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div>
         {{form.file}}
-        <input type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;" name="inserir" value="Inserir">
+        <input type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;" name="inserirMultiple" value="inserir">
     </div>
 
         
@@ -15,12 +15,40 @@
 </div>
 
 <div>
-<h4 class="d-flex justify-content-center" style="margin: 0 auto;display: block;margin-top: 5%;">OU cole o conteudo aqui</h4>
-<form>
-    <div class="form-group">
-        <input type="text" class="form-control" style="width:80%;height:40vh; margin-left: 10%;margin-right: 10%;">
-        <input type="submit" class="btn btn-primary" style="margin: 0 auto;display: block;" value="Inserir2">
+<h4 class="d-flex justify-content-center" style="margin: 0 auto;display: block;margin-top: 5%;">Registar um produto</h4>
+<form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
+    {% csrf_token %}
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control"  name="nome" placeholder="Nome" required>
     </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="number" step="any" class="form-control" min=0 name="preco" placeholder="Preço" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="marca" placeholder="Marca" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="cor" placeholder="Cor" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="imagem" placeholder="Link Imagem" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="descricao" placeholder="Descrição" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="stock" placeholder="Stock" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="number" class="form-control" max=99 min=0 name="desconto" placeholder="Desconto" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="text" class="form-control" name="categoria" placeholder="Categoria" required>
+    </div>
+    <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
+        <input type="submit" class="btn btn-primary" name="inserirSingle" value="inserir">
+    </div>
+    
 </form>
 </div>
 {% endblock %}

@@ -962,40 +962,64 @@ def criarProdutosPorFicheiro(request):
     if(request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1"):
         return redirect('index')
     if request.method == 'POST':
-        form = uploadFile(request.POST, request.FILES)
-        file = request.FILES['file']
-        if not (str(file).endswith(".xml") or str(file).endswith(".json")):
-            return HttpResponse("Ficheiro não é XML ou JSON")#meter bonito
-        if str(file).endswith(".xml"):
-            tree = ET.parse(file)
-            root = tree.getroot()
-            #verificar se o ficheiro está bem formatado
-            for child in root:
-                dados = {}
-                for value in child:
-                    dados[value.tag] = value.text
-                if not (dados["nome"] and dados["preco"] and dados["marca"] and dados["cor"] and dados["imagem"] and dados["descricao"] and dados["stock"] and dados["desconto"] and dados["categoria"] and dados["preco_com_desconto"]):
-                    return HttpResponse("Ficheiro XML mal formatado")
-            #inserir na bd
-            for child in root:
-                dados = {}
-                for value in child:
-                    dados[value.tag] = value.text
-                #todo inserir na bd
-        if str(file).endswith(".json"):
-            dadosFicheiro = json.load(file)
-            #verificar se o ficheiro está bem formatado
-            for produto in dadosFicheiro:
-                if not (produto["nome"] and produto["preco"] and produto["marca"] and produto["cor"] and produto["imagem"] and produto["descricao"] and produto["stock"] and produto["desconto"] and produto["categoria"] and produto["preco_com_desconto"]):
-                    return HttpResponse("Ficheiro JSON mal formatado")
-            #inserir na bd
-            for produto in dadosFicheiro:
-                print(produto)
-                #todo inserir na bd
-        return HttpResponse("Produtos inseridos com sucesso") 
+        if 'inserirMultiple' in request.POST:
+            form = uploadFile(request.POST, request.FILES)
+            file = request.FILES['file']
+            if not (str(file).endswith(".xml") or str(file).endswith(".json")):
+                return HttpResponse("Ficheiro não é XML ou JSON")#meter bonito
+            if str(file).endswith(".xml"):
+                tree = ET.parse(file)
+                root = tree.getroot()
+                #verificar se o ficheiro está bem formatado
+                for child in root:
+                    for value in child:
+                        if not (value.tag == "nome" or value.tag == "preco" or value.tag == "marca" or value.tag == "cor" or value.tag == "imagem" or value.tag == "descricao" or value.tag == "stock" or value.tag == "desconto" or value.tag == "categoria"):
+                            return HttpResponse("Ficheiro XML mal formatado")
+                #inserir na bd
+                for child in root:
+                    dados = {}
+                    for value in child:
+                        if value.tag == "preco":
+                            try:
+                                dados[value.tag] = float(value.text)
+                            except:
+                                return HttpResponse("Ficheiro XML mal formatado")
+                        if value.tag == "stock" or value.tag == "desconto":
+                            try:
+                                dados[value.tag] = int(value.text)
+                            except:
+                                return HttpResponse("Ficheiro XML mal formatado")
+                        else:
+                            dados[value.tag] = value.text
+                    #inserir na bd
+                    novo_produto_insert(dados["nome"], dados["preco"], dados["marca"], dados["cor"], dados["imagem"], dados["descricao"], dados["stock"], dados["desconto"], dados["categoria"],request.user.id)
+            if str(file).endswith(".json"):
+                dadosFicheiro = json.load(file)
+                #verificar se o ficheiro está bem formatado
+                for produto in dadosFicheiro:
+                    if not (produto["nome"] and produto["preco"] and produto["marca"] and produto["cor"] and produto["imagem"] and produto["descricao"] and produto["stock"] and produto["desconto"] and produto["categoria"]):
+                        return HttpResponse("Ficheiro JSON mal formatado")
+                #inserir na bd
+                for produto in dadosFicheiro:
+                    #inserir na bd
+                    novo_produto_insert(produto["nome"], produto["preco"], produto["marca"], produto["cor"], produto["imagem"], produto["descricao"], produto["stock"], produto["desconto"], produto["categoria"],request.user.id)
+            return redirect("index") 
+        if 'inserirSingle' in request.POST:
+            data = request.POST
+            nome = data.get("nome")
+            descricao = data.get("descricao")
+            imagem = data.get("imagem")
+            preco = float(data.get("preco"))
+            desconto = int(data.get("desconto"))
+            marca = data.get("marca")
+            cor = data.get("cor")
+            stock = int(data.get("stock"))
+            categoria = data.get("categoria")
+            novo_produto_insert(nome, preco, marca, cor, imagem,descricao, stock, desconto, categoria, request.user.id)
+            return redirect('todos_produtos')
     else:
         form = uploadFile()
-    return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
+        return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
 
 @login_required
 def exportProdutos(request):
