@@ -659,6 +659,7 @@ def incrementQuantityAnonimo(request, id_produto):
                  messages.warning(request, 'Stock máximo atingido!') #not working
     return JsonResponse({'quantity': item["quantidade"], 'total': round(item["preco_com_desconto"]*item['quantidade'], 2)})
 
+
 def decrementQuantityAnonimo(request, id_produto):
     carrinhoAnonimo = request.session['carrinhoAnonimo']
     col = bd['produtos']
