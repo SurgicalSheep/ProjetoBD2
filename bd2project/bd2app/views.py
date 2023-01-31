@@ -327,7 +327,6 @@ def carrinho(request):
         precoTotal = round(precoTotal, 2)
         return render(request,'carrinhoAnonimoV2.html',{'carrinho':carrinhoAnonimo,'precoTotal':precoTotal})
 
-
 def adicionar_carrinho(request, produto_id):
     col = bd["produtos"]
     stock = col.find_one({"id": produto_id})["stock"]
@@ -348,13 +347,8 @@ def adicionar_carrinho(request, produto_id):
                 verificacao.save()
                 return redirect('todos_produtos')
             else:
-                item = itens_carrinho_model.objects.create(**{
-                    'id_carrinho': request.user.id,
-                    'id_produto': produto_id,
-                    'quantidade': quantity,
-                    'preco_produto': produto_preco_com_desconto,
-                })
-                item.save()
+                cursor = connection.cursor()
+                cursor.execute("call insert_itens_carrinho(" + str(request.user.id) + "," + str(produto_id) + "," + str(quantity) + "," + str(produto_preco_com_desconto) + ")")
                 return redirect('todos_produtos')
         else:
             #carrinho anonimo
@@ -418,26 +412,16 @@ def pagamento(request,id_carrinho):
 def inserir_pedido(id_carrinho):
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
-    pedido = todos_pedidos_model.objects.create(**{
-        'id_cliente': id_carrinho, 
-        'preco_total': carrinho.preco_total,
-        'data': datetime.datetime.now(),
-        'estado': 'Em Processamento!'
-    })
-    pedido.save()
+    cursor = connection.cursor()
+    data = "'" + str(datetime.datetime.now()) + "'"
+    cursor.execute("call insert_pedidos(" + str(id_carrinho) + "," + str(carrinho.preco_total) + "," + data + ")")
     latest_pedido = todos_pedidos_model.objects.filter(id_cliente=id_carrinho).latest('id_pedido')
     id_pedido_x = latest_pedido.id_pedido 
     for item_carrinho in itens_carrinho:
-        itens_pedido = Itens_Pedido.objects.create(
-            id_pedido=id_pedido_x,
-            id_produto=item_carrinho.id_produto,
-            quantidade=item_carrinho.quantidade,
-            preco_produto=item_carrinho.preco_produto
-    )
+        cursor.execute("call insert_itens_pedidos(" + str(id_pedido_x) + "," + str(item_carrinho.id_produto) + "," + str(item_carrinho.quantidade) + "," + str(item_carrinho.preco_produto) + ")")
         # Update stock in MongoDB collection
         col = bd["produtos"]
-        col.update_one({"id": item_carrinho.id_produto}, {"$inc": {"stock": -item_carrinho.quantidade}})
-    itens_pedido.save()    
+        col.update_one({"id": item_carrinho.id_produto}, {"$inc": {"stock": -item_carrinho.quantidade}})   
     delete_carrinho(id_carrinho)
     return 1
 
