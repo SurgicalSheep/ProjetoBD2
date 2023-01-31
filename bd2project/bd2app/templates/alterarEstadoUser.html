@@ -22,6 +22,7 @@
                     <td>Não</td>
                 {% endif %}
                 <td>
+                    <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Estatísticas</a>
                     {% if users.active %}
                     <a type="button" class="btn btn-danger" href="{% url 'desativarUser' id_user=users.id %}">Desativar</a>
                     {% else %}

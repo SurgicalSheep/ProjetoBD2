@@ -60,8 +60,8 @@ urlpatterns = [
     path('gerir_fornecedores', views.gerir_fornecedores, name='gerir_fornecedores'),
     path('gerir_produtos_fornecedor/<int:id_user>', views.gerir_produtos_fornecedor, name='gerir_produtos_fornecedor'),
     path('add_produtos_fornecedor/<int:id_fornecedor>', views.add_produtos_fornecedor, name='add_produtos_fornecedor'),
-    path('graficos_nvendas', views.graficos_nvendas, name='graficos_nvendas'),
-    path('graficos_valvendas', views.graficos_valvendas, name='graficos_valvendas'),
+    path('estatisticas/<int:acao>', views.estatisticas, name='estatisticas'),
+    path('estatisticas_cliente/<int:id_user>/<int:acao>', views.estatisticas_cliente, name='estatisticas_cliente'),
     path('criarProdutosPorFicheiro',views.criarProdutosPorFicheiro, name='criarProdutosPorFicheiro'),
     path('exportProdutos',views.exportProdutos, name='exportProdutos'),
 ]

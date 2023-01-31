@@ -106,4 +106,9 @@ def todos_produtos_fornecedor_n_fornece_other(idfornecedor):
     produtos_que_fornece = [x["id_produto"] for x in collection.find({"id_fornecedor": idfornecedor}, {"_id": 0,"id_produto": 1})]
     produtos = collection2.find({ "id": { "$nin": produtos_que_fornece } }, {"_id": 0,"id": 1, "nome":1}).sort("nome",1)
     return produtos
-    
+
+def nome_cliente_other(id_user):
+    collection = bd["vw_nome_clientes"]
+    aux = collection.find({"id": id_user})
+    nome = aux[0]["nome"]
+    return nome

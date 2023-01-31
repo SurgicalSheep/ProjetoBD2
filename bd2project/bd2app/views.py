@@ -863,9 +863,9 @@ def add_produtos_fornecedor(request, id_fornecedor):
         produtos = todos_produtos_fornecedor_n_fornece_other(id_fornecedor)
         return render(request, "novo_produto_fornecedor.html", {'id_fornecedor': id_fornecedor,'form': form, 'produtos': produtos})
 
-def info_sells_per_day_month(ano, mes):
+def info_sells_year_month(ano, mes):
     cursor = connection.cursor()
-    cursor.execute("select * from info_sells_days_month(" + str(ano) + "," + str(mes) + ")")
+    cursor.execute("select * from info_sells_year_month(" + str(ano) + "," + str(mes) + ")")
     results = cursor.fetchall()
     return results
 
@@ -883,46 +883,14 @@ def return_mes():
     meses = [int(item[0]) for item in results]
     return meses
 
-@login_required
-def graficos_nvendas(request):
-    context = {}
-    info = []
-    dias = []
-    ano = -1
-    mes = -1
-    anos = return_ano()
-    meses = return_mes()
-    if request.method == 'POST':
-        data = request.POST
-        ano = int(data.get("ano"))
-        mes =  int(data.get("mes"))
-        array_diasmes = [31,28,31,30,31,30,31,31,30,31,30,31]
-        if ano % 4 == 0: 
-            array_diasmes = [31,29,31,30,31,30,31,31,30,31,30,31]
-        for x in range(0, array_diasmes[mes-1]):
-            info.append(0)
-            dias.append(x)
-        # Create data for the bar graph
-        results = info_sells_per_day_month(ano, mes)
-        for x in results:
-            info[x[0]] = x[2]
-        # Create the bar graph
-        df = pd.DataFrame({
-        "dia": dias,
-        "n_vendas": info,
-        })
-        fig = px.bar(df, x="dia", y="n_vendas", barmode="group")
-        fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), yaxis=dict(dtick=1), xaxis_title='dia', yaxis_title='n_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True)
-        # Convert the figure to a JSON string
-        fig_json = fig.to_json()
-        # Pass the JSON string to the template
-        return render(request, "estatisticas.html", {"fig_json": fig_json, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes})
-    else:
-        form = request.POST
-        return render(request, "estatisticas.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes})
+def get_info_sells():
+    cursor = connection.cursor()
+    cursor.execute("select * from info_sells();")
+    results = cursor.fetchall()
+    return results[0]
 
 @login_required
-def graficos_valvendas(request):
+def estatisticas(request, acao):
     context = {}
     info = []
     dias = []
@@ -930,6 +898,10 @@ def graficos_valvendas(request):
     mes = -1
     anos = return_ano()
     meses = return_mes()
+    info = get_info_sells()
+    valorvendas = (info[0])
+    nvendas = (info[1])
+    context = {}
     if request.method == 'POST':
         data = request.POST
         ano = int(data.get("ano"))
@@ -941,23 +913,32 @@ def graficos_valvendas(request):
             info.append(0)
             dias.append(x)
         # Create data for the bar graph
-        results = info_sells_per_day_month(ano, mes)
+        results = info_sells_year_month(ano, mes)
         for x in results:
-            info[x[0]] = x[1]
+            info[x[0]] = x[acao]
         # Create the bar graph
-        df = pd.DataFrame({
-        "dia": dias,
-        "valor_vendas": info,
-        })
-        fig = px.bar(df, x="dia", y="valor_vendas", barmode="group")
-        fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), xaxis_title='dia',yaxis_title='valor_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True) 
+        if acao == 1:
+            df = pd.DataFrame({
+            "dia": dias,
+            "valor_vendas": info,
+            })
+            fig = px.bar(df, x="dia", y="valor_vendas", barmode="group")
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), xaxis_title='dia',yaxis_title='valor_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True)
+        if acao == 2:
+            df = pd.DataFrame({
+            "dia": dias,
+            "n_vendas": info,
+            })
+            fig = px.bar(df, x="dia", y="n_vendas", barmode="group")
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), yaxis=dict(dtick=1), xaxis_title='dia', yaxis_title='n_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True) 
         # Convert the figure to a JSON string
         fig_json = fig.to_json()
         # Pass the JSON string to the template
-        return render(request, "estatisticas.html", {"fig_json": fig_json, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes})
+        return render(request, "estatisticas.html", {"fig_json": fig_json, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes, "valorvendas": valorvendas, "nvendas": nvendas})
     else:
         form = request.POST
-        return render(request, "estatisticas.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes})
+        return render(request, "estatisticas.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes, "valorvendas": valorvendas, "nvendas": nvendas})
+
 def criarProdutosPorFicheiro(request):
     if(request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1"):
         return redirect('index')
@@ -1047,3 +1028,81 @@ def exportProdutos(request):
     # response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
     # return response
     
+    return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
+
+def get_info_cliente(id_client):
+    cursor = connection.cursor()
+    cursor.execute("select * from info_sells_client(" + str(id_client) + ");")
+    results = cursor.fetchall()
+    return results[0]
+
+def return_ano_client(id_client):
+    cursor = connection.cursor()
+    cursor.execute("select * from anos_pedidos_client(" + str(id_client) + ");")
+    results = cursor.fetchall()
+    anos = [int(item[0]) for item in results]
+    return anos
+
+def return_mes_client(id_client):
+    cursor = connection.cursor()
+    cursor.execute("select * from meses_pedidos_client(" + str(id_client) + ");")
+    results = cursor.fetchall()
+    meses = [int(item[0]) for item in results]
+    return meses
+
+def client_info_sells_year_month(ano, mes, id_client):
+    cursor = connection.cursor()
+    cursor.execute("select * from client_info_sells_year_month(" + str(ano) + "," + str(mes) + "," + str(id_client) + ")")
+    results = cursor.fetchall()
+    return results
+
+@login_required
+def estatisticas_cliente(request, id_user, acao):
+    context = {}
+    info = []
+    dias = []
+    ano = -1
+    mes = -1
+    anos = return_ano_client(id_user)
+    meses = return_mes_client(id_user)
+    context = {}
+    client_info = get_info_cliente(id_user)
+    client_valorvendas = (client_info[0])
+    client_nvendas = (client_info[1])
+    nomecliente = nome_cliente_other(id_user)
+    if request.method == 'POST':
+        data = request.POST
+        ano = int(data.get("ano"))
+        mes =  int(data.get("mes"))
+        array_diasmes = [31,28,31,30,31,30,31,31,30,31,30,31]
+        if ano % 4 == 0: 
+            array_diasmes = [31,29,31,30,31,30,31,31,30,31,30,31]
+        for x in range(0, array_diasmes[mes-1]):
+            info.append(0)
+            dias.append(x)
+        # Create data for the bar graph
+        results = client_info_sells_year_month(ano, mes, id_user)
+        for x in results:
+            info[x[0]] = x[acao]
+        # Create the bar graph
+        if acao == 1:
+            df = pd.DataFrame({
+            "dia": dias,
+            "valor_vendas": info,
+            })
+            fig = px.bar(df, x="dia", y="valor_vendas", barmode="group")
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), xaxis_title='dia',yaxis_title='valor_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True)
+        if acao == 2:
+            df = pd.DataFrame({
+            "dia": dias,
+            "n_vendas": info,
+            })
+            fig = px.bar(df, x="dia", y="n_vendas", barmode="group")
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), yaxis=dict(dtick=1), xaxis_title='dia', yaxis_title='n_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True) 
+        # Convert the figure to a JSON string
+        fig_json = fig.to_json()
+        # Pass the JSON string to the template
+        return render(request, "estatisticas_cliente.html", {"fig_json": fig_json, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes, "client_valorvendas": client_valorvendas, "client_nvendas": client_nvendas, "idcliente": id_user, "nomecliente": nomecliente})
+    else:
+        form = request.POST
+        return render(request, "estatisticas_cliente.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes, "client_valorvendas": client_valorvendas, "client_nvendas": client_nvendas, "idcliente": id_user, "nomecliente": nomecliente})
