@@ -2,6 +2,7 @@ import pymongo
 from django.shortcuts import get_object_or_404, redirect
 from bd2app.models import *
 bd = pymongo.MongoClient("mongodb+srv://eletropoggers_admin:faroladlucas@projetobd2-onlinedb.833ybao.mongodb.net/test")["bd2_mongo"]
+import re
 
 def insere_ut(id,nome,tipouser,morada,username,email):
     col = bd["utilizadores"]
@@ -25,6 +26,28 @@ def novo_produto_insert(nome, preco, marca, cor, imagem, descricao, stock, desco
 def todos_produtos_other():
     collection = bd['produtos']
     return collection.find({'belongs_store': True})
+
+def todos_produtos_other_search(search):
+    if search == "":
+        return todos_produtos_other()
+
+    collection = bd['produtos']
+
+    pattern = re.compile(search, re.IGNORECASE)
+
+    query = {
+        "$or": [
+            {"nome": {"$regex": pattern}},
+            {"preco": {"$regex": pattern}},
+            {"marca": {"$regex": pattern}},
+            {"cor": {"$regex": pattern}},
+            {"descricao": {"$regex": pattern}},
+            {"categoria": {"$regex": pattern}},
+        ],
+        "belongs_store": True
+    }
+
+    return collection.find(query)
 
 def todos_produtos_other_marketplace():
     collection = bd['produtos']

@@ -2,7 +2,8 @@
 {% load math_extras %}
 
 {% block content %}
-<div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 4rem; cursor: pointer;"
+<div>
+<div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 20px; cursor: pointer;"
     onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
     onclick="location.href='/todos_produtos/marketplace';">
     <h5 style = "font-size: medium; font-family: Poppins;">Marketplace</h5>
@@ -12,6 +13,24 @@
     onclick="location.href='/todos_produtos';">
     <h5 style = "font-size: medium; font-family: Poppins;">Electro Poggers</h5>
 </div>
+<form method="get">
+<div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 20px; cursor: pointer;"
+    onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">
+    <h5 style = "font-size: medium; font-family: Poppins;">Download</h5>
+</div>
+</form>
+</div>
+<form method="get">
+    <div style=" width: fit-content; float: right; margin-right: 20px;display:flex;" class="form-group">
+        <div>
+            <input type="text" class="form-control" name="pesquisa" placeholder="Pesquisa"> 
+        </div>
+        <div>
+            <button style="height:100%" class="btn btn-primary" type="submit">Procurar</button>
+        </div>
+    </div>
+  </form>
+
 <div style="margin: auto;width: 50%;text-align: center; margin-top: 25px; margin-bottom: 50px;">
     <h2 style="margin-left: 1.5%;">Todos os produtos</h2>
 </div>
@@ -20,8 +39,6 @@
 
     <div class="card" style="width: 18rem;margin-left: 1.1%;background-color: #def2f5;border-radius: 10px;">
         <div class="card-body">
-
-
             <img src="{{product.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top imagensitens"
                 alt="imagem não disponível" onclick="location.href='/produto/{{product.id}}/';"
                 onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">

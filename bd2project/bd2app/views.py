@@ -117,7 +117,7 @@ def registro(request):
             u = User.objects.create_user(username=username,password=password)
             u.save()
             login(request,u)
-            insere_ut(request.user.id, nome, tipouser, morada, username, email)
+            insere_ut(u.id, nome, tipouser, morada, username, email)
             request.session['tipouser'] = tipouser
             request.session['nome'] = nome
             print(request.user.id)
@@ -145,7 +145,7 @@ def registroAdmin(request):
         except User.DoesNotExist:
             u = User.objects.create_user(username=username,password=password)
             u.save()
-            insere_ut(request.user.id, nome, tipouser, morada, username, email)
+            insere_ut(u.id, nome, tipouser, morada, username, email)
         return redirect('index')
     else:
         form = request.POST
@@ -239,6 +239,10 @@ def novo_produto(request):
 
 def todos_produtos(request):
     if request.method == 'GET':
+        if 'pesquisa' in request.GET:
+            search = request.GET['pesquisa']
+            products = todos_produtos_other_search(search)
+            return render(request, "todos_produtos.html", {'products': products})
         products = todos_produtos_other()
         return render(request, "todos_produtos.html", {'products': products})
 
@@ -948,7 +952,7 @@ def criarProdutosPorFicheiro(request):
                                 dados[value.tag] = float(value.text)
                             except:
                                 return HttpResponse("Ficheiro XML mal formatado")
-                        if value.tag == "stock" or value.tag == "desconto":
+                        elif value.tag == "stock" or value.tag == "desconto":
                             try:
                                 dados[value.tag] = int(value.text)
                             except:
@@ -1010,7 +1014,7 @@ def exportProdutos(request):
     # response = HttpResponse(xml_str, content_type='application/xml')
     # response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
     # return response
-    
+    form = {}
     return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
 
 def get_info_cliente(id_client):
