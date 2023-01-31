@@ -175,23 +175,25 @@ def loginUser(request):
                     request.session['nome'] = nome
                     if 'carrinhoAnonimo' in request.session:
                         carrinhoAnonimo = request.session['carrinhoAnonimo']
-                        if len(carrinhoAnonimo) > 0:
-                            x = "'["
-                            l = len(carrinhoAnonimo)
-                            y=0
-                            for item in carrinhoAnonimo:
-                                y+=1
-                                x+="{"
-                                x+="\"id\":"+str(item["id"])+","
-                                x+="\"quantidade\":"+str(item["quantidade"])+","
-                                x+="\"preco\":"+str(item["preco"])+","
-                                x+="\"stock\":"+str(item["stock"])
-                                x+="}"
-                                if y < l:
-                                    x+=","
-                            x+="]'"
-                            cursor = connection.cursor()
-                            cursor.execute("call carrinho_anonimo("+x+","+str(user.id)+")")
+                        if tipoUser == "Cliente":
+                            if len(carrinhoAnonimo) > 0:
+                                x = "'["
+                                l = len(carrinhoAnonimo)
+                                y=0
+                                for item in carrinhoAnonimo:
+                                    y+=1
+                                    x+="{"
+                                    x+="\"id\":"+str(item["id"])+","
+                                    x+="\"quantidade\":"+str(item["quantidade"])+","
+                                    x+="\"preco\":"+str(item["preco"])+","
+                                    x+="\"stock\":"+str(item["stock"])
+                                    x+="}"
+                                    if y < l:
+                                        x+=","
+                                x+="]'"
+                                cursor = connection.cursor()
+                                cursor.execute("call carrinho_anonimo("+x+","+str(user.id)+")")
+                        if 'carrinhoAnonimo' in request.session:
                             del request.session['carrinhoAnonimo']
                     login(request,user)
                     return redirect("/")
