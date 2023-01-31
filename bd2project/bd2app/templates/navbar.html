@@ -136,37 +136,21 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if not request.user.is_authenticated %}
-          <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;"
-              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
-              href="{% url 'registro' %}">Registro Utilizador</a>
-          </li>
-          {% endif %}
-          {% if request.session %}
-          {% if request.session.tipouser == "Administrador" %}
-          <li class="nav-item">
-            <div class="dropdown">
-              <button onclick="dropDownUser()" class="dropbtn" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;">Gerir Utilizadores</button>
-              <div id="dropDownUser" class="dropdown-content">
-                <a href="{% url 'todos_users' %}" style="font-family: Merriweather Sans;">Mostrar todos os utilizadores</a>
-                <a href="{% url 'editarUsers' %}" style="font-family: Merriweather Sans;">Editar utilizadores</a>
-                <a href="{% url 'registroAdmin' %}" style="font-family: Merriweather Sans;">Registar utilizadores</a>
-                <a href="{% url 'utilizador_por_confirmar' %}" style="font-family: Merriweather Sans;">Utilizadores por confirmar</a>
-              </div>
-            </div>
-          </li>
-          {% endif %}
-          {% endif %}
+          {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
               onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'criarProdutosPorFicheiro' %}">Registro Produto</a>
           </li>
+          {% endif %}
+          {% endif %}
+          {% if request.session.tipouser != "Fornecedor" and  request.session.tipouser != "Parceiro" %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
               onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
-              href="{% url 'todos_produtos' %}">Apresentar todos os produtos</a>
+              href="{% url 'todos_produtos' %}">Todos os produtos</a>
           </li>
+          {% endif %}
           {% if request.user.is_authenticated %}
           {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
           <li class="nav-item">
@@ -180,17 +164,24 @@
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
           </form>
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+          {% if not request.user.is_authenticated or request.session.tipouser == "Cliente" %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;" class="nav-link"
               href="{% url 'carrinho' %}" id="icone_carrinho"><img
                 src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="" width="24" height="24"
                 class="d-inline-block align-text-top"></a>
           </li>
+          {% endif %}
           {% if not request.user.is_authenticated %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
               onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
               href="{% url 'loginUser' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a style="text-decoration: none;color: black;font-weight: bold; font-family: Poppins;"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+              href="{% url 'registro' %}">Registo</a>
           </li>
           {% endif %}
           {% if request.user.is_authenticated %}
@@ -203,11 +194,30 @@
           {% endif %}
           {% endif %}
           {% if request.user.is_authenticated %}
-          {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+          {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 2" %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
               onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
-              href="{% url 'gerir_fornecedores' %}">Gerir Fornecedores</a>
+              href="{% url 'estatisticas' acao=2 %}">graficos</a>
+          </li>
+          {% endif %}
+          {% endif %}
+          {% if request.user.is_authenticated %}
+          {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
+          <li class="nav-item">
+            <div class="dropdown">
+              <button onclick="dropDownGerir()" class="dropbtn" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;">Gerir Utilizadores</button>
+              <div id="dropDwonGerir" class="dropdown-content">
+                <a href="{% url 'gerir_clientes' %}" style="font-family: Merriweather Sans;">Gerir Clientes</a>
+                <a href="{% url 'gerir_fornecedores' %}" style="font-family: Merriweather Sans;">Gerir Fornecedores</a>
+                {% if request.session.tipouser == "Administrador" %}
+                <a href="{% url 'gerir_comerciais' %}" style="font-family: Merriweather Sans;">Gerir Comerciais</a>
+                {% endif %}
+                <a href="{% url 'gerir_parceiros' %}" style="font-family: Merriweather Sans;">Gerir Parceiros</a>
+                <a href="{% url 'registroAdmin' %}" style="font-family: Merriweather Sans;">Registar utilizadores</a>
+                <a href="{% url 'utilizador_por_confirmar' %}" style="font-family: Merriweather Sans;">Utilizadores por confirmar</a>
+              </div>
+            </div>
           </li>
           {% endif %}
           {% endif %}
@@ -221,18 +231,13 @@
                 <a href="{% url 'verPerfil' %}" style="font-family: Merriweather Sans;">Ver Perfil</a>
                 <a href="{% url 'editarPerfil' %}" style="font-family: Merriweather Sans;">Editar Perfil</a>
                 <a href="{% url 'mudarPass' %}" style="font-family: Merriweather Sans;">Mudar Password</a>
-                <a href="{% url 'encomendas_cliente' %}" style="font-family: Merriweather Sans;">Encomendas</a>
+                <a href="{% url 'encomendas_cliente' %}" style="font-family: Merriweather Sans;">Histórico Encomendas</a>
                 <a href="{% url 'pedidos_cliente' %}" style="font-family: Merriweather Sans;">Pedidos por processar</a>
                 <a href="{% url 'logoutUser' %}" style="font-family: Merriweather Sans;">Logout</a>
               </div>
             </div>
           </li>
           {% endif %}
-          <li class="nav-item">
-            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
-              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
-              href="{% url 'estatisticas' acao=2 %}">graficos</a>
-          </li>
         </ul>
       </div>
     </div>
@@ -249,7 +254,9 @@
     function dropDownUser() {
       document.getElementById("dropDownUser").classList.toggle("show");
     }
-
+    function dropDownGerir() {
+      document.getElementById("dropDwonGerir").classList.toggle("show");
+    }
     // Close the dropdown menu if the user clicks outside of it
     window.onclick = function (event) {
       if (!event.target.matches('.dropbtn')) {

@@ -1,0 +1,45 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color: rgb(248, 236, 245);text-align: center;">
+
+    <table>
+        <tr>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>Email</th>
+          <th>Morada</th>
+          <th>Ativo</th>
+          <th>Ação</th>
+        </tr>
+        {% for users in users %}
+            <tr>
+                <td>{{users.nome}}</td>
+                <td>{{users.tipouser}}</td>
+                <td>{{users.email}}</td>
+                <td>{{users.morada}}</td>
+                {% if users.active %}
+                    <td>Sim</td>
+                {% else %}
+                    <td>Não</td>
+                {% endif %}
+                <td>
+                    <a type="button" class="btn btn-info" href="{% url 'editarUser' id_user=users.id%}">Editar</a>
+                    {% if users.active %}
+                    <a type="button" class="btn btn-danger" href="{% url 'desativarUser' id_user=users.id %}">Desativar</a>
+                    {% else %}
+                    <a type="button" class="btn btn-primary" href="{% url 'ativarUser' id_user=users.id %}">Ativar</a>
+                    {% endif %}
+                    {% if tipo_user == "Fornecedor" and users.active %}
+                    <a type="button" class="btn btn-secondary" href="{% url 'gerir_produtos_fornecedor' id_user=users.id %}">Gerir os Produtos</a>
+                    {% endif %}
+                    {% if tipo_user == "Cliente" %}
+                    <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Estatísticas</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+
+</div>
+
+{% endblock %}

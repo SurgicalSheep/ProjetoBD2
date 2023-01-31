@@ -11,7 +11,18 @@
             <input type="hidden" name=id value="{{id_user}}"></input>
             <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
                 <input type="submit" class="btn btn-primary" name="Guardar" value="Confirmar">
-                <button style="width:20%;margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/editarUsers'">Cancelar</button>
+                {% if tipo_user == 'Cliente' %}
+                <button style="width:20%;margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/gerir_clientes'">Cancelar</button>
+                {% endif %}
+                {% if tipo_user == 'Fornecedor' %}
+                <button style="width:20%;margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/gerir_fornecedores'">Cancelar</button>
+                {% endif %}
+                {% if tipo_user == 'Comercial Tipo 1' or tipo_user == 'Comercial Tipo 2' %}
+                <button style="width:20%;margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/gerir_comerciais'">Cancelar</button>
+                {% endif %}
+                {% if tipo_user == 'Parceiro' %}
+                <button style="width:20%;margin: auto;" type="button" class="btn btn-danger" onclick="window.location.href='/gerir_parceiros'">Cancelar</button>
+                {% endif %}
             </div> 
         </form>
     </div>

@@ -184,7 +184,8 @@ def loginUser(request):
                                 x+="{"
                                 x+="\"id\":"+str(item["id"])+","
                                 x+="\"quantidade\":"+str(item["quantidade"])+","
-                                x+="\"preco\":"+str(item["preco"])
+                                x+="\"preco\":"+str(item["preco"])+","
+                                x+="\"stock\":"+str(item["stock"])
                                 x+="}"
                                 if y < l:
                                     x+=","
@@ -452,7 +453,7 @@ def acaoutilizador(request, id_user, acao, nome):
 @login_required  
 def utilizador_por_confirmar(request):
     collection = bd['utilizadores']
-    users = collection.find({"approved": False})
+    users = list(collection.find({"approved": False}))
     return render(request, 'utilizador_por_confirmar.html', {'users': users})
 
 @login_required
@@ -523,13 +524,13 @@ def ativar_produto_fornecedor(request, id_produto, id_fornecedor):
         return redirect('homepage_fornecedores')
     return redirect('/gerir_produtos_fornecedor/'+str(id_fornecedor))
 
-@login_required
-def editarUsers(request):
-    if not getTipoUserMongo(request.user.id) == "Administrador":
-        return redirect('mudarEstadoClientes')
-    collection = bd['utilizadores']
-    users = collection.find({"approved": True})
-    return render(request, 'editUsers.html', {'users': users})
+# @login_required
+# def editarUsers(request):
+#     if not getTipoUserMongo(request.user.id) == "Administrador":
+#         return redirect('mudarEstadoClientes')
+#     collection = bd['utilizadores']
+#     users = collection.find({"approved": True})
+#     return render(request, 'editUsers.html', {'users': users})
 
 @login_required
 def editarUser(request, id_user):
@@ -562,21 +563,37 @@ def mudarEstadoClientes(request):
 
 @login_required
 def desativarUser(request, id_user):
+    tipo_user = getTipoUserMongo(id_user)
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         return redirect('index')
     if request.method == 'POST':
         desativarUserMongo(id_user, request.user.id)
-        return redirect('editarUsers')
-    return render(request,'desativarUser.html' ,{'id_user': id_user})
+        if tipo_user == "Cliente":
+            return redirect('gerir_clientes')
+        elif tipo_user == 'Fornecedor':
+            return redirect('gerir_fornecedores')
+        elif tipo_user == 'Comercial Tipo 1' or tipo_user == 'Comercial Tipo 2':
+            return redirect('gerir_comerciais')
+        elif tipo_user == 'Parceiro':
+            return redirect('gerir_parceiros')
+    return render(request,'desativarUser.html' ,{'id_user': id_user, "tipo_user": tipo_user})
 
 @login_required
 def ativarUser(request, id_user):
+    tipo_user = getTipoUserMongo(id_user)
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         return redirect('mudarEstadoClientes')
     if request.method == 'POST':
         ativarUserMongo(id_user, request.user.id)
-        return redirect('editarUsers')
-    return render(request,'ativarUser.html' ,{'id_user': id_user})
+        if tipo_user == "Cliente":
+            return redirect('gerir_clientes')
+        elif tipo_user == 'Fornecedor':
+            return redirect('gerir_fornecedores')
+        elif tipo_user == 'Comercial Tipo 1' or tipo_user == 'Comercial Tipo 2':
+            return redirect('gerir_comerciais')
+        elif tipo_user == 'Parceiro':
+            return redirect('gerir_parceiros')
+    return render(request,'ativarUser.html' ,{'id_user': id_user, "tipo_user": tipo_user})
     
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id)
@@ -672,7 +689,6 @@ def decrementQuantityAnonimo(request, id_produto):
 #         item.preco_produto = preco
 #         item.save()
 #         return 1
-
 
 @login_required
 def solicitar_produto(request, id_product):
@@ -798,13 +814,37 @@ def number_users():
     return 0
 
 @login_required
+def gerir_clientes (request):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('index')
+    collection = bd['vw_clientes']
+    users = collection.find()
+    return render(request, 'gerir_utilizadores.html', {'users': users, 'tipo_user': "Cliente"})
+
+@login_required
 def gerir_fornecedores (request):
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         return redirect('index')
-    collection = bd['utilizadores']
-    users = collection.find({"approved": True, "active": True,"tipouser": "Fornecedor"})
-    return render(request, 'gerir_fornecedores.html', {'users': users})
-        
+    collection = bd['vw_fornecedores']
+    users = collection.find()
+    return render(request, 'gerir_utilizadores.html', {'users': users, 'tipo_user': "Fornecedor"})
+
+@login_required
+def gerir_comerciais (request):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('index')
+    collection = bd['vw_comerciais']
+    users = collection.find()
+    return render(request, 'gerir_utilizadores.html', {'users': users, 'tipo_user': "Comercial"})
+
+@login_required
+def gerir_parceiros (request):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        return redirect('index')
+    collection = bd['vw_parceiros']
+    users = collection.find()
+    return render(request, 'gerir_utilizadores.html', {'users': users, 'tipo_user': "Parceiro"})
+
 @login_required
 def gerir_produtos_fornecedor (request, id_user):
     if not (getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Administrador"):

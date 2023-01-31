@@ -1,7 +1,7 @@
 {% extends "navbar.html" %}
 
 {% block content %}
-<div style="margin: auto;width: 50%;text-align: center;">
+<div style="margin: auto;width: 70%;text-align: center;">
 <h2 >Lista de pedidos:</h2>
 
 <table frame=hsides rules=rows style="width: 100%;border: solid 1px black;">
@@ -35,7 +35,7 @@
                     <form action="" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="id_pedido" value="{{k.id_pedido}}"></input>
-                        <button style="margin-top: 1%;margin-bottom: 1%;" class="btn btn-success" type="submit">Enviar encomenda!</button>
+                        <button style="margin-top: 1%;margin-bottom: 1%;" class="btn btn-success" type="submit">Enviar</button>
                     </form>
                     {% endif %}
                 <td style="text-align: center;"><a href="/encomenda/{{k.id_pedido}}">Ver detalhes</a></td>
