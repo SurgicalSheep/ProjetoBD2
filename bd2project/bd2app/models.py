@@ -38,6 +38,7 @@ class todos_pedidos_model(models.Model):
     preco_total = models.DecimalField(max_digits=10, decimal_places=2)
     estado = models.CharField(max_length=255)
     data = models.DateTimeField()
+    morada = models.CharField(max_length=255)
     class Meta:
         managed = False
         db_table = 'pedidos'
