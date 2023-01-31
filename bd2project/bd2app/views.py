@@ -970,7 +970,7 @@ def estatisticas(request, acao):
         return render(request, "estatisticas.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes, "valorvendas": valorvendas, "nvendas": nvendas})
 
 def criarProdutosPorFicheiro(request):
-    if(request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1"):
+    if(request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1" and request.session["tipouser"] != "Parceiro"):
         return redirect('index')
     if request.method == 'POST':
         if 'inserirMultiple' in request.POST:
