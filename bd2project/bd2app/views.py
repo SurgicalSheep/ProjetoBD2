@@ -110,7 +110,6 @@ def registro(request):
         tipouser = data.get("tipouser")
         morada = data.get("morada")
         email = data.get("email")
-
         try:
             u = User.objects.get(username=username)
             return HttpResponse("Username exists")#meter isto bonito
@@ -871,14 +870,14 @@ def info_sells_year_month(ano, mes):
 
 def return_ano():
     cursor = connection.cursor()
-    cursor.execute("select distinct date_part('year', pedidos.data::DATE) from pedidos where pedidos.estado = 'Encomenda Enviada!'")
+    cursor.execute("select * from view_anos_pedidos")
     results = cursor.fetchall()
     anos = [int(item[0]) for item in results]
     return anos
 
 def return_mes():
     cursor = connection.cursor()
-    cursor.execute("select distinct date_part('month', pedidos.data::DATE) from pedidos where pedidos.estado = 'Encomenda Enviada!'")
+    cursor.execute("select * from view_meses_pedidos")
     results = cursor.fetchall()
     meses = [int(item[0]) for item in results]
     return meses
@@ -898,9 +897,9 @@ def estatisticas(request, acao):
     mes = -1
     anos = return_ano()
     meses = return_mes()
-    info = get_info_sells()
-    valorvendas = (info[0])
-    nvendas = (info[1])
+    info_sells = get_info_sells()
+    valorvendas = (info_sells[0])
+    nvendas = (info_sells[1])
     context = {}
     if request.method == 'POST':
         data = request.POST
