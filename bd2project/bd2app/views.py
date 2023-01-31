@@ -406,19 +406,20 @@ def removerProdutoCarrinhoAnonimo(request, produto_id):
 def pagamento(request,id_carrinho):
     context = {}
     if request.method == 'POST':
-        inserir_pedido(id_carrinho)
+        morada = request.POST.get('address')
+        inserir_pedido(id_carrinho,morada)
         return redirect('pedidos_cliente')
     else:
         form = request.POST
         context = {'form': form}
     return render(request, 'pagamento.html', context=context)
 
-def inserir_pedido(id_carrinho):
+def inserir_pedido(id_carrinho,morada):
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     cursor = connection.cursor()
     data = "'" + str(datetime.datetime.now()) + "'"
-    cursor.execute("call insert_pedidos(" + str(id_carrinho) + "," + str(carrinho.preco_total) + "," + data + ")")
+    cursor.execute("call insert_pedidos(" + str(id_carrinho) + "," + str(carrinho.preco_total) + "," + data +  ",'" + str(morada) + "')")
     latest_pedido = todos_pedidos_model.objects.filter(id_cliente=id_carrinho).latest('id_pedido')
     id_pedido_x = latest_pedido.id_pedido 
     for item_carrinho in itens_carrinho:

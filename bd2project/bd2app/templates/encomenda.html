@@ -5,23 +5,25 @@
 
 <div style="text-align: center;">
     <h4>Encomenda - {{todos.data}} - {{todos.estado}} - {{todos.preco_total}}€</h4>
+    <h6>{{todos.morada}}</h6>
 </div>
 
+{% for item in itens2 %}
 {% for encomenda in encomenda %}
-  {% for item in itens2 %}
-    
-    <div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color: rgb(248, 236, 245);" cursor:pointer; onmouseover='this.style.cursor="pointer"' onclick="location.href='/produto/{{item.id}}/';">
-        <div>
-            <b>Nome do produto:</b> {{item.nome}}
-            <br>
-            <b>Preço do produto:</b> {{encomenda.preco_produto}}€
-            <br>
-            <b>Quantidade encomendada:</b> {{encomenda.quantidade}}
-            <br>
-            <b><img src={{item.imagem}} style="width: 8em;height: 5em;" alt={{item.descricao}}></b>
-        </div>
-    </div>
-    
+
+    {% if item.id == encomenda.id_produto %}
+      <div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color: rgb(248, 236, 245);" cursor:pointer; onmouseover='this.style.cursor="pointer"' onclick="location.href='/produto/{{item.id}}/';">
+          <div>
+              <b>Nome do produto:</b> {{item.nome}}
+              <br>
+              <b>Preço do produto:</b> {{item.preco}}€
+              <br>
+              <b>Quantidade encomendada:</b> {{encomenda.quantidade}}
+              <br>
+              <b><img src={{item.imagem}} style="width: 8em;height: 5em;" alt={{item.descricao}}></b>
+          </div>
+      </div>
+    {% endif %}
   {% endfor %}
 {% endfor %}
 
