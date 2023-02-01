@@ -18,6 +18,7 @@ urlpatterns = [
     path('produto/ativar_produto/<int:produto_id>', views.ativar_produto, name='ativar_produto'),
     path('produto/editar_produto/<int:produto_id>', views.editar_produto, name='editar_produto'),
     path('verPerfil/', views.verPerfil, name='verPerfil'),
+    path('verPerfilAdmin/<int:idUser>', views.verPerfilAdmin, name='verPerfilAdmin'),
     path('editarPerfil/', views.editarPerfil, name='editarPerfil'),
     path('mudarPass/', views.mudarPass, name='mudarPass'),
     path('todos_pedidos', views.todos_pedidos, name='todos_pedidos'),#teste
@@ -71,5 +72,6 @@ urlpatterns = [
     path('produtos_parceiro',views.produtos_parceiro, name='produtos_parceiro'),
     path('ativar_produto_parceiro/<int:produto_id>',views.ativar_produto_parceiro, name='ativar_produto_parceiro'),
     path('desativar_produto_parceiro/<int:produto_id>',views.desativar_produto_parceiro, name='desativar_produto_parceiro'),
+    path('showLogs/',views.showLogs, name='showLogs'),
 ]
 handler404='bd2app.views.error404'

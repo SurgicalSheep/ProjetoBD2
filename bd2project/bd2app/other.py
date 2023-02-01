@@ -69,6 +69,23 @@ def todos_produtos_other_marketplace_search(search):
 
     return collection.find(query)
 
+def logsSearch(search):
+    if search == "":
+        collection = bd['logs_mongodb']
+        return collection.find()
+    collection = bd['logs_mongodb']
+    pattern = re.compile(search, re.IGNORECASE)
+
+    query = {
+        "$or": [
+            {"type": {"$regex": pattern}},
+            {"nome_tabela": {"$regex": pattern}},
+            {"comment": {"$regex": pattern}},
+        ]
+    }
+
+    return collection.find(query)
+
 def todos_produtos_other_marketplace():
     collection = bd['produtos']
     return collection.find({'belongs_store': False})

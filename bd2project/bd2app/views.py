@@ -22,6 +22,7 @@ import pandas as pd
 from django.contrib import messages #import messages
 import xml.etree.ElementTree as ET
 from django.core import serializers
+from django.core.paginator import Paginator, EmptyPage
 # Create your views here.
 
 def index(request):
@@ -67,6 +68,11 @@ def error404(request,exception=None):
 @login_required
 def verPerfil(request):
     userMongo = bd["utilizadores"].find_one({"id":request.user.id})
+    return render(request, 'showPerfil.html', {'user': userMongo})
+
+@login_required
+def verPerfilAdmin(request,idUser):
+    userMongo = bd["utilizadores"].find_one({"id":idUser})
     return render(request, 'showPerfil.html', {'user': userMongo})
 
 @login_required
@@ -1033,7 +1039,6 @@ def criarProdutosPorFicheiro(request):
                 for produto in dadosFicheiro:
                     if not (produto["nome"] and produto["preco"] and produto["marca"] and produto["cor"] and produto["imagem"] and produto["descricao"] and produto["stock"] and produto["desconto"] and produto["categoria"]):
                         return HttpResponse("Ficheiro JSON mal formatado")
-                #inserir na bd
                 for produto in dadosFicheiro:
                     #inserir na bd
                     novo_produto_insert(produto["nome"], produto["preco"], produto["marca"], produto["cor"], produto["imagem"], produto["descricao"], produto["stock"], produto["desconto"], produto["categoria"],request.user.id)
@@ -1244,3 +1249,29 @@ def desativar_produto_parceiro(request, produto_id):
         if not active["active"]:
             return redirect('index') 
         return render(request, 'desativar_produto_parceiro.html', context)
+
+@login_required
+def showLogs(request):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
+        return redirect('index')
+    if request.method == 'GET':
+        collection = bd['logs_mongodb']
+        if 'pesquisa' in request.GET:
+            search = request.GET['pesquisa']
+            logs = logsSearch(search)
+        else:
+            logs = collection.find()
+        logs = [log for log in logs]
+        collection = bd['utilizadores']
+        for log in logs:
+            utilizador = collection.find_one({"id": log["id_utilizador"]})
+            log["nomeUtilizador"] = utilizador["nome"]
+            log["tipoUser"] = utilizador["tipouser"]
+        logs_per_page = 10
+        paginator = Paginator(logs, logs_per_page)
+        page = request.GET.get('page')
+        try:
+            current_page = paginator.get_page(page)
+        except EmptyPage:
+            current_page = paginator.get_page(1)
+    return render(request, 'showLogs.html', {'logs': current_page})
