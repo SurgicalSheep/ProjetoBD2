@@ -1052,14 +1052,15 @@ def criarProdutosPorFicheiro(request):
 def exportProdutos(request,format):
     if getTipoUserMongo(request.user.id) != "Administrador" and getTipoUserMongo(request.user.id) != "Comercial Tipo 1" and getTipoUserMongo(request.user.id) != "Parceiro":
         return redirect('index')
-    pesquisa = request.GET.get('pesquisa', '')
+    pesquisa = request.GET.get('pesquisa', "")
+    if pesquisa == 'null':
+        pesquisa=""
     if getTipoUserMongo(request.user.id) == "Parceiro":
         produtos = todos_produtos_other_marketplace_search(pesquisa)
     else:
         produtos = todos_produtos_other_search(pesquisa)
     produtos = [product for product in produtos]
     #json
-    pprint(format)
     if format == 'json':
         for product in produtos:
             if '_id' in product:
