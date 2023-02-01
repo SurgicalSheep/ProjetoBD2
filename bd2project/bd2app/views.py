@@ -245,6 +245,8 @@ def novo_produto(request):
         return render(request, 'novo_produto.html', context)
 
 def todos_produtos(request):
+    if getTipoUserMongo(request.user.id) == "Parceiro" or getTipoUserMongo(request.user.id) == "Fornecedor" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2":
+        return redirect('index')
     if request.method == 'GET':
         if 'pesquisa' in request.GET:
             search = request.GET['pesquisa']
