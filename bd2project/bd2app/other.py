@@ -64,7 +64,7 @@ def todos_produtos_other_marketplace_search(search):
             {"descricao": {"$regex": pattern}},
             {"categoria": {"$regex": pattern}},
         ],
-        "belongs_store": True
+        "belongs_store": False
     }
 
     return collection.find(query)

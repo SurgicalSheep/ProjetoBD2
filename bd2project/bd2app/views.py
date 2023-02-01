@@ -257,7 +257,14 @@ def todos_produtos(request):
         return render(request, "todos_produtos.html", {'products': products})
 
 def todos_produtos_marketplace(request):
+    if request.user.is_authenticated:
+        if getTipoUserMongo(request.user.id) == "Parceiro" or getTipoUserMongo(request.user.id) == "Fornecedor" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2":
+            return redirect('index')
     if request.method == 'GET':
+        if 'pesquisa' in request.GET:
+            search = request.GET['pesquisa']
+            products = todos_produtos_other_marketplace_search(search)
+            return render(request, "todos_produtos_marketplace.html", {'products': products})
         products = todos_produtos_other_marketplace()
         return render(request, "todos_produtos_marketplace.html", {'products': products})
 
@@ -1055,10 +1062,39 @@ def exportProdutos(request,format):
     pesquisa = request.GET.get('pesquisa', "")
     if pesquisa == 'null':
         pesquisa=""
-    if getTipoUserMongo(request.user.id) == "Parceiro":
-        produtos = todos_produtos_other_marketplace_search(pesquisa)
-    else:
-        produtos = todos_produtos_other_search(pesquisa)
+    produtos = todos_produtos_other_search(pesquisa)
+    produtos = [product for product in produtos]
+    #json
+    if format == 'json':
+        for product in produtos:
+            if '_id' in product:
+                product['_id'] = str(product['_id'])
+        produtos = json.dumps(produtos)
+        response = HttpResponse(produtos, content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="produtos.json"'
+        return response
+    #xml
+    if format == 'xml':
+        root = ET.Element("root")
+        for product in produtos:
+            prod = ET.SubElement(root, "produto")
+            for key, value in product.items():
+                elem = ET.SubElement(prod, key)
+                elem.text = str(value)
+
+        xml_str = ET.tostring(root).decode("utf-8")
+        response = HttpResponse(xml_str, content_type='application/xml')
+        response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
+        return response
+
+@login_required
+def exportProdutosMarketPlace(request,format):
+    if getTipoUserMongo(request.user.id) != "Administrador" and getTipoUserMongo(request.user.id) != "Comercial Tipo 1" and getTipoUserMongo(request.user.id) != "Parceiro":
+        return redirect('index')
+    pesquisa = request.GET.get('pesquisa', "")
+    if pesquisa == 'null':
+        pesquisa=""
+    produtos = todos_produtos_other_marketplace_search(pesquisa)
     produtos = [product for product in produtos]
     #json
     if format == 'json':
