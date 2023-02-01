@@ -33,6 +33,9 @@
                     {% if tipo_user == "Fornecedor" and users.active %}
                     <a type="button" class="btn btn-secondary" href="{% url 'gerir_produtos_fornecedor' id_user=users.id %}">Gerir os Produtos</a>
                     {% endif %}
+                    {% if tipo_user == "Parceiro" and users.active %}
+                    <a type="button" class="btn btn-secondary" href="{% url 'gerir_produtos_parceiro' id_user=users.id %}">Gerir os Produtos</a>
+                    {% endif %}
                     {% if tipo_user == "Cliente" %}
                     <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Estatísticas</a>
                     {% endif %}

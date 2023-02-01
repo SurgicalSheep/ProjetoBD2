@@ -73,5 +73,8 @@ urlpatterns = [
     path('ativar_produto_parceiro/<int:produto_id>',views.ativar_produto_parceiro, name='ativar_produto_parceiro'),
     path('desativar_produto_parceiro/<int:produto_id>',views.desativar_produto_parceiro, name='desativar_produto_parceiro'),
     path('showLogs/',views.showLogs, name='showLogs'),
+    path('gerir_produtos_parceiro/<int:id_user>', views.gerir_produtos_parceiro, name='gerir_produtos_parceiro'),
+    path('loja_ativar_produto_parceiro/<int:produto_id>/<int:id_parceiro>',views.loja_ativar_produto_parceiro, name='loja_ativar_produto_parceiro'),
+    path('loja_desativar_produto_parceiro/<int:produto_id>/<int:id_parceiro>',views.loja_desativar_produto_parceiro, name='loja_desativar_produto_parceiro'),
 ]
 handler404='bd2app.views.error404'

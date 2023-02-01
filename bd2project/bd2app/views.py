@@ -5,6 +5,7 @@ from pprint import pprint
 from bson import Decimal128
 from bson.objectid import ObjectId
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
 from bd2app.forms import *
 from bd2app.models import *
 from bd2app.other import *
@@ -59,7 +60,7 @@ def index(request):
             counter += 1
         if counter >= 6:
             break
-    produtos_marketplace = col.find({'active': True, 'belongs_store': False}).sort("desconto", -1).limit(6)
+    produtos_marketplace = col.find({'active': True, 'belongs_store': False, "active_parceiro": True}).sort("desconto", -1).limit(6)
     return render(request, 'index.html', {'produtos_promocao':produtos_promocao, 'produtos_mais_vendidos':produtos_mais_vendidos, 'categorias':categorias, 'recomendacoes':recomendacoes, 'produtos_marketplace':produtos_marketplace})
 
 def error404(request,exception=None):
@@ -1275,3 +1276,35 @@ def showLogs(request):
         except EmptyPage:
             current_page = paginator.get_page(1)
     return render(request, 'showLogs.html', {'logs': current_page})
+def gerir_produtos_parceiro(request, id_user):
+    if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+        products = todos_produtos_parceiro_other(id_user)
+        nome_parceiro = nome_parceiro_other(id_user)
+        return render(request, "gerir_produtos_parceiro.html", {'products': products, "nome_parceiro": nome_parceiro})
+    return redirect('index')
+
+@login_required
+def loja_desativar_produto_parceiro(request, produto_id, id_parceiro):
+    context = {}
+    if request.method == 'POST':
+        if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+            desativar_produto_other(produto_id, request.user.id)
+            return redirect(reverse('gerir_produtos_parceiro', args=(id_parceiro,)))
+        return redirect('index')
+    else:
+        form = request.POST
+        context = {'form': form, "id_parceiro": id_parceiro}
+        return render(request, 'loja_desativar_produto_parceiro.html', context)
+
+@login_required
+def loja_ativar_produto_parceiro(request, produto_id, id_parceiro):
+    context = {}
+    if request.method == 'POST':
+        if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+            ativar_produto_other(produto_id, request.user.id)
+            return redirect(reverse('gerir_produtos_parceiro', args=(id_parceiro,)))
+        return redirect('index')
+    else:
+        form = request.POST
+        context = {'form': form, "id_parceiro": id_parceiro}
+        return render(request, 'loja_ativar_produto_parceiro.html', context)
