@@ -31,7 +31,6 @@ class produtoMongo(models.Model):
         data = collection.find({'belongs_store': False})
         return data
 
-
 class todos_pedidos_model(models.Model):
     id_pedido = models.AutoField(primary_key=True)
     id_cliente = models.IntegerField()
@@ -80,6 +79,7 @@ class PedidoFornecedor(models.Model):
     datapedido = models.DateTimeField()
     dataentrega = models.DateTimeField()
     estado = models.CharField(max_length=255)
+    id_utilizador = models.IntegerField()
     class Meta:
         managed = False
         db_table = 'pedidos_fornecedor'
