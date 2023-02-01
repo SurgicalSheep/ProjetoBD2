@@ -20,7 +20,7 @@
                 <td style="text-align: center;">{{x.id_fornecedor}}</td>
                 <td style="text-align: center;">{{x.preco_unitario}}</td>
                 {% if x.disponivel %}
-                <td style="text-align: center;">certo</td>
+                <td style="text-align: center;">Sim</td>
                     <form method="POST" enctype="multipart/form-data" style="margin-left: 1%;">
                     <td>
                         {% csrf_token %}
@@ -33,7 +33,7 @@
                         <td style="text-align: center;"><button style="margin: auto;" type="submit" class="btn btn-success">Encomendar</button></td>
                     </form>
                 {% else %}
-                <td style="text-align: center;">notcerto</td>
+                <td style="text-align: center;">Não</td>
                     <form method="POST" enctype="multipart/form-data" style="margin-left: 1%;">
                         <td>
                         <div class="form-group" style="margin-left: 20%;margin-right: 20%; margin-bottom: 0.5%;">
