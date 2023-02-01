@@ -97,6 +97,7 @@
         onclick="location.href='/todos_produtos';">
         <h5 style="font-size: medium; font-family: Poppins;">Electro Poggers</h5>
     </div>
+    {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
     <div>
         <form method="get" id="downloadForm">
           <div id ="download-btn" class="download-btn" style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 20px; cursor: pointer;" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">
@@ -108,7 +109,7 @@
           </div>
         </form>
       </div>
-      
+      {% endif %}
       <div style="margin: auto;width: 50%;text-align: center; margin-top: 25px; margin-bottom: 50px;">
         <h2 style="margin-left: 1.5%;">Todos os produtos</h2>
         <div style="text-align: center;margin-top: 3%;">
