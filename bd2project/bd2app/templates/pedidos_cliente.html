@@ -1,14 +1,14 @@
 {% extends "navbar.html" %}
 
 {% block content %}
-<div style="margin: auto;width: 50%;text-align: center;">
-<h2 >Lista de pedidos não finalizados:</h2>
+<div style="margin: auto;width: 60%;text-align: center;">
+    <h2>Lista de pedidos não enviados:</h2>
 
-{% if todos|length == 0 %}
+    {% if todos|length == 0 %}
     <h4>Não tem nenhum pedido pendente na sua conta atualmente!</h4>
-{% else %}
-    <table class="table" frame=hsides rules=rows style="width: 100%;border: solid 1px black;">
-        <thead style="background-color: white;text-align: center;">
+    {% else %}
+    <table class="table table-striped table-hover table-borderless" frame=hsides rules=rows style="width: 100%;">
+        <thead style="text-align: center;" class="thead-dark">
             <th>Data Pedido:</th>
             <th>Estado:</th>
             <th>Preço Total:</th>
@@ -17,18 +17,19 @@
         </thead>
         <tbody>
             {% for k in todos %}
-            <tr style="border-bottom: 1px solid #000;"></tr>
-                <tr style="background-color: white;text-align:center;">
-                    <td style="text-align: center;">{{k.data}}</td>
-                    <td style="text-align: center;">{{k.estado}}</td>
-                    <td style="text-align: center;">{{k.preco_total}}</td>
-                    <td style="text-align: center;">{{k.morada}}</td>
-                    <td style="text-align: center;"><a href="/encomenda_cancelar/{{k.id_pedido}}">Cancelar encomenda</a></td>
-                </tr>
-                <tr style="border-bottom: 1px solid #000;"></tr>
+            <tr style="background-color: white;text-align:center;">
+                <td style="text-align: center;">{{k.data}}</td>
+                <td style="text-align: center;">{{k.estado}}</td>
+                <td style="text-align: center;">{{k.preco_total}}</td>
+                <td style="text-align: center;">{{k.morada}}</td>
+                <td style="text-align: center;">
+                    <a class="btn btn-info" href="/encomenda/{{k.id_pedido}}">Ver detalhes</a>
+                    <a class="btn btn-danger" href="/encomenda_cancelar/{{k.id_pedido}}">Cancelar Encomenda</a>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-{% endif %}
+    {% endif %}
 </div>
 {% endblock %}

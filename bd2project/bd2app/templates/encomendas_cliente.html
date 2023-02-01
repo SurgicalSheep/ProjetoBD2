@@ -1,15 +1,15 @@
 {% extends "navbar.html" %}
 
 {% block content %}
-<div style="margin: auto;width: 50%;text-align: center;">
-    <h2>Lista de encomendas finalizadas:</h2>
+<div style="margin: auto;width: 60%;text-align: center;">
+    <h2 style="margin-top: 1%;margin-bottom: 1%;">Lista de encomendas finalizadas:</h2>
 
     {% if todos|length == 0 %}
     <h4>Ainda não existe nenhuma encomenda finalizada!</h4>
     <h6>Verifique os seus pedidos ou faça uma nova encomenda!</h6>
     {% else %}
-    <table class="table" frame=hsides rules=rows>
-        <thead style="background-color: white;text-align: center;">
+    <table class="table table-striped table-hover table-borderless" frame=hsides rules=rows style="width: 100%;">
+        <thead style="text-align: center;" class="thead-dark">
             <th>Data Pedido:</th>
             <th>Estado:</th>
             <th>Preço Total:</th>
@@ -17,14 +17,12 @@
         </thead>
         <tbody>
             {% for k in todos %}
-            <tr style="border-bottom: 1px solid #000;"></tr>
             <tr style="background-color: white;text-align:center;">
                 <td style="text-align: center;">{{k.data}}</td>
                 <td style="text-align: center;">{{k.estado}}</td>
-                <td style="text-align: center;">{{k.preco_total}}</td>
-                <td style="text-align: center;"><a href="/encomenda/{{k.id_pedido}}">Ver detalhes</a></td>
+                <td style="text-align: center;">{{k.preco_total}} €</td>
+                <td style="text-align: center;"><a class="btn btn-info" href="/encomenda/{{k.id_pedido}}">Ver detalhes</a></td>
             </tr>
-            <tr style="border-bottom: 1px solid #000;"></tr>
             {% endfor %}
         </tbody>
     </table>

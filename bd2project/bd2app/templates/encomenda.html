@@ -3,28 +3,44 @@
 
 {% block content %}
 
-<div style="text-align: center;">
-    <h4>Encomenda - {{todos.data}} - {{todos.estado}} - {{todos.preco_total}}€</h4>
-    <h6>{{todos.morada}}</h6>
+<div class="card mb-3 text-center" style="background-color: #def2f5;margin: 0 auto;width: fit-content;">
+  <div class="row no-gutters">
+    <div class="card-body text-center">
+      <h4>Encomenda - <u>{{todos.data}}</u></h4>
+      {% if todos.estado == "Encomenda Enviada!" %}
+      <h4><label class="text-success" style="margin: 0;">{{todos.estado}}</label> - {{todos.preco_total}}€</h4>
+      {% elif todos.estado == "Encomenda Cancelada!" %}
+      <h4><label class="text-danger" style="margin: 0;">{{todos.estado}}</label> - {{todos.preco_total}}€</h4>
+      {% else %}
+      <h4><label class="text-primary" style="margin: 0;">{{todos.estado}}</label> - {{todos.preco_total}}€</h4>
+      {% endif %}
+      <h6>{{todos.morada}}</h6>
+    </div>
+  </div>
 </div>
 
 {% for item in itens2 %}
 {% for encomenda in encomenda %}
 
-    {% if item.id == encomenda.id_produto %}
-      <div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color: rgb(248, 236, 245);" cursor:pointer; onmouseover='this.style.cursor="pointer"' onclick="location.href='/produto/{{item.id}}/';">
-          <div>
-              <b>Nome do produto:</b> {{item.nome}}
-              <br>
-              <b>Preço do produto:</b> {{item.preco}}€
-              <br>
-              <b>Quantidade encomendada:</b> {{encomenda.quantidade}}
-              <br>
-              <b><img src={{item.imagem}} style="width: 8em;height: 5em;" alt={{item.descricao}}></b>
-          </div>
+{% if item.id == encomenda.id_produto %}
+<div class="card mb-3 text-center" style="max-width: 540px;background-color: #def2f5;margin: 0 auto;">
+  <div class="row no-gutters">
+    <div class="col-md-4" cursor:pointer; onmouseover='this.style.cursor="pointer"'
+      onclick="location.href='/produto/{{item.id}}/';">
+      <img src={{item.imagem}} class="card-img" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h4 class="card-title" cursor:pointer; onmouseover='this.style.cursor="pointer";this.style.color="#FA7F08";'
+          onmouseout="this.style.color='#000000';" onclick="location.href='/produto/{{item.id}}/';">{{item.nome}}</h4>
+        <p class="card-text"><b>Preço do produto:</b> {{item.preco}}€</p>
+        <p class="card-text"><b>Quantidade encomendada:</b> {{encomenda.quantidade}}</p>
       </div>
-    {% endif %}
-  {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
 {% endfor %}
 
 
