@@ -401,7 +401,7 @@ def adicionar_carrinho(request, produto_id):
         form = request.POST
         return render(request, 'adicionar_carrinho.html', {'form': form, 'stock': stock})
 
-#@login_required acho q precisa
+@login_required
 def remover_produto_carrinho(request, produto_id):
     
     if request.method == 'POST':
