@@ -144,6 +144,15 @@
           </li>
           {% endif %}
           {% endif %}
+          {% if request.user.is_authenticated %}
+          {% if request.session.tipouser == "Parceiro" %}
+          <li class="nav-item">
+            <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"
+              onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';" class="nav-link"
+              href="{% url 'produtos_parceiro' %}">Seus Produtos</a>
+          </li>
+          {% endif %}
+          {% endif %}
           {% if request.session.tipouser != "Fornecedor" and  request.session.tipouser != "Parceiro" %}
           <li class="nav-item">
             <a style="text-decoration: none;color: black;font-weight: bold;font-family: 'Poppins';"

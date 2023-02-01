@@ -29,6 +29,8 @@ def index(request):
         if request.session: 
             if request.session["tipouser"] == "Fornecedor":
                 return redirect('homepage_fornecedores')
+            elif request.session["tipouser"] == "Parceiro":
+                return redirect('produtos_parceiro')
             elif request.session["tipouser"] == "Comercial Tipo 1" or request.session["tipouser"] == "Administrador":
                 return redirect('todos_produtos')
     col = bd["produtos"]
@@ -603,6 +605,12 @@ def pedidos_cliente(request):
 
 @login_required #para alem destes login required tbm é preciso que haja um if para verificar se o user é admin ou comercial tipo 1
 def editar_produto(request, produto_id):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Parceiro"):
+        return redirect('index')
+    if (getTipoUserMongo(request.user.id) == "Parceiro"):
+        list_ids_produtos_parceiro = ids_produtos_parceiro_other(request.user.id)
+        if produto_id not in list_ids_produtos_parceiro:
+            return redirect('index')
     if request.method == 'POST':
         data = request.POST
         nome = data.get("nome")
@@ -1136,3 +1144,40 @@ def estatisticas_cliente(request, id_user, acao):
     else:
         form = request.POST
         return render(request, "estatisticas_cliente.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes, "client_valorvendas": client_valorvendas, "client_nvendas": client_nvendas, "idcliente": id_user, "nomecliente": nomecliente})
+
+@login_required
+def produtos_parceiro(request):
+    if getTipoUserMongo(request.user.id) == "Parceiro":
+        products = todos_produtos_parceiro_other(request.user.id)
+        return render(request, "produtos_parceiro.html", {'products': products})
+    return redirect('index')
+
+@login_required
+def ativar_produto_parceiro(request, produto_id):
+    context = {}
+    if request.method == 'POST':
+        if getTipoUserMongo(request.user.id) == "Parceiro":
+            list_ids_produtos_parceiro = ids_produtos_parceiro_other(request.user.id)
+            if produto_id not in list_ids_produtos_parceiro:
+                return redirect('index')
+            ativar_produto_parceiro_other(produto_id, request.user.id)
+        return redirect('index')
+    else:
+        form = request.POST
+        context = {'form': form}
+        return render(request, 'ativar_produto_parceiro.html', context)
+
+@login_required
+def desativar_produto_parceiro(request, produto_id):
+    context = {}
+    if request.method == 'POST':
+        if getTipoUserMongo(request.user.id) == "Parceiro":
+            list_ids_produtos_parceiro = ids_produtos_parceiro_other(request.user.id)
+            if produto_id not in list_ids_produtos_parceiro:
+                return redirect('index')
+            desativar_produto_parceiro_other(produto_id, request.user.id)
+        return redirect('index')
+    else:
+        form = request.POST
+        context = {'form': form}
+        return render(request, 'desativar_produto_parceiro.html', context)

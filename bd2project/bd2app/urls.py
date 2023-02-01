@@ -67,5 +67,8 @@ urlpatterns = [
     path('estatisticas_cliente/<int:id_user>/<int:acao>', views.estatisticas_cliente, name='estatisticas_cliente'),
     path('criarProdutosPorFicheiro',views.criarProdutosPorFicheiro, name='criarProdutosPorFicheiro'),
     path('exportProdutos',views.exportProdutos, name='exportProdutos'),
+    path('produtos_parceiro',views.produtos_parceiro, name='produtos_parceiro'),
+    path('ativar_produto_parceiro/<int:produto_id>',views.ativar_produto_parceiro, name='ativar_produto_parceiro'),
+    path('desativar_produto_parceiro/<int:produto_id>',views.desativar_produto_parceiro, name='desativar_produto_parceiro'),
 ]
 handler404='bd2app.views.error404'

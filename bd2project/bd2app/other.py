@@ -17,10 +17,9 @@ def insere_ut(id,nome,tipouser,morada,username,email):
 def novo_produto_insert(nome, preco, marca, cor, imagem, descricao, stock, desconto, categoria, idgestor):
     col = bd["produtos"]
     if getTipoUserMongo(idgestor) == "Parceiro":
-        belongs = False
+        doc = {"id": product_max_id(),"nome":nome, "preco":preco, "marca":marca, "cor":cor, "imagem":imagem, "descricao":descricao, "stock":stock, "desconto":desconto, "categoria":categoria, "active":True, "id_utilizador": idgestor, "belongs_store": False, "active_parceiro": True, "id_parceiro": idgestor} 
     else:
-        belongs = True
-    doc = {"id": product_max_id(),"nome":nome, "preco":preco, "marca":marca, "cor":cor, "imagem":imagem, "descricao":descricao, "stock":stock, "desconto":desconto, "categoria":categoria, "active":True, "id_utilizador": idgestor, "belongs_store": belongs} 
+        doc = {"id": product_max_id(),"nome":nome, "preco":preco, "marca":marca, "cor":cor, "imagem":imagem, "descricao":descricao, "stock":stock, "desconto":desconto, "categoria":categoria, "active":True, "id_utilizador": idgestor, "belongs_store": True} 
     x = col.insert_one(doc)
     return x
 
@@ -136,3 +135,25 @@ def nome_cliente_other(id_user):
     aux = collection.find({"id": id_user})
     nome = aux[0]["nome"]
     return nome
+
+def todos_produtos_parceiro_other(id_parceiro):
+    collection = bd['produtos']
+    return list(collection.find({"id_parceiro": id_parceiro, "belongs_store": False, "active": True}))
+
+def ids_produtos_parceiro_other(id_parceiro):
+    collection = bd['vw_ids_produtos_parceiros']
+    results=[]
+    ids = collection.find({"id_parceiro": id_parceiro}, {"id": 1})
+    for x in ids:
+        results.append(x["id"])
+    return results
+
+def ativar_produto_parceiro_other(id, idgestor):
+    collection = bd['produtos']
+    x = collection.update_one({"id": id}, {"$set": {"active_parceiro": True, "id_utilizador": idgestor}})
+    return x
+
+def desativar_produto_parceiro_other(id, idgestor):
+    collection = bd['produtos']
+    x = collection.update_one({"id": id}, {"$set": {"active_parceiro": False, "id_utilizador": idgestor}})
+    return x

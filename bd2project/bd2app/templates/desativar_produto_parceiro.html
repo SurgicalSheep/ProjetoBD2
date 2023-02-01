@@ -1,0 +1,14 @@
+{% extends "navbar.html" %}
+{% block content %}
+
+<div class="card" style="margin: 1%;margin-left: 15%;margin-right: 15%; background-color:#def2f5;text-align: center;">
+    <h2>Confirme que pretende desativar o item!</h2>
+    <button style="width:20%;margin: auto;" type="button" class="btn btn-primary" onclick="window.location.href='/'">Voltar</button>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name=id value="{{products.id}}"></input>
+        <button style="width:20%;margin-top: 1%;margin-bottom: 1%;" class="btn btn-danger" type="submit">Desativar</button>
+    </form>
+</div>
+
+{% endblock %}
