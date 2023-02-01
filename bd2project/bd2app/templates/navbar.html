@@ -216,7 +216,7 @@
           <li class="nav-item">
             <div class="dropdown">
               <button onclick="dropDownGerir()" class="dropbtn align-middle pt-2" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;background-color: #f8f9fa;">Gerir Utilizadores</button>
-              <div id="dropDwonGerir" class="dropdown-content">
+              <div id="dropDownGerir" class="dropdown-content">
                 <a href="{% url 'gerir_clientes' %}" style="font-family: Merriweather Sans;">Gerir Clientes</a>
                 <a href="{% url 'gerir_fornecedores' %}" style="font-family: Merriweather Sans;">Gerir Fornecedores</a>
                 {% if request.session.tipouser == "Administrador" %}
@@ -264,7 +264,7 @@
       document.getElementById("dropDownUser").classList.toggle("show");
     }
     function dropDownGerir() {
-      document.getElementById("dropDwonGerir").classList.toggle("show");
+      document.getElementById("dropDownGerir").classList.toggle("show");
     }
     // Close the dropdown menu if the user clicks outside of it
     window.onclick = function (event) {

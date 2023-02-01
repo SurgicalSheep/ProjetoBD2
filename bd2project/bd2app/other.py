@@ -49,6 +49,26 @@ def todos_produtos_other_search(search):
 
     return collection.find(query)
 
+def todos_produtos_other_marketplace_search(search):
+    if search == "":
+        return todos_produtos_other_marketplace()
+    collection = bd['produtos']
+    pattern = re.compile(search, re.IGNORECASE)
+
+    query = {
+        "$or": [
+            {"nome": {"$regex": pattern}},
+            {"preco": {"$regex": pattern}},
+            {"marca": {"$regex": pattern}},
+            {"cor": {"$regex": pattern}},
+            {"descricao": {"$regex": pattern}},
+            {"categoria": {"$regex": pattern}},
+        ],
+        "belongs_store": True
+    }
+
+    return collection.find(query)
+
 def todos_produtos_other_marketplace():
     collection = bd['produtos']
     return collection.find({'belongs_store': False})

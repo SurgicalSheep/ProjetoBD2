@@ -2,6 +2,90 @@
 {% load math_extras %}
 
 {% block content %}
+<style>
+    .dropbtn {
+      color: black;
+      padding: 5px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Dropdown button on hover & focus */
+    .dropbtn:hover,
+    .dropbtn:focus {
+      background-color: #2980B9;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+
+    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+    .show {
+      display: block;
+    }
+
+    img {
+      -webkit-user-drag: none;
+      user-select: none;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+    
+    .imagensitens:hover {
+      opacity: 0.7;
+      cursor: pointer;
+    }
+    
+    @media only screen and (max-width: 350px) {
+      #carouselExampleSlidesOnly {
+        display: none;
+      }
+    }
+
+    .dropdown {
+      z-index: 9999;
+      /* set to a high value to ensure it's always above the carousel */
+    }
+
+    .carousel {
+      z-index: 1;
+      /* set to a lower value to ensure it's always below the dropdown */
+    }
+
+    #icone_carrinho:hover img {
+      content: url(https://i.ibb.co/Tt1mY0c/carrinho-laranja.png);
+
+    }
+
+  </style>
 <div>
     <div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 20px; cursor: pointer;"
         onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
@@ -13,23 +97,28 @@
         onclick="location.href='/todos_produtos';">
         <h5 style="font-size: medium; font-family: Poppins;">Electro Poggers</h5>
     </div>
-    <form method="get">
-        <div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 20px; cursor: pointer;"
-            onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">
+    <div>
+        <form method="get" id="downloadForm">
+          <div id ="download-btn" class="download-btn" style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; margin-right: 20px; cursor: pointer;" onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';">
             <h5 style="font-size: medium; font-family: Poppins;">Download</h5>
-        </div>
-    </form>
-</div>
-
-<div style="margin: auto;width: 50%;text-align: center; margin-top: 25px; margin-bottom: 50px;">
-    <h2 style="margin-left: 1.5%;">Todos os produtos</h2>
-    <div style="text-align: center;margin-top: 3%;">
-        <form class="form-inline justify-content-center" method="get">
-                    <input type="text" aria-label="Search" class="form-control mr-sm-2" style="width: 400px;margin: 0;" name="pesquisa" placeholder="Pesquisa">
-                    <button style="height:100%" class="btn btn-primary my-2 my-sm-0" type="submit">Procurar</button>
+            <div class="dropdown-content" id="download-dropdown-content">
+              <a onclick="jsonLink()" href="#" id="download-json">JSON</a>
+              <a onclick="xmlLink()" href="#" id="download-xml">XML</a>
+            </div>
+          </div>
         </form>
-    </div>
-</div>
+      </div>
+      
+      <div style="margin: auto;width: 50%;text-align: center; margin-top: 25px; margin-bottom: 50px;">
+        <h2 style="margin-left: 1.5%;">Todos os produtos</h2>
+        <div style="text-align: center;margin-top: 3%;">
+          <form class="form-inline justify-content-center" method="get">
+            <input type="text" aria-label="Search" class="form-control mr-sm-2" style="width: 400px;margin: 0;" name="pesquisa" placeholder="Pesquisa">
+            <input type="hidden" id="download-format" name="format" value="">
+            <button style="height:100%" class="btn btn-primary my-2 my-sm-0" type="submit">Procurar</button>
+          </form>
+        </div>
+      </div>
 
 
 
@@ -248,4 +337,38 @@
 
     {% endfor %}
 </div>
+<script>
+    function jsonLink() {
+        const searchParams = new URLSearchParams(window.location.search);
+        const pesquisa = searchParams.get("pesquisa");
+        const jsonLink = "{% url 'exportProdutos' format='json' %}" + "?pesquisa=" + pesquisa;;
+        document.getElementById("download-json").href = jsonLink;
+      }
+      
+      function xmlLink() {
+        const searchParams = new URLSearchParams(window.location.search);
+        const pesquisa = searchParams.get("pesquisa");
+        const xmlLink = "{% url 'exportProdutos' format='xml' %}"+ "?pesquisa=" + pesquisa;
+        document.getElementById("download-xml").href = xmlLink;
+      }
+        document.querySelector("#download-btn").addEventListener("click", function () {
+          document.querySelector("#download-dropdown-content").style.display = "block";
+        });
+        
+        document.querySelector("#download-json").addEventListener("click", function() {
+          console.log("JSON download");
+        });
+        
+        document.querySelector("#download-xml").addEventListener("click", function() {
+          console.log("XML download");
+        });
+        document.addEventListener("click", function(event) {
+          if (!event.target.closest("#download-btn")) {
+            document.querySelector("#download-dropdown-content").style.display = "none";
+          }
+          
+        });
+        /* When the user clicks on the button,
+  toggle between hiding and showing the dropdown content */
+  </script>
 {% endblock %}

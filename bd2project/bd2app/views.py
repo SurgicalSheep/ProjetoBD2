@@ -245,8 +245,9 @@ def novo_produto(request):
         return render(request, 'novo_produto.html', context)
 
 def todos_produtos(request):
-    if getTipoUserMongo(request.user.id) == "Parceiro" or getTipoUserMongo(request.user.id) == "Fornecedor" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2":
-        return redirect('index')
+    if request.user.is_authenticated:
+        if getTipoUserMongo(request.user.id) == "Parceiro" or getTipoUserMongo(request.user.id) == "Fornecedor" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2":
+            return redirect('index')
     if request.method == 'GET':
         if 'pesquisa' in request.GET:
             search = request.GET['pesquisa']
@@ -1048,32 +1049,38 @@ def criarProdutosPorFicheiro(request):
         return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
 
 @login_required
-def exportProdutos(request):
-    #semi feito
-    produtos = produtoMongo.getDataStore()
+def exportProdutos(request,format):
+    if getTipoUserMongo(request.user.id) != "Administrador" and getTipoUserMongo(request.user.id) != "Comercial Tipo 1" and getTipoUserMongo(request.user.id) != "Parceiro":
+        return redirect('index')
+    pesquisa = request.GET.get('pesquisa', '')
+    if getTipoUserMongo(request.user.id) == "Parceiro":
+        produtos = todos_produtos_other_marketplace_search(pesquisa)
+    else:
+        produtos = todos_produtos_other_search(pesquisa)
     produtos = [product for product in produtos]
     #json
-    # for product in produtos:
-    #     if '_id' in product:
-    #         product['_id'] = str(product['_id'])
-    # produtos = json.dumps(produtos)
-    # response = HttpResponse(produtos, content_type='application/xml')
-    # response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
-    # return response
-    # #xml
-    # root = ET.Element("root")
-    # for product in produtos:
-    #     prod = ET.SubElement(root, "produto")
-    #     for key, value in product.items():
-    #         elem = ET.SubElement(prod, key)
-    #         elem.text = str(value)
+    pprint(format)
+    if format == 'json':
+        for product in produtos:
+            if '_id' in product:
+                product['_id'] = str(product['_id'])
+        produtos = json.dumps(produtos)
+        response = HttpResponse(produtos, content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="produtos.json"'
+        return response
+    #xml
+    if format == 'xml':
+        root = ET.Element("root")
+        for product in produtos:
+            prod = ET.SubElement(root, "produto")
+            for key, value in product.items():
+                elem = ET.SubElement(prod, key)
+                elem.text = str(value)
 
-    # xml_str = ET.tostring(root).decode("utf-8")
-    # response = HttpResponse(xml_str, content_type='application/xml')
-    # response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
-    # return response
-    form = {}
-    return render(request, 'criarProdutosPorFicheiro.html', {'form': form})
+        xml_str = ET.tostring(root).decode("utf-8")
+        response = HttpResponse(xml_str, content_type='application/xml')
+        response['Content-Disposition'] = 'attachment; filename="produtos.xml"'
+        return response
 
 def get_info_cliente(id_client):
     cursor = connection.cursor()
