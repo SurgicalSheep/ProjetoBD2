@@ -35,7 +35,7 @@
                     <form action="" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="id_pedido" value="{{k.id_pedido}}"></input>
-                        <button style="margin-top: 1%;margin-bottom: 1%;" class="btn btn-success" type="submit">Enviar</button>
+                        <button style="margin-top: 1%;margin-bottom: 1%;" class="btn btn-success" type="submit">Enviar Encomenda!</button>
                     </form>
                     {% endif %}
                 <td style="text-align: center;"><a href="/encomenda/{{k.id_pedido}}">Ver detalhes</a></td>
