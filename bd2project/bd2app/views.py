@@ -320,6 +320,7 @@ def todos_pedidos(request):
             id_pedido = data.get("id_pedido")
             pedido_update = todos_pedidos_model.objects.get(id_pedido=id_pedido)
             pedido_update.estado = "Encomenda Enviada!"
+            pedido_update.id_utilizador = request.user.id
             pedido_update.save()
             return redirect('todos_pedidos')
         else:
@@ -443,7 +444,7 @@ def inserir_pedido(id_carrinho,morada):
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     cursor = connection.cursor()
     data = "'" + str(datetime.datetime.now()) + "'"
-    cursor.execute("call insert_pedidos(" + str(id_carrinho) + "," + str(carrinho.preco_total) + "," + data +  ",'" + str(morada) + "')")
+    cursor.execute("call insert_pedidos(" + str(id_carrinho) + "," + str(carrinho.preco_total) + "," + data +  ",'" + str(morada) + "'," + str(id_carrinho) + ")")
     latest_pedido = todos_pedidos_model.objects.filter(id_cliente=id_carrinho).latest('id_pedido')
     id_pedido_x = latest_pedido.id_pedido 
     for item_carrinho in itens_carrinho:
