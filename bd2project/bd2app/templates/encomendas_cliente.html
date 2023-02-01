@@ -19,7 +19,13 @@
             {% for k in todos %}
             <tr style="background-color: white;text-align:center;">
                 <td style="text-align: center;">{{k.data}}</td>
-                <td style="text-align: center;">{{k.estado}}</td>
+                {% if k.estado == "Encomenda Enviada!" %}
+                <td style="text-align: center;" class="text-success">{{k.estado}}</td>
+                {% elif k.estado == "Encomenda Cancelada!" %}
+                <td style="text-align: center;" class="text-danger">{{k.estado}}</td>
+                {% else %}
+                <td style="text-align: center;" class="text-primary">{{k.estado}}</td>
+                {% endif %}
                 <td style="text-align: center;">{{k.preco_total}} €</td>
                 <td style="text-align: center;"><a class="btn btn-info" href="/encomenda/{{k.id_pedido}}">Ver detalhes</a></td>
             </tr>
