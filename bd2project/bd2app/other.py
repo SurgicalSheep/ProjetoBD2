@@ -25,7 +25,7 @@ def novo_produto_insert(nome, preco, marca, cor, imagem, descricao, stock, desco
 
 def todos_produtos_other():
     collection = bd['produtos']
-    return collection.find({'belongs_store': True})
+    return collection.find({'belongs_store': True, 'active': True})
 
 def todos_produtos_other_search(search):
     if search == "":
@@ -71,7 +71,7 @@ def todos_produtos_other_marketplace_search(search):
 
 def todos_produtos_other_marketplace():
     collection = bd['produtos']
-    return collection.find({'belongs_store': False})
+    return collection.find({'belongs_store': False, 'active': True, "active_parceiro": True})
     
 def todos_users_other():
     collection = bd['utilizadores']
@@ -183,3 +183,9 @@ def get_active_produto_other(id_produto):
     collection = bd['produtos']
     x = collection.find({"id": id_produto}, {"_id": 0, "active": 1})
     return x[0]
+
+def nome_parceiro_other(id_user):
+    collection = bd["vw_nome_parceiros"]
+    aux = collection.find({"id": id_user})
+    nome = aux[0]["nome"]
+    return nome
