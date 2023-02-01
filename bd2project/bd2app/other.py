@@ -138,7 +138,8 @@ def nome_cliente_other(id_user):
 
 def todos_produtos_parceiro_other(id_parceiro):
     collection = bd['produtos']
-    return list(collection.find({"id_parceiro": id_parceiro, "belongs_store": False}))
+    produtos = collection.find({"id_parceiro": id_parceiro, "belongs_store": False}).sort("active", -1)
+    return list(produtos)
 
 def ids_produtos_parceiro_other(id_parceiro):
     collection = bd['vw_ids_produtos_parceiros']

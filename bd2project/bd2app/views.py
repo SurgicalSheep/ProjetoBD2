@@ -236,6 +236,8 @@ def novo_produto(request):
         categoria = data.get("categoria")
         novo_produto_insert(nome, preco, marca, cor, imagem,
                             descricao, stock, desconto, categoria, request.user.id)
+        if getTipoUserMongo(request.user.id) == "Parceiro":
+            return redirect('index')
         return redirect('todos_produtos')
     else:
         form = request.POST
