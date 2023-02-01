@@ -611,6 +611,9 @@ def editar_produto(request, produto_id):
         list_ids_produtos_parceiro = ids_produtos_parceiro_other(request.user.id)
         if produto_id not in list_ids_produtos_parceiro:
             return redirect('index')
+        active = get_active_produto_other(produto_id)
+        if not active["active"]:
+            return redirect('index') 
     if request.method == 'POST':
         data = request.POST
         nome = data.get("nome")
@@ -1160,11 +1163,17 @@ def ativar_produto_parceiro(request, produto_id):
             list_ids_produtos_parceiro = ids_produtos_parceiro_other(request.user.id)
             if produto_id not in list_ids_produtos_parceiro:
                 return redirect('index')
+            active = get_active_produto_other(produto_id)
+            if not active["active"]:
+                return redirect('index')
             ativar_produto_parceiro_other(produto_id, request.user.id)
         return redirect('index')
     else:
         form = request.POST
         context = {'form': form}
+        active = get_active_produto_other(produto_id)
+        if not active["active"]:
+            return redirect('index') 
         return render(request, 'ativar_produto_parceiro.html', context)
 
 @login_required
@@ -1175,9 +1184,15 @@ def desativar_produto_parceiro(request, produto_id):
             list_ids_produtos_parceiro = ids_produtos_parceiro_other(request.user.id)
             if produto_id not in list_ids_produtos_parceiro:
                 return redirect('index')
+            active = get_active_produto_other(produto_id)
+            if not active["active"]:
+                return redirect('index')     
             desativar_produto_parceiro_other(produto_id, request.user.id)
         return redirect('index')
     else:
         form = request.POST
         context = {'form': form}
+        active = get_active_produto_other(produto_id)
+        if not active["active"]:
+            return redirect('index') 
         return render(request, 'desativar_produto_parceiro.html', context)
