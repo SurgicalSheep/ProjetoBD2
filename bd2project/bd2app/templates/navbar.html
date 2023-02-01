@@ -215,7 +215,7 @@
           {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
           <li class="nav-item">
             <div class="dropdown">
-              <button onclick="dropDownGerir()" class="dropbtn" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;">Gerir Utilizadores</button>
+              <button onclick="dropDownGerir()" class="dropbtn align-middle pt-2" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;background-color: #f8f9fa;">Gerir Utilizadores</button>
               <div id="dropDwonGerir" class="dropdown-content">
                 <a href="{% url 'gerir_clientes' %}" style="font-family: Merriweather Sans;">Gerir Clientes</a>
                 <a href="{% url 'gerir_fornecedores' %}" style="font-family: Merriweather Sans;">Gerir Fornecedores</a>
@@ -232,11 +232,11 @@
           {% endif %}
           {% if request.user.is_authenticated %}
           <li class="nav-item">
-            <div class="dropdown">
-              <button onclick="myFunction()" class="dropbtn"><img
+            <div class="dropdown" >
+              <button onclick="myFunction()" class="dropbtn pt-2" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;background-color: #f8f9fa;"><img
                   src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="" width="24" height="24"
-                  class="d-inline-block align-text-top">{{request.session.nome}}</button>
-              <div id="myDropdown" class="dropdown-content">
+                  class="d-inline-block align-text-top" style="margin-right: 5px;">{{request.session.nome}}</button>
+              <div id="myDropdown" class="dropdown-content"> 
                 <a href="{% url 'verPerfil' %}" style="font-family: Merriweather Sans;">Ver Perfil</a>
                 <a href="{% url 'editarPerfil' %}" style="font-family: Merriweather Sans;">Editar Perfil</a>
                 <a href="{% url 'mudarPass' %}" style="font-family: Merriweather Sans;">Mudar Password</a>
