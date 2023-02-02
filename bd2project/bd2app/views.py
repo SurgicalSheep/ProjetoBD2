@@ -380,6 +380,8 @@ def adicionar_carrinho(request, produto_id):
         if stock < quantity:
             return redirect('out_of_stock')
         if request.user.is_authenticated:
+            if request.session['tipouser'] == "Administrador" or request.session['tipouser'] == "Comercial Tipo 1" or request.session['tipouser'] == "Comercial Tipo 2" or request.session['tipouser'] == "Fornecedor" or request.session['tipouser'] == "Parceiro":
+                return redirect('index')
             ##fazer cena normal
             verificacao = itens_carrinho_model.objects.filter(id_carrinho=request.user.id, id_produto=produto_id).first()
             if verificacao:
@@ -426,7 +428,8 @@ def adicionar_carrinho(request, produto_id):
 
 @login_required
 def remover_produto_carrinho(request, produto_id):
-    
+    if request.session["tipouser"] != "Cliente":
+        return redirect('index')
     if request.method == 'POST':
         remover_produto_carrinho_other(produto_id,request.user.id)
         return redirect('carrinho')
@@ -451,6 +454,8 @@ def removerProdutoCarrinhoAnonimo(request, produto_id):
 
 @login_required
 def pagamento(request,id_carrinho):
+    if request.session["tipouser"] != "Cliente":
+        return redirect('index')
     context = {}
     if request.method == 'POST':
         morada = request.POST.get('address')
@@ -461,7 +466,10 @@ def pagamento(request,id_carrinho):
         context = {'form': form}
     return render(request, 'pagamento.html', context=context)
 
+@login_required
 def inserir_pedido(id_carrinho,morada):
+    if request.session["tipouser"] != "Cliente":
+        return redirect('index')
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     cursor = connection.cursor()
@@ -498,18 +506,24 @@ def acaoutilizador(request, id_user, acao, nome):
 
 @login_required  
 def utilizador_por_confirmar(request):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1":
+        return redirect('index')
     collection = bd['utilizadores']
     users = list(collection.find({"approved": False}))
     return render(request, 'utilizador_por_confirmar.html', {'users': users})
 
 @login_required
 def aceitar_utilizador(request, id_user):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1":
+        return redirect('index')
     collection = bd['utilizadores']
     collection.update_one({"id": id_user}, {"$set": {"approved": True, "id_utilizador": request.user.id}})
     return redirect('utilizador_por_confirmar')
 
 @login_required
 def rejeitar_utilizador(request, id_user):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1":
+        return redirect('index')
     user = User.objects.filter(id=id_user)
     user.delete()
     collection = bd['utilizadores']
@@ -525,29 +539,30 @@ def categoria(request, categoria):
 
 @login_required
 def homepage_fornecedores(request):
-    if(request.user.is_authenticated):
-        class produto:
-            def __init__(self, id, nome, preco, imagem, desconto, disponivel):
-                self.id = id
-                self.nome = nome
-                self.preco = preco
-                self.imagem = imagem
-                self.desconto = desconto
-                self.disponivel = disponivel
-        collection = bd['produtos_fornecedores']
-        collection2 = bd['produtos']
-        produtos=[]
-        produtos_fornecedor = collection.find({"id_fornecedor": request.user.id})
-        for x in produtos_fornecedor:
-            varproduto = collection2.find_one({"id": x["id_produto"]})
-            varid = varproduto["id"]
-            varpreco = x["preco_unitario"]
-            vardisponivel = x["disponivel"]
-            varimagem = varproduto["imagem"]
-            vardesconto = varproduto["desconto"]
-            varnome = varproduto["nome"]
-            p = produto(varid, varnome, varpreco, varimagem, vardesconto, vardisponivel)
-            produtos.append(p)
+    if request.session["tipouser"] != "Fornecedor":
+        return redirect('index')
+    class produto:
+        def __init__(self, id, nome, preco, imagem, desconto, disponivel):
+            self.id = id
+            self.nome = nome
+            self.preco = preco
+            self.imagem = imagem
+            self.desconto = desconto
+            self.disponivel = disponivel
+    collection = bd['produtos_fornecedores']
+    collection2 = bd['produtos']
+    produtos=[]
+    produtos_fornecedor = collection.find({"id_fornecedor": request.user.id})
+    for x in produtos_fornecedor:
+        varproduto = collection2.find_one({"id": x["id_produto"]})
+        varid = varproduto["id"]
+        varpreco = x["preco_unitario"]
+        vardisponivel = x["disponivel"]
+        varimagem = varproduto["imagem"]
+        vardesconto = varproduto["desconto"]
+        varnome = varproduto["nome"]
+        p = produto(varid, varnome, varpreco, varimagem, vardesconto, vardisponivel)
+        produtos.append(p)
     return render(request, 'homepage_fornecedores.html', {'produtos': produtos})
 
 @login_required
@@ -570,18 +585,18 @@ def ativar_produto_fornecedor(request, id_produto, id_fornecedor):
         return redirect('homepage_fornecedores')
     return redirect('/gerir_produtos_fornecedor/'+str(id_fornecedor))
 
-# @login_required
-# def editarUsers(request):
-#     if not getTipoUserMongo(request.user.id) == "Administrador":
-#         return redirect('mudarEstadoClientes')
-#     collection = bd['utilizadores']
-#     users = collection.find({"approved": True})
-#     return render(request, 'editUsers.html', {'users': users})
+@login_required
+def editarUsers(request):
+    if not getTipoUserMongo(request.user.id) == "Administrador":
+        return redirect('index')
+    collection = bd['utilizadores']
+    users = collection.find({"approved": True})
+    return render(request, 'editUsers.html', {'users': users})
 
 @login_required
 def editarUser(request, id_user):
-    if not getTipoUserMongo(request.user.id) == "Administrador":
-        return redirect('mudarEstadoClientes')
+    if request.session["tipouser"] != "Administrador"  and request.session["tipouser"] != "Comercial Tipo 1":
+        return redirect('index')
     userMongo = bd["utilizadores"].find_one({"id":id_user})
     if request.method == 'POST':
         nome = request.POST["nome"]
@@ -596,12 +611,12 @@ def editarUser(request, id_user):
             updateUserMongo(id_user, nome, email, morada, tipouser, active, request.user.id)
             user.email = email
             user.save()
-            return redirect('editarUsers')
+            return redirect('index')
     return render(request, 'editUser.html', {'user': userMongo})
 
 @login_required
 def mudarEstadoClientes(request):
-    if not getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
+    if request.session["tipouser"] != "Comercial Tipo 1" and request.session["tipouser"] != "Administrador":
         return redirect('index')
     collection = bd['utilizadores']
     users = collection.find({"approved": True, "tipouser": "Cliente"})
@@ -610,7 +625,7 @@ def mudarEstadoClientes(request):
 @login_required
 def desativarUser(request, id_user):
     tipo_user = getTipoUserMongo(id_user)
-    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1":
         return redirect('index')
     if request.method == 'POST':
         desativarUserMongo(id_user, request.user.id)
@@ -627,7 +642,7 @@ def desativarUser(request, id_user):
 @login_required
 def ativarUser(request, id_user):
     tipo_user = getTipoUserMongo(id_user)
-    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1":
         return redirect('mudarEstadoClientes')
     if request.method == 'POST':
         ativarUserMongo(id_user, request.user.id)
@@ -640,7 +655,8 @@ def ativarUser(request, id_user):
         elif tipo_user == 'Parceiro':
             return redirect('gerir_parceiros')
     return render(request,'ativarUser.html' ,{'id_user': id_user, "tipo_user": tipo_user})
-    
+
+@login_required
 def pedidos_cliente(request):
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id)
     return render(request, 'pedidos_cliente.html', {'todos': todos})
@@ -682,8 +698,10 @@ def editar_produto(request, produto_id):
         produto = collection.find_one({"id": produto_id})
         return render(request, 'editar_produto.html', {'produto': produto})
 
-#@login_required
+@login_required
 def increment_quantity(request, id_carrinho, id_produto):
+    if request.session["tipouser"] != "Cliente":
+        return redirect('index')
     col = bd['produtos']
     stock = col.find_one({"id": id_produto})["stock"]
     item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
@@ -696,8 +714,10 @@ def increment_quantity(request, id_carrinho, id_produto):
         messages.warning(request, 'Stock máximo atingido!') #not working
     return JsonResponse({'quantity': item.quantidade,'total': carrinho.preco_total})
 
-#@login_required
+@login_required
 def decrement_quantity(request, id_carrinho, id_produto):
+    if request.session["tipouser"] != "Cliente":
+        return redirect('index')
     item = get_object_or_404(itens_carrinho_model, id_carrinho=id_carrinho, id_produto=id_produto)
     if item.quantidade > 1:
         item.quantidade -= 1
@@ -747,7 +767,8 @@ def decrementQuantityAnonimo(request, id_produto):
 
 @login_required
 def solicitar_produto(request, id_product):
-    context = {}
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Fornecedor":
+        return redirect('index')
     if request.method == 'POST':
         data = request.POST
         quantidade = data.get("quantidade")
@@ -770,7 +791,9 @@ def encomendas_cliente(request, id_user):
     return redirect('index')
 
 @login_required
-def encomenda(request,id_encomenda): #falta checkar esta
+def encomenda(request,id_encomenda):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1" and request.session["tipouser"] != "Cliente":
+        return redirect('index')
     todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda)
     encomenda = Itens_Pedido.objects.filter(id_pedido=id_encomenda)
     col = bd["produtos"]
@@ -780,11 +803,15 @@ def encomenda(request,id_encomenda): #falta checkar esta
 
 @login_required
 def pedidos_cliente(request):
+    if request.session["tipouser"] != "Cliente":
+        return redirect('index')
     todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado="Em Processamento!").order_by('-data')
     return render(request, 'pedidos_cliente.html', {'todos': todos})
 
 @login_required
-def encomenda_cancelar(request, id_encomenda): #falta atualizar o stock depois de cancelar
+def encomenda_cancelar(request, id_encomenda):
+    if request.session["tipouser"] != "Cliente":
+        return redirect('index')
     todos = todos_pedidos_model.objects.get(id_pedido=id_encomenda, estado="Em Processamento!")
     todos.estado = "Encomenda Cancelada!"
     todos.save()
@@ -797,6 +824,8 @@ def encomenda_cancelar(request, id_encomenda): #falta atualizar o stock depois d
 
 @login_required
 def ativar_produto(request, produto_id):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1":
+        return redirect('index')
     context = {}
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
@@ -809,6 +838,8 @@ def ativar_produto(request, produto_id):
 
 @login_required
 def pedidos_fornecedor(request):
+    if request.session["tipouser"] != "Fornecedor":
+        return redirect('index')
     collection2 = bd['produtos']
     class class_pedidos_fornecedor:
             def __init__(self, id_pedidofornecedor, id_fornecedor, id_produto, nome_produto, quantidade, datapedido):
@@ -834,6 +865,8 @@ def pedidos_fornecedor(request):
 
 @login_required
 def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantidade):
+    if request.session["tipouser"] != "Fornecedor":
+        return redirect('index')
     collection = bd['produtos']
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
     item.estado = "Aceite!"
@@ -845,6 +878,8 @@ def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantid
 
 @login_required
 def rejeitar_pedidos_fornecedor(request, id_pedidofornecedor):
+    if request.session["tipouser"] != "Fornecedor":
+        return redirect('index')
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
     item.estado = "Rejeitada!"
     item.id_utilizador = request.user.id
@@ -947,7 +982,8 @@ def gerir_produtos_fornecedor (request, id_user):
 
 @login_required
 def add_produtos_fornecedor(request, id_fornecedor):
-    context = {}
+    if not (getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Administrador"):
+        return redirect('index')
     if request.method == 'POST':
         collection = bd['produtos_fornecedores']
         data = request.POST
@@ -988,7 +1024,8 @@ def get_info_sells():
 
 @login_required
 def estatisticas(request, acao):
-    context = {}
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
+        return redirect('index')
     info = []
     dias = []
     ano = -1
@@ -1038,6 +1075,7 @@ def estatisticas(request, acao):
         form = request.POST
         return render(request, "estatisticas.html", {'form': form, "ano": anos, "mes": meses, "anoselected": ano, "messelected": mes, "valorvendas": valorvendas, "nvendas": nvendas})
 
+@login_required
 def criarProdutosPorFicheiro(request):
     if(request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1" and request.session["tipouser"] != "Parceiro"):
         return redirect('index')
@@ -1053,7 +1091,7 @@ def criarProdutosPorFicheiro(request):
                 #verificar se o ficheiro está bem formatado
                 for child in root:
                     for value in child:
-                        if not (value.tag == "nome" or value.tag == "preco" or value.tag == "marca" or value.tag == "cor" or value.tag == "imagem" or value.tag == "descricao" or value.tag == "stock" or value.tag == "desconto" or value.tag == "categoria"):
+                        if not (value.tag == "nome" or value.tag == "preco" or value.tag == "marca" or value.tag == "cor" or value.tag == "imagem" or value.tag == "descricao" or value.tag == "stock" or value.tag == "desconto" or value.tag == "categoria" or value.tag == '_id' or value.tag == "id" or value.tag != "active" or value.tag != "id_utilizador" or value.tag != "belongs_store"):
                             return HttpResponse("Ficheiro XML mal formatado")
                 #inserir na bd
                 for child in root:
@@ -1071,13 +1109,13 @@ def criarProdutosPorFicheiro(request):
                                 return HttpResponse("Ficheiro XML mal formatado")
                         else:
                             dados[value.tag] = value.text
-                    #inserir na bd
+                    #inserir na bd                                                                                              
                     novo_produto_insert(dados["nome"], dados["preco"], dados["marca"], dados["cor"], dados["imagem"], dados["descricao"], dados["stock"], dados["desconto"], dados["categoria"],request.user.id)
             if str(file).endswith(".json"):
                 dadosFicheiro = json.load(file)
                 #verificar se o ficheiro está bem formatado
                 for produto in dadosFicheiro:
-                    if not (produto["nome"] and produto["preco"] and produto["marca"] and produto["cor"] and produto["imagem"] and produto["descricao"] and produto["stock"] and produto["desconto"] and produto["categoria"]):
+                    if not (produto["nome"] and produto["preco"] and produto["marca"] and produto["cor"] and produto["imagem"] and produto["descricao"] and produto["stock"] and produto["desconto"] and produto["categoria"] and produto["_id"] and produto["id"] and produto["active"] and produto["id_utilizador"] and produto["belongs_store"]):
                         return HttpResponse("Ficheiro JSON mal formatado")
                 for produto in dadosFicheiro:
                     #inserir na bd
@@ -1102,7 +1140,7 @@ def criarProdutosPorFicheiro(request):
 
 @login_required
 def exportProdutos(request,format):
-    if getTipoUserMongo(request.user.id) != "Administrador" and getTipoUserMongo(request.user.id) != "Comercial Tipo 1" and getTipoUserMongo(request.user.id) != "Parceiro":
+    if getTipoUserMongo(request.user.id) != "Administrador" and getTipoUserMongo(request.user.id) != "Comercial Tipo 1":
         return redirect('index')
     pesquisa = request.GET.get('pesquisa', "")
     if pesquisa == 'null':
@@ -1192,14 +1230,14 @@ def client_info_sells_year_month(ano, mes, id_client):
 
 @login_required
 def estatisticas_cliente(request, id_user, acao):
-    context = {}
+    if getTipoUserMongo(request.user.id) != "Administrador" and getTipoUserMongo(request.user.id) != "Comercial Tipo 1" and getTipoUserMongo(request.user.id) != "Comercial Tipo 2":
+        return redirect('index')
     info = []
     dias = []
     ano = -1
     mes = -1
     anos = return_ano_client(id_user)
     meses = return_mes_client(id_user)
-    context = {}
     client_info = get_info_cliente(id_user)
     client_valorvendas = 0
     if(client_info[0] is not None):
@@ -1252,6 +1290,8 @@ def produtos_parceiro(request):
 
 @login_required
 def ativar_produto_parceiro(request, produto_id):
+    if getTipoUserMongo(request.user.id) != "Parceiro":
+        redirect('index')
     context = {}
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Parceiro":
@@ -1273,6 +1313,8 @@ def ativar_produto_parceiro(request, produto_id):
 
 @login_required
 def desativar_produto_parceiro(request, produto_id):
+    if getTipoUserMongo(request.user.id) != "Parceiro":
+        redirect('index')
     context = {}
     if request.method == 'POST':
         if getTipoUserMongo(request.user.id) == "Parceiro":
@@ -1297,45 +1339,93 @@ def showLogs(request):
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
         return redirect('index')
     if request.method == 'GET':
-        collection = bd['logs_mongodb']
-        if 'pesquisa' in request.GET:
-            search = request.GET['pesquisa']
-            logsMongo = logsSearch(search)
-            logsPostgres = searchLogsPostgres(search)
-            logs = []
-            for log in logsMongo:
-                log["source"] = "MongoDB"
-                logs.append(log)
-            for log in logsPostgres:
-                logs.append(log)
-        else:
-            logsMongo = collection.find()
-            logsPostgres = list(Logs_plpgsql.objects.all().values())
-            logs = []
-            for log in logsMongo:
-                log["source"] = "MongoDB"
-                logs.append(log)
-            for log in logsPostgres:
-                log["source"] = "PostgreSQL"
-                logs.append(log)
-        collection = bd['utilizadores']
-        for log in logs:
-            utilizador = collection.find_one({"id": log["id_utilizador"]})
-            if utilizador is None:
-                log["nomeUtilizador"] = "Apagado"
-                log["tipoUser"] = "Apagado"
+        if getTipoUserMongo(request.user.id) == "Administrador":
+            collection = bd['logs_mongodb']
+            if 'pesquisa' in request.GET:
+                search = request.GET['pesquisa']
+                logsMongo = logsSearch(search)
+                logsPostgres = searchLogsPostgres(search)
+                logs = []
+                for log in logsMongo:
+                    log["source"] = "MongoDB"
+                    logs.append(log)
+                for log in logsPostgres:
+                    logs.append(log)
             else:
-                log["nomeUtilizador"] = utilizador["nome"]
-                log["tipoUser"] = utilizador["tipouser"]
-        logs_per_page = 10
-        paginator = Paginator(logs, logs_per_page)
-        page = request.GET.get('page')
-        try:
-            current_page = paginator.get_page(page)
-        except EmptyPage:
-            current_page = paginator.get_page(1)
+                logsMongo = collection.find()
+                logsPostgres = list(Logs_plpgsql.objects.all().values())
+                logs = []
+                for log in logsMongo:
+                    log["source"] = "MongoDB"
+                    logs.append(log)
+                for log in logsPostgres:
+                    log["source"] = "PostgreSQL"
+                    logs.append(log)
+            collection = bd['utilizadores']
+            for log in logs:
+                utilizador = collection.find_one({"id": log["id_utilizador"]})
+                if utilizador is None:
+                    log["nomeUtilizador"] = "Apagado"
+                    log["tipoUser"] = "Apagado"
+                else:
+                    log["nomeUtilizador"] = utilizador["nome"]
+                    log["tipoUser"] = utilizador["tipouser"]
+            logs_per_page = 10
+            paginator = Paginator(logs, logs_per_page)
+            page = request.GET.get('page')
+            try:
+                current_page = paginator.get_page(page)
+            except EmptyPage:
+                current_page = paginator.get_page(1)
+        elif getTipoUserMongo(request.user.id) == 'Comercial Tipo 2':
+            collection = bd['logs_mongodb']
+            if 'pesquisa' in request.GET:
+                search = request.GET['pesquisa']
+                logsMongo = logsSearch(search)
+                logsPostgres = searchLogsPostgres(search)
+                logs = []
+                for log in logsMongo:
+                    log["source"] = "MongoDB"
+                    logs.append(log)
+                for log in logsPostgres:
+                    logs.append(log)
+            else:
+                logsMongo = collection.find()
+                logsPostgres = list(Logs_plpgsql.objects.all().values())
+                logs = []
+                for log in logsMongo:
+                    log["source"] = "MongoDB"
+                    logs.append(log)
+                for log in logsPostgres:
+                    log["source"] = "PostgreSQL"
+                    logs.append(log)
+            collection = bd['utilizadores']
+            logsToRemove = []
+            for log in logs:
+                utilizador = collection.find_one({"id": log["id_utilizador"]})
+                if utilizador is None:
+                    log["nomeUtilizador"] = "Apagado"
+                    log["tipoUser"] = "Apagado"
+                else:
+                    log["nomeUtilizador"] = utilizador["nome"]
+                    log["tipoUser"] = utilizador["tipouser"]
+                    if log["tipoUser"] == "Administrador":
+                        logsToRemove.append(log)
+            count = len(logsToRemove)
+            for log in range(count):
+                for x in logs:
+                    if x == logsToRemove[log]:
+                        logs.remove(x)
+            logs_per_page = 10
+            paginator = Paginator(logs, logs_per_page)
+            page = request.GET.get('page')
+            try:
+                current_page = paginator.get_page(page)
+            except EmptyPage:
+                current_page = paginator.get_page(1)
     return render(request, 'showLogs.html', {'logs': current_page})
 
+@login_required
 def gerir_produtos_parceiro(request, id_user):
     if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         products = todos_produtos_parceiro_other(id_user)
@@ -1369,6 +1459,7 @@ def loja_ativar_produto_parceiro(request, produto_id, id_parceiro):
         context = {'form': form, "id_parceiro": id_parceiro}
         return render(request, 'loja_ativar_produto_parceiro.html', context)
 
+@login_required
 def consulta_produtos(request):
     if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
         products = []
@@ -1401,6 +1492,7 @@ def consulta_produtos(request):
         return render(request, "consulta_produtos.html", {'products': current_page, "isloja": 1})
     return redirect('index')
 
+@login_required
 def consulta_produtos_parceiro(request, id_user):
     if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
         products = []
