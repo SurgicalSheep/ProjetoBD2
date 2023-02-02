@@ -1342,3 +1342,55 @@ def loja_ativar_produto_parceiro(request, produto_id, id_parceiro):
         form = request.POST
         context = {'form': form, "id_parceiro": id_parceiro}
         return render(request, 'loja_ativar_produto_parceiro.html', context)
+
+def consulta_produtos(request):
+    if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
+        products = []
+        class produto:
+            def __init__(self, id, nome, n_vendas, valor_vendas):
+                self.id = id
+                self.nome = nome
+                self.n_vendas = n_vendas
+                self.valor_vendas = valor_vendas
+        all_products = get_all_products_other()
+        cursor = connection.cursor()
+        cursor.execute("select * from produto_info_function()")
+        results = cursor.fetchall()
+        for x in all_products:
+            pprint(x)
+            check = 0
+            for y in results:
+                if x["id"] == y[0]:
+                    p = produto(x["id"], x["nome"], y[1], y[2])
+                    check = 1
+            if(check == 0):        
+                p = produto(x["id"], x["nome"], 0, 0)
+            products.append(p)
+        return render(request, "consulta_produtos.html", {'products': products})
+    return redirect('index')
+
+def consulta_produtos(request):
+    if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
+        products = []
+        class produto:
+            def __init__(self, id, nome, n_vendas, valor_vendas):
+                self.id = id
+                self.nome = nome
+                self.n_vendas = n_vendas
+                self.valor_vendas = valor_vendas
+        all_products = get_all_products_other()
+        cursor = connection.cursor()
+        cursor.execute("select * from produto_info_function()")
+        results = cursor.fetchall()
+        for x in all_products:
+            pprint(x)
+            check = 0
+            for y in results:
+                if x["id"] == y[0]:
+                    p = produto(x["id"], x["nome"], y[1], y[2])
+                    check = 1
+            if(check == 0):        
+                p = produto(x["id"], x["nome"], 0, 0)
+            products.append(p)
+        return render(request, "consulta_produtos.html", {'products': products})
+    return redirect('index')

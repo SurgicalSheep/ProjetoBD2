@@ -1,5 +1,6 @@
 {% extends "index.html" %}
 {% block content %}
+<a type="button" class="btn btn-primary mt-3 ml-4" href="{% url 'consulta_produtos' %}">Informações de Produtos</a>
 <h2 class="mt-3 ml-4"> Todas as vendas da loja: </h2>
 <div class="card border-light mb-3" style="max-width: 18rem; float: left; margin-top: 2%; margin-left: 2%;">
     <div class="card-header">Número de compras efetuadas: </div>
@@ -14,7 +15,7 @@
     </div>
 </div>
 <br><br><br><br><br><br><br>
-{% if request.session.tipouser == "Comercial Tipo 2" %}
+{% if request.session.tipouser == "Comercial Tipo 2" or request.session.tipouser == "Administrador" %}
 <div style="display: flex; margin-left: 2%; margin-top: 1%;">
     <div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; cursor: pointer;"
         onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
@@ -27,6 +28,7 @@
         <h6 style="font-size: medium; font-family: Poppins;">Valor das vendas</h6>
     </div>
 </div>
+
 <div style="display: flex; margin-left: 1%; margin-top: 1%;">
     <form method="post" enctype="multipart/form-data" style="margin-left: 1%;">
         {% csrf_token %}
