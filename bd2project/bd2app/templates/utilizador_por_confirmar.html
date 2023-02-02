@@ -11,6 +11,7 @@
           <th>Username</th>
           <th>Email</th>
           <th>Morada</th>
+          <th>Tipo de Utilizador</th>
           <th>Ação</th>
         </tr>
         {% for users in users %}
@@ -19,6 +20,7 @@
                 <td>{{users.username}}</td>
                 <td>{{users.email}}</td>
                 <td>{{users.morada}}</td>
+                <td>{{users.tipouser}}</td>
                 <td>
                     <a type="button" class="btn btn-success" href="{% url 'acao_utilizador' id_user=users.id acao='aceitar' nome=users.nome %}">Aceitar</a>
                     <a type="button" class="btn btn-danger" href="{% url 'acao_utilizador' id_user=users.id acao='rejeitar' nome=users.nome %}">Rejeitar</a>
