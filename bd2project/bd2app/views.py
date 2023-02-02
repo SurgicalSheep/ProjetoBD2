@@ -384,6 +384,12 @@ def adicionar_carrinho(request, produto_id):
             verificacao = itens_carrinho_model.objects.filter(id_carrinho=request.user.id, id_produto=produto_id).first()
             if verificacao:
                 verificacao.quantidade += quantity
+                if verificacao.quantidade + quantity > stock:
+                    x = stock - (verificacao.quantidade + quantity)
+                    if x < 0:
+                        verificacao.quantidade += (quantity + x)
+                    else:
+                        verificacao.quantidade += quantity
                 verificacao.save()
                 return redirect('todos_produtos')
             else:
