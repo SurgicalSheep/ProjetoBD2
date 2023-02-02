@@ -35,6 +35,8 @@ def index(request):
                 return redirect('produtos_parceiro')
             elif request.session["tipouser"] == "Comercial Tipo 1" or request.session["tipouser"] == "Administrador":
                 return redirect('todos_produtos')
+            elif request.session["tipouser"] == "Comercial Tipo 2":
+                return redirect(reverse('estatisticas', args=(2,)))
     col = bd["produtos"]
     produtos_promocao = col.find({'active': True, 'desconto': {'$gt': 0}}).sort("desconto", -1).limit(6) #maybe mudar isto para nao serem só 6?
     produtos_nao_ativos = col.find({'active': False})
