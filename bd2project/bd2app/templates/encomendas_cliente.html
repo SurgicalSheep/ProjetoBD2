@@ -6,7 +6,9 @@
 
     {% if todos|length == 0 %}
     <h4>Ainda não existe nenhuma encomenda finalizada!</h4>
+    {% if request.session.tipouser == "Cliente" %}
     <h6>Verifique os seus pedidos ou faça uma nova encomenda!</h6>
+    {% endif %}
     {% else %}
     <table class="table table-striped table-hover table-borderless" frame=hsides rules=rows style="width: 100%;">
         <thead style="text-align: center;" class="thead-dark">

@@ -741,9 +741,11 @@ def solicitar_produto(request, id_product):
         return render(request, "lista_fornecedores_produto.html", {'fornecedores': fornecedores,'form': form})
 
 @login_required
-def encomendas_cliente(request):
-    todos = todos_pedidos_model.objects.filter(id_cliente=request.user.id, estado__in=["Encomenda Enviada!", "Encomenda Cancelada!"]).order_by('-data')
-    return render(request, 'encomendas_cliente.html', {'todos': todos})
+def encomendas_cliente(request, id_user):
+    if ((getTipoUserMongo(request.user.id) == "Administrador") or ((getTipoUserMongo(request.user.id) == "Cliente") and (request.user.id == id_user))):
+        todos = todos_pedidos_model.objects.filter(id_cliente=id_user, estado__in=["Encomenda Enviada!", "Encomenda Cancelada!"]).order_by('-data')
+        return render(request, 'encomendas_cliente.html', {'todos': todos})
+    return render('index')
 
 @login_required
 def encomenda(request,id_encomenda): #falta checkar esta
@@ -972,7 +974,9 @@ def estatisticas(request, acao):
     anos = return_ano()
     meses = return_mes()
     info_sells = get_info_sells()
-    valorvendas = (info_sells[0])
+    valorvendas = 0
+    if(info_sells[0] is not None):
+        valorvendas = (info_sells[0])
     nvendas = (info_sells[1])
     context = {}
     if request.method == 'POST':
@@ -1175,7 +1179,9 @@ def estatisticas_cliente(request, id_user, acao):
     meses = return_mes_client(id_user)
     context = {}
     client_info = get_info_cliente(id_user)
-    client_valorvendas = (client_info[0])
+    client_valorvendas = 0
+    if(client_info[0] is not None):
+        client_valorvendas = (client_info[0])
     client_nvendas = (client_info[1])
     nomecliente = nome_cliente_other(id_user)
     if request.method == 'POST':

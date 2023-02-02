@@ -249,7 +249,7 @@
                 <a href="{% url 'verPerfil' %}" style="font-family: Merriweather Sans;">Ver Perfil</a>
                 <a href="{% url 'editarPerfil' %}" style="font-family: Merriweather Sans;">Editar Perfil</a>
                 <a href="{% url 'mudarPass' %}" style="font-family: Merriweather Sans;">Mudar Password</a>
-                <a href="{% url 'encomendas_cliente' %}" style="font-family: Merriweather Sans;">Histórico Encomendas</a>
+                <a href="{% url 'encomendas_cliente' id_user=request.user.id %}" style="font-family: Merriweather Sans;">Histórico Encomendas</a>
                 <a href="{% url 'pedidos_cliente' %}" style="font-family: Merriweather Sans;">Pedidos por enviar</a>
                 <a href="{% url 'logoutUser' %}" style="font-family: Merriweather Sans;">Logout</a>
               </div>

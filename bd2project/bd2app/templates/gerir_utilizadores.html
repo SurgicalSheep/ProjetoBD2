@@ -55,7 +55,7 @@
                     <td>Não</td>
                 {% endif %}
                 <td>
-                    <a type="button" class="btn btn-info" href="{% url 'editarUser' id_user=users.id%}">Editar</a>
+                    <a type="button" class="btn btn-warning" href="{% url 'editarUser' id_user=users.id%}">Editar</a>
                     {% if users.active %}
                     <a type="button" class="btn btn-danger" href="{% url 'desativarUser' id_user=users.id %}">Desativar</a>
                     {% else %}
@@ -68,12 +68,14 @@
                     <a type="button" class="btn btn-secondary" href="{% url 'gerir_produtos_parceiro' id_user=users.id %}">Gerir os Produtos</a>
                     {% endif %}
                     {% if tipo_user == "Cliente" %}
-                    <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Estatísticas</a>
+                    <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Detalhes</a>
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
     </table>
+    
+    {% if tipo_user == "Cliente" %}
     <div class="pagination" style="display: flex;justify-content:center;">
         {% if users.has_previous %}
             <a href="?page={{ users.previous_page_number }}">&laquo;</a>
@@ -91,6 +93,7 @@
             <a href="?page={{ users.next_page_number }}">&raquo;</a>
         {% endif %}
     </div>
+    {% endif %}
 </div>
 
 {% endblock %}
