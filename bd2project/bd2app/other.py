@@ -25,7 +25,7 @@ def novo_produto_insert(nome, preco, marca, cor, imagem, descricao, stock, desco
 
 def todos_produtos_other():
     collection = bd['produtos']
-    return collection.find({'belongs_store': True, 'active': True})
+    return collection.find({'belongs_store': True})
 
 def todos_produtos_other_search(search):
     if search == "":

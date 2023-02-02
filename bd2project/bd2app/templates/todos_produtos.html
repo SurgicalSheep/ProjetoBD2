@@ -128,7 +128,7 @@
   <div class="container-fluid">
     <div class="row row-cols-1 row-cols-4 g-4 gap-4 justify-content-center" >
       {% for product in products %}
-
+      {% if product.active == True or product.active == False and request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
       <div class="card" style="width: 18rem;background-color: #def2f5;border-radius: 10px;">
         <div class="card-body">
           <img src="{{product.imagem}}" style="height:50%;border-radius: 10px;" class="card-img-top imagensitens"
@@ -336,7 +336,7 @@
 
         </div>
       </div>
-
+      {% endif %}
       {% endfor %}
     </div>
   </div>
