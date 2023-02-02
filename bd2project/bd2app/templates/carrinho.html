@@ -21,12 +21,17 @@
                 alt="imagem não disponível"
                 onError="this.onerror=null;this.src='https://user-images.githubusercontent.com/24848110/33519396-7e56363c-d79d-11e7-969b-09782f5ccbab.png';">
             <h6 class="card-title">Nome do produto: {{itens.nome}}</h6>
-
+            {% if itens.desconto > 0 %}
             <label> <b
                     style="background-color: #F2CB05;border-radius: 5px;padding: 3px;">-{{itens.desconto}}%</b></label>
+            {% endif %}
             <h3 class="card-title" style="margin-bottom: 0;">
                 <b style="color: #FA7F08;">{{itens.preco|mul:itens.desconto|floatformat:2}}€</b>
-                <label style="color: #7c7c7c;font-size: medium;"><del>{{itens.preco}}€</del></label>
+                {% if itens.desconto > 0 %}
+                <label style="color: #7c7c7c;font-size: medium;">
+                    <del>{{itens.preco}}€</del>
+                </label>
+                {% endif %}
             </h3>
             {% if item_pg.quantidade > 1 %}
             <h5 class="card-title" id="preco{{itens.id}}" data-preco="{{itens.preco}}"

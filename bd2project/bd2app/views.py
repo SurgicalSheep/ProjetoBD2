@@ -92,6 +92,7 @@ def editarPerfil(request):
             updatePerfil(request.user.id, nome, email, morada)
             user.email = email
             user.save()
+            request.session["nome"] = nome
             return redirect('verPerfil')
     return render(request, 'editPerfil.html', {'user': userMongo})
 
@@ -466,10 +467,7 @@ def pagamento(request,id_carrinho):
         context = {'form': form}
     return render(request, 'pagamento.html', context=context)
 
-@login_required
 def inserir_pedido(id_carrinho,morada):
-    if request.session["tipouser"] != "Cliente":
-        return redirect('index')
     itens_carrinho = itens_carrinho_model.objects.filter(id_carrinho=id_carrinho)
     carrinho = carrinho_compras.objects.get(id_carrinho=id_carrinho)
     cursor = connection.cursor()
