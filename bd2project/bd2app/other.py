@@ -86,6 +86,24 @@ def logsSearch(search):
 
     return collection.find(query)
 
+def getClientesSearch(search):
+    collection = bd['vw_clientes']
+    if search == "":
+        return collection.find()
+    pattern = re.compile(search, re.IGNORECASE)
+
+    query = {
+        "$or": [
+            {"nome": {"$regex": pattern}},
+            {"morada": {"$regex": pattern}},
+            {"email": {"$regex": pattern}},
+            {"active": {"$regex": pattern}},
+        ]
+    }
+
+    return collection.find(query)
+    
+
 def todos_produtos_other_marketplace():
     collection = bd['produtos']
     return collection.find({'belongs_store': False, 'active': True, "active_parceiro": True})

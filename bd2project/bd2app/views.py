@@ -849,9 +849,22 @@ def number_users():
 def gerir_clientes (request):
     if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         return redirect('index')
-    collection = bd['vw_clientes']
-    users = collection.find()
-    return render(request, 'gerir_utilizadores.html', {'users': users, 'tipo_user': "Cliente"})
+    if request.method == 'GET':
+        collection = bd['vw_clientes']
+        if 'pesquisa' in request.GET:
+            search = request.GET['pesquisa']
+            users = getClientesSearch(search)
+        else:
+            users = collection.find()
+    users = [user for user in users]
+    users_per_page = 10
+    paginator = Paginator(users, users_per_page)
+    page = request.GET.get('page')
+    try:
+        current_page = paginator.get_page(page)
+    except EmptyPage:
+        current_page = paginator.get_page(1)
+    return render(request, 'gerir_utilizadores.html', {'users': current_page, 'tipo_user': "Cliente"})
 
 @login_required
 def gerir_fornecedores (request):
