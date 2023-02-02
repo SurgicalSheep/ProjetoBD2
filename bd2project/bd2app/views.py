@@ -742,10 +742,10 @@ def solicitar_produto(request, id_product):
 
 @login_required
 def encomendas_cliente(request, id_user):
-    if ((getTipoUserMongo(request.user.id) == "Administrador") or ((getTipoUserMongo(request.user.id) == "Cliente") and (request.user.id == id_user))):
+    if ((getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2") or ((getTipoUserMongo(request.user.id) == "Cliente") and (request.user.id == id_user))):
         todos = todos_pedidos_model.objects.filter(id_cliente=id_user, estado__in=["Encomenda Enviada!", "Encomenda Cancelada!"]).order_by('-data')
         return render(request, 'encomendas_cliente.html', {'todos': todos})
-    return render('index')
+    return redirect('index')
 
 @login_required
 def encomenda(request,id_encomenda): #falta checkar esta
@@ -849,7 +849,7 @@ def number_users():
 
 @login_required
 def gerir_clientes (request):
-    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
         return redirect('index')
     if request.method == 'GET':
         collection = bd['vw_clientes']
@@ -870,7 +870,7 @@ def gerir_clientes (request):
 
 @login_required
 def gerir_fornecedores (request):
-    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
         return redirect('index')
     collection = bd['vw_fornecedores']
     users = collection.find()
@@ -886,7 +886,7 @@ def gerir_comerciais (request):
 
 @login_required
 def gerir_parceiros (request):
-    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
+    if not (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
         return redirect('index')
     collection = bd['vw_parceiros']
     users = collection.find()
@@ -986,7 +986,7 @@ def estatisticas(request, acao):
         array_diasmes = [31,28,31,30,31,30,31,31,30,31,30,31]
         if ano % 4 == 0: 
             array_diasmes = [31,29,31,30,31,30,31,31,30,31,30,31]
-        for x in range(0, array_diasmes[mes-1]):
+        for x in range(0, array_diasmes[mes-1]+1):
             info.append(0)
             dias.append(x)
         # Create data for the bar graph
@@ -1000,14 +1000,14 @@ def estatisticas(request, acao):
             "valor_vendas": info,
             })
             fig = px.bar(df, x="dia", y="valor_vendas", barmode="group")
-            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), xaxis_title='dia',yaxis_title='valor_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True)
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]+1], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+2))), xaxis_title='dia',yaxis_title='valor_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True)
         if acao == 2:
             df = pd.DataFrame({
             "dia": dias,
             "n_vendas": info,
             })
             fig = px.bar(df, x="dia", y="n_vendas", barmode="group")
-            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), yaxis=dict(dtick=1), xaxis_title='dia', yaxis_title='n_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True) 
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]+1], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+2))), yaxis=dict(dtick=1), xaxis_title='dia', yaxis_title='n_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True) 
         # Convert the figure to a JSON string
         fig_json = fig.to_json()
         # Pass the JSON string to the template
@@ -1191,7 +1191,7 @@ def estatisticas_cliente(request, id_user, acao):
         array_diasmes = [31,28,31,30,31,30,31,31,30,31,30,31]
         if ano % 4 == 0: 
             array_diasmes = [31,29,31,30,31,30,31,31,30,31,30,31]
-        for x in range(0, array_diasmes[mes-1]):
+        for x in range(0, array_diasmes[mes-1]+1):
             info.append(0)
             dias.append(x)
         # Create data for the bar graph
@@ -1205,14 +1205,14 @@ def estatisticas_cliente(request, id_user, acao):
             "valor_vendas": info,
             })
             fig = px.bar(df, x="dia", y="valor_vendas", barmode="group")
-            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), xaxis_title='dia',yaxis_title='valor_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True)
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]+1], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+2))), xaxis_title='dia',yaxis_title='valor_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True)
         if acao == 2:
             df = pd.DataFrame({
             "dia": dias,
             "n_vendas": info,
             })
             fig = px.bar(df, x="dia", y="n_vendas", barmode="group")
-            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+1))), yaxis=dict(dtick=1), xaxis_title='dia', yaxis_title='n_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True) 
+            fig.update_layout(xaxis=dict(range=[0, array_diasmes[mes-1]+1], tick0=1, dtick=1, tickvals=list(range(1, array_diasmes[mes-1]+2))), yaxis=dict(dtick=1), xaxis_title='dia', yaxis_title='n_vendas', xaxis_fixedrange=True, yaxis_fixedrange=True) 
         # Convert the figure to a JSON string
         fig_json = fig.to_json()
         # Pass the JSON string to the template

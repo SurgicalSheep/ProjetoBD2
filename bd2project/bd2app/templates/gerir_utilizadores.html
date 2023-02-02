@@ -55,6 +55,7 @@
                     <td>Não</td>
                 {% endif %}
                 <td>
+                    {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
                     <a type="button" class="btn btn-warning" href="{% url 'editarUser' id_user=users.id%}">Editar</a>
                     {% if users.active %}
                     <a type="button" class="btn btn-danger" href="{% url 'desativarUser' id_user=users.id %}">Desativar</a>
@@ -67,6 +68,7 @@
                     {% if tipo_user == "Parceiro" and users.active %}
                     <a type="button" class="btn btn-secondary" href="{% url 'gerir_produtos_parceiro' id_user=users.id %}">Gerir os Produtos</a>
                     {% endif %}
+                    {% endif %}
                     {% if tipo_user == "Cliente" %}
                     <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Detalhes</a>
                     {% endif %}
@@ -74,7 +76,7 @@
             </tr>
         {% endfor %}
     </table>
-    
+
     {% if tipo_user == "Cliente" %}
     <div class="pagination" style="display: flex;justify-content:center;">
         {% if users.has_previous %}

@@ -1,5 +1,6 @@
 {% extends "index.html" %}
 {% block content %}
+<h2 class="mt-3 ml-4"> Todas as vendas da loja: </h2>
 <div class="card border-light mb-3" style="max-width: 18rem; float: left; margin-top: 2%; margin-left: 2%;">
     <div class="card-header">Número de compras efetuadas: </div>
     <div class="card-body" style="text-align: center;">
@@ -13,6 +14,7 @@
     </div>
 </div>
 <br><br><br><br><br><br><br>
+{% if request.session.tipouser == "Comercial Tipo 2" %}
 <div style="display: flex; margin-left: 2%; margin-top: 1%;">
     <div style="padding: 10px; border: 2px solid black; width: fit-content; float: right; border-radius: 10px; cursor: pointer;"
         onmouseover="this.style.color='#FA7F08';" onmouseout="this.style.color='#000000';"
@@ -68,5 +70,5 @@
         Plotly.newPlot("bar-graph", fig.data, fig.layout);
     </script>
 </div>
-
+{% endif %}
 {% endblock %}
