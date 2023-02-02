@@ -70,7 +70,9 @@
                     {% endif %}
                     {% endif %}
                     {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" or request.session.tipouser == "Comercial Tipo 2" %}
+                    {% if tipo_user == "Parceiro" %}
                     <a type="button" class="btn btn-info" href="{% url 'consulta_produtos_parceiro' id_user=users.id %}">Detalhes Vendas</a>
+                    {% endif %}
                     {% endif %}
                     {% if tipo_user == "Cliente" %}
                     <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Detalhes</a>
