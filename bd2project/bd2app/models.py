@@ -31,7 +31,6 @@ class produtoMongo(models.Model):
         data = collection.find({'belongs_store': False})
         return data
 
-
 class todos_pedidos_model(models.Model):
     id_pedido = models.AutoField(primary_key=True)
     id_cliente = models.IntegerField()
@@ -39,6 +38,7 @@ class todos_pedidos_model(models.Model):
     estado = models.CharField(max_length=255)
     data = models.DateTimeField()
     morada = models.CharField(max_length=255)
+    id_utilizador = models.IntegerField()
     class Meta:
         managed = False
         db_table = 'pedidos'
@@ -79,6 +79,7 @@ class PedidoFornecedor(models.Model):
     datapedido = models.DateTimeField()
     dataentrega = models.DateTimeField()
     estado = models.CharField(max_length=255)
+    id_utilizador = models.IntegerField()
     class Meta:
         managed = False
         db_table = 'pedidos_fornecedor'
@@ -89,6 +90,8 @@ class Logs_plpgsql(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     type = models.CharField(max_length=255, null=False)
     nome_tabela = models.CharField(max_length=255, null=False)
+    ids_tabela = models.CharField(max_length=255, null=False)
+    comment = models.CharField(max_length=255, null=False)
     class Meta:
         managed = False
         db_table = 'logs_plpgsql'
