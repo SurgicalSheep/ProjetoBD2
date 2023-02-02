@@ -1361,7 +1361,6 @@ def consulta_produtos(request):
         cursor.execute("select * from produto_info_function()")
         results = cursor.fetchall()
         for x in all_products:
-            pprint(x)
             check = 0
             for y in results:
                 if x["id"] == y[0]:
@@ -1370,33 +1369,14 @@ def consulta_produtos(request):
             if(check == 0):        
                 p = produto(x["id"], x["nome"], 0, 0)
             products.append(p)
-        return render(request, "consulta_produtos.html", {'products': products})
-    return redirect('index')
-
-def consulta_produtos(request):
-    if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
-        products = []
-        class produto:
-            def __init__(self, id, nome, n_vendas, valor_vendas):
-                self.id = id
-                self.nome = nome
-                self.n_vendas = n_vendas
-                self.valor_vendas = valor_vendas
-        all_products = get_all_products_other()
-        cursor = connection.cursor()
-        cursor.execute("select * from produto_info_function()")
-        results = cursor.fetchall()
-        for x in all_products:
-            pprint(x)
-            check = 0
-            for y in results:
-                if x["id"] == y[0]:
-                    p = produto(x["id"], x["nome"], y[1], y[2])
-                    check = 1
-            if(check == 0):        
-                p = produto(x["id"], x["nome"], 0, 0)
-            products.append(p)
-        return render(request, "consulta_produtos.html", {'products': products, "isloja": 1})
+        products_per_page = 15
+        paginator = Paginator(products, products_per_page)
+        page = request.GET.get('page')
+        try:
+            current_page = paginator.get_page(page)
+        except EmptyPage:
+            current_page = paginator.get_page(1)
+        return render(request, "consulta_produtos.html", {'products': current_page, "isloja": 1})
     return redirect('index')
 
 def consulta_produtos_parceiro(request, id_user):
@@ -1428,5 +1408,12 @@ def consulta_produtos_parceiro(request, id_user):
                     p = produto(x["id"], x["nome"], 0, 0)
                 products.append(p)
         nome_parceiro = nome_parceiro_other(id_user)
-        return render(request, "consulta_produtos.html", {'products': products,"isloja": 0 ,"nome_parceiro": nome_parceiro, "nvendas": nvendas, "valorvendas": valorvendas})
+        products_per_page = 10
+        paginator = Paginator(products, products_per_page)
+        page = request.GET.get('page')
+        try:
+            current_page = paginator.get_page(page)
+        except EmptyPage:
+            current_page = paginator.get_page(1)
+        return render(request, "consulta_produtos.html", {'products': current_page,"isloja": 0 ,"nome_parceiro": nome_parceiro, "nvendas": nvendas, "valorvendas": valorvendas})
     return redirect('index')
