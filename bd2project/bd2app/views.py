@@ -1299,8 +1299,12 @@ def showLogs(request):
         collection = bd['utilizadores']
         for log in logs:
             utilizador = collection.find_one({"id": log["id_utilizador"]})
-            log["nomeUtilizador"] = utilizador["nome"]
-            log["tipoUser"] = utilizador["tipouser"]
+            if utilizador is None:
+                log["nomeUtilizador"] = "Apagado"
+                log["tipoUser"] = "Apagado"
+            else:
+                log["nomeUtilizador"] = utilizador["nome"]
+                log["tipoUser"] = utilizador["tipouser"]
         logs_per_page = 10
         paginator = Paginator(logs, logs_per_page)
         page = request.GET.get('page')

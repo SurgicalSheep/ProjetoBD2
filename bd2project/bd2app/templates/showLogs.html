@@ -57,13 +57,17 @@
                 {% elif log.type == "Delete" %}
                 <td style="text-align: center;background-color: rgb(255, 127, 127);">{{log.type}}</td>
                 {% endif %}
-                <td>{{log.ids_tabela}}</td>
+                <td>{{log.ids_tabela|safe}}</td>
                 <td>{{log.nome_tabela}}</td>
                 <td>{{log.source}}</td>
                 <td>{{log.data}}</td>
                 <td>{{log.comment}}</td>
                 <td>
+                    {% if log.id_utilizador %}
                     <a type="button" class="btn btn-info" href="{% url 'verPerfilAdmin' idUser=log.id_utilizador %}">Ver Perfil</a>
+                    {% else %}
+                    Deleted
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
