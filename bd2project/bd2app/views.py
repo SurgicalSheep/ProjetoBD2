@@ -731,13 +731,9 @@ def solicitar_produto(request, id_product):
         quantidade = data.get("quantidade")
         id_fornecedor =  data.get("id_fornecedor")
         id_produto = data.get("id_produto")
-        encomenda = PedidoFornecedor.objects.create(**{
-        'id_fornecedor': id_fornecedor,
-        'id_produto': id_produto,
-        'quantidade': quantidade,
-        'datapedido': datetime.datetime.now(),
-        'estado': "Por verificar"
-        })
+        cursor = connection.cursor()
+        data = "'"+str(datetime.datetime.now())+"'"
+        cursor.execute("call insert_pedidos_fornecedor(" + str(id_fornecedor) + "," + str(id_produto) + "," + str(quantidade) +  "," + data + "," + "'Por verificar'" + "," + str(request.user.id) + ")")
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -818,6 +814,7 @@ def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantid
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
     item.estado = "Aceite!"
     item.dataentrega = datetime.datetime.now()
+    item.id_utilizador = request.user.id
     item.save()
     collection.update_one({"id": id_produto}, {"$inc": {"stock": quantidade}})
     return redirect('pedidos_fornecedor')
@@ -825,7 +822,9 @@ def aceitar_pedidos_fornecedor(request, id_pedidofornecedor, id_produto, quantid
 @login_required
 def rejeitar_pedidos_fornecedor(request, id_pedidofornecedor):
     item = get_object_or_404(PedidoFornecedor, id_pedidofornecedor = id_pedidofornecedor)
-    item.delete()
+    item.estado = "Rejeitada!"
+    item.id_utilizador = request.user.id
+    item.save()
     return redirect('pedidos_fornecedor')
 
 def out_of_stock(request):
