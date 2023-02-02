@@ -1295,6 +1295,7 @@ def showLogs(request):
         except EmptyPage:
             current_page = paginator.get_page(1)
     return render(request, 'showLogs.html', {'logs': current_page})
+
 def gerir_produtos_parceiro(request, id_user):
     if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1"):
         products = todos_produtos_parceiro_other(id_user)
