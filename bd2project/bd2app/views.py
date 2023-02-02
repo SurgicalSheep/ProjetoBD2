@@ -73,6 +73,8 @@ def verPerfil(request):
 
 @login_required
 def verPerfilAdmin(request,idUser):
+    if request.session["tipouser"] != "Administrador":
+        return redirect('index')
     userMongo = bd["utilizadores"].find_one({"id":idUser})
     return render(request, 'showPerfil.html', {'user': userMongo})
 
@@ -137,7 +139,10 @@ def registro(request):
         context = {'form': form}
         return render(request, 'registro.html', context)
 
+@login_required
 def registroAdmin(request):
+    if request.session["tipouser"] != "Administrador" and request.session["tipouser"] != "Comercial Tipo 1":
+        return redirect('index')
     context = {}
     if request.method == 'POST':
         data = request.POST
@@ -182,7 +187,7 @@ def loginUser(request):
                     nome = userMongo["nome"]
                     request.session['tipouser'] = tipoUser
                     request.session['nome'] = nome
-                    if 'carrinhoAnonimo' in request.session:
+                    if 'carrinhoAnonimo' in request.session and tipoUser == "Cliente":
                         carrinhoAnonimo = request.session['carrinhoAnonimo']
                         if tipoUser == "Cliente":
                             if len(carrinhoAnonimo) > 0:
@@ -277,6 +282,8 @@ def todos_produtos_marketplace(request):
 
 @login_required
 def todos_users(request):
+    if request.session['tipouser'] != "Administrador" and request.session['tipouser'] != "Comercial Tipo 1":
+        return redirect("index")
     context = {}
     if request.method == 'GET':
         pag = 'todos_users.html'
@@ -303,9 +310,10 @@ def detalhes_produto(request, produto_id):
 @login_required
 def desativar_produto(request, produto_id):
     context = {}
+    if request.session['tipouser'] != "Administrador" and request.session['tipouser'] != "Comercial Tipo 1":
+        return redirect("index")
     if request.method == 'POST':
-        if getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1":
-            desativar_produto_other(produto_id, request.user.id)
+        desativar_produto_other(produto_id, request.user.id)
         return redirect('todos_produtos')
     else:
         form = request.POST
@@ -329,7 +337,6 @@ def todos_pedidos(request):
             return render(request, 'todos_pedidos.html', {'todos': todos, 'form': form})
     else:
         return redirect('pedidos_cliente')
-# ainda por acabar e meio que um teste
 
 
 # def novo_pedido(request):
@@ -340,6 +347,8 @@ def todos_pedidos(request):
 #@login_required
 def carrinho(request):
     if request.user.is_authenticated:
+        if request.session['tipouser'] == "Administrador" or request.session['tipouser'] == "Comercial Tipo 1" or request.session['tipouser'] == "Comercial Tipo 2" or request.session['tipouser'] == "Fornecedor" or request.session['tipouser'] == "Parceiro":
+            return redirect('index')
         carrinho = carrinho_compras.objects.get(id_cliente=request.user.id) 
         itens_pg = itens_carrinho_model.objects.filter(id_carrinho=request.user.id).order_by('id_produto')
         col = bd["produtos"]
@@ -388,7 +397,12 @@ def adicionar_carrinho(request, produto_id):
             col = bd['produtos']
             for item in carrinhoAnonimo:
                 if item['id'] == produto_id:
-                    item["quantidade"] += quantity
+                    if item["quantidade"] + quantity > stock:
+                        x = stock - (item["quantidade"] + quantity)
+                        if x < 0:
+                            item["quantidade"] += (quantity + x)
+                    else:
+                        item["quantidade"] += quantity
                     produtoExists = True
                     break
             if not produtoExists:
