@@ -1392,5 +1392,37 @@ def consulta_produtos(request):
             if(check == 0):        
                 p = produto(x["id"], x["nome"], 0, 0)
             products.append(p)
-        return render(request, "consulta_produtos.html", {'products': products})
+        return render(request, "consulta_produtos.html", {'products': products, "isloja": 1})
+    return redirect('index')
+
+def consulta_produtos_parceiro(request, id_user):
+    if (getTipoUserMongo(request.user.id) == "Administrador" or getTipoUserMongo(request.user.id) == "Comercial Tipo 1" or getTipoUserMongo(request.user.id) == "Comercial Tipo 2"):
+        products = []
+        nvendas = 0
+        valorvendas = 0
+        class produto:
+            def __init__(self, id, nome, n_vendas, valor_vendas):
+                self.id = id
+                self.nome = nome
+                self.n_vendas = n_vendas
+                self.valor_vendas = valor_vendas
+        all_products = get_all_products_parceiro_other(id_user)
+        ids = [int(item["id"]) for item in all_products]
+        cursor = connection.cursor()
+        if(len(ids) != 0):
+            cursor.execute("SELECT * FROM produto_parceiro_info_function(ARRAY"+ str(ids)+");")
+            results = cursor.fetchall()
+            for x in all_products:
+                check = 0
+                for y in results:
+                    if x["id"] == y[0]:
+                        p = produto(x["id"], x["nome"], y[1], y[2])
+                        nvendas = nvendas + y[1]
+                        valorvendas = valorvendas + y[2]
+                        check = 1
+                if(check == 0):        
+                    p = produto(x["id"], x["nome"], 0, 0)
+                products.append(p)
+        nome_parceiro = nome_parceiro_other(id_user)
+        return render(request, "consulta_produtos.html", {'products': products,"isloja": 0 ,"nome_parceiro": nome_parceiro, "nvendas": nvendas, "valorvendas": valorvendas})
     return redirect('index')

@@ -234,4 +234,8 @@ def searchLogsPostgres(search_term):
     return logs
 def get_all_products_other():
     collection = bd['produtos']
-    return collection.find({}, {"_id": 0, "id": 1, "nome": 1})
+    return list(collection.find({}, {"_id": 0, "id": 1, "nome": 1}))
+
+def get_all_products_parceiro_other(id_parceiro):
+    collection = bd['produtos']
+    return list(collection.find({"id_parceiro": id_parceiro, "belongs_store": False}, {"_id": 0, "id": 1, "nome": 1}))
