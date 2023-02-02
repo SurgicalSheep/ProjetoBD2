@@ -67,8 +67,10 @@
                     {% endif %}
                     {% if tipo_user == "Parceiro" and users.active %}
                     <a type="button" class="btn btn-secondary" href="{% url 'gerir_produtos_parceiro' id_user=users.id %}">Gerir os Produtos</a>
-                    <a type="button" class="btn btn-info" href="{% url 'consulta_produtos_parceiro' id_user=users.id %}">Detalhes Vendas</a>
                     {% endif %}
+                    {% endif %}
+                    {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" or request.session.tipouser == "Comercial Tipo 2" %}
+                    <a type="button" class="btn btn-info" href="{% url 'consulta_produtos_parceiro' id_user=users.id %}">Detalhes Vendas</a>
                     {% endif %}
                     {% if tipo_user == "Cliente" %}
                     <a type="button" class="btn btn-info" href="{% url 'estatisticas_cliente' id_user=users.id acao=2 %}">Detalhes</a>

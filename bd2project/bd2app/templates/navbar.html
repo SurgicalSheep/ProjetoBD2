@@ -218,7 +218,9 @@
               <button onclick="dropDownGerir()" class="dropbtn align-middle pt-2" style="text-decoration: none;color: black;font-weight: bold;font-family: Poppins;background-color: #f8f9fa;">Gerir Utilizadores</button>
               <div id="dropDownGerir" class="dropdown-content">
                 <a href="{% url 'gerir_clientes' %}" style="font-family: Merriweather Sans;">Gerir Clientes</a>
+                {% if request.session.tipouser == "Administrador" or request.session.tipouser == "Comercial Tipo 1" %}
                 <a href="{% url 'gerir_fornecedores' %}" style="font-family: Merriweather Sans;">Gerir Fornecedores</a>
+                {% endif %}
                 {% if request.session.tipouser == "Administrador" %}
                 <a href="{% url 'gerir_comerciais' %}" style="font-family: Merriweather Sans;">Gerir Comerciais</a>
                 {% endif %}
