@@ -1278,10 +1278,24 @@ def showLogs(request):
         collection = bd['logs_mongodb']
         if 'pesquisa' in request.GET:
             search = request.GET['pesquisa']
-            logs = logsSearch(search)
+            logsMongo = logsSearch(search)
+            logsPostgres = searchLogsPostgres(search)
+            logs = []
+            for log in logsMongo:
+                log["source"] = "MongoDB"
+                logs.append(log)
+            for log in logsPostgres:
+                logs.append(log)
         else:
-            logs = collection.find()
-        logs = [log for log in logs]
+            logsMongo = collection.find()
+            logsPostgres = list(Logs_plpgsql.objects.all().values())
+            logs = []
+            for log in logsMongo:
+                log["source"] = "MongoDB"
+                logs.append(log)
+            for log in logsPostgres:
+                log["source"] = "PostgreSQL"
+                logs.append(log)
         collection = bd['utilizadores']
         for log in logs:
             utilizador = collection.find_one({"id": log["id_utilizador"]})

@@ -39,7 +39,9 @@
           <th>Nome Utilizador</th>
           <th>Tipo Utilizador</th>
           <th>Tipo</th>
+          <th>ids Afetados</th>
           <th>Tabela</th>
+          <th>Base de dados</th>
           <th>Data</th>
           <th>Comentário</th>
           <th>Ação</th>
@@ -55,7 +57,9 @@
                 {% elif log.type == "Delete" %}
                 <td style="text-align: center;background-color: rgb(255, 127, 127);">{{log.type}}</td>
                 {% endif %}
+                <td>{{log.ids_tabela}}</td>
                 <td>{{log.nome_tabela}}</td>
+                <td>{{log.source}}</td>
                 <td>{{log.data}}</td>
                 <td>{{log.comment}}</td>
                 <td>

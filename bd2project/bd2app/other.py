@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404, redirect
 from bd2app.models import *
 bd = pymongo.MongoClient("mongodb+srv://eletropoggers_admin:faroladlucas@projetobd2-onlinedb.833ybao.mongodb.net/test")["bd2_mongo"]
 import re
+from django.db import connection
+from pprint import pprint
 
 def insere_ut(id,nome,tipouser,morada,username,email):
     col = bd["utilizadores"]
@@ -224,3 +226,9 @@ def nome_parceiro_other(id_user):
     aux = collection.find({"id": id_user})
     nome = aux[0]["nome"]
     return nome
+
+def searchLogsPostgres(search_term):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM search_log_by_string(%s)", [search_term])
+        logs = [{'id_log':log[0],'id_utilizador':log[1],'data':log[2], 'type': log[3], 'nome_tabela': log[4], 'ids_tabela': log[5], 'comment': log[6], 'source': 'PostgreSQL'} for log in cursor.fetchall()]
+    return logs
