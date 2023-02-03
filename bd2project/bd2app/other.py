@@ -178,7 +178,7 @@ def converterCarrinhoAnonimoParaLogado(id):
 
 def todos_fornecedores_produto_other(id_produto):
     collection = bd['produtos_fornecedores']
-    return collection.find({"id_produto": id_produto})
+    return list(collection.find({"id_produto": id_produto}))
 
 def todos_produtos_fornecedor_n_fornece_other(idfornecedor):
     collection = bd['produtos_fornecedores']
